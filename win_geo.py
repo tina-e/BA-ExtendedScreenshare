@@ -1,5 +1,6 @@
 from ewmh import EWMH
 ewmh = EWMH()
+import Xlib
 
 
 def frame(window):
@@ -32,8 +33,16 @@ def get_win_at(x, y):
 
 
 if __name__ == '__main__':
-    found_win = get_win_at(500, 500)
+    found_win = get_win_at(100, 100)
+
+    #print(found_win.display)
+    print(found_win)
+    print(found_win.get_attributes())
     print(found_win.get_wm_class())
+    print(found_win.query_tree().parent.get_wm_class())
+    for child in found_win.query_tree().children:
+        print(child.get_geometry())
+
 
 
 
