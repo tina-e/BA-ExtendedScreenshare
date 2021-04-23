@@ -35,6 +35,7 @@ def get_win_at(x, y):
 if __name__ == '__main__':
     found_win = get_win_at(100, 100)
 
+    print(found_win.id)
     #print(found_win.display)
     print(found_win)
     print(found_win.get_attributes())
