@@ -10,9 +10,9 @@ import subprocess
 import threading
 import ffmpeg
 
-x_pos = 100
+x_pos = 500
 y_pos = 100
-width = 1500
+width = 750
 height = 750
 ip_receiver = '192.168.178.136'
 port = 9000
@@ -25,14 +25,17 @@ def start_stream_bindings():
     (
         ffmpeg
             .input(f':0.0+{x_pos},{y_pos}', format='x11grab', framerate=25, s='{}x{}'.format(width, height))
-            .output(f'udp://{ip_receiver}:{port}/', format='mpegts')
-            # .output(f'udp://{ip_receiver}:{port}/', format='mpegts', preset='ultrafast', tune='zerolatency')
+            #.output(f'udp://{ip_receiver}:{port}/', format='mpegts') #basic
+            #.output(f'udp://{ip_receiver}:{port}/', format='mpegts', preset='ultrafast', tune='zerolatency') # bessere performance
+            .output(f'udp://{ip_receiver}:{port}/', format='mpegts', preset='ultrafast', tune='zerolatency', codec='libx264') # codec verbessert krass quali
             .run()
     )
 
 
 def access_stream():
-    subprocess.check_output(f"ffplay -f mpegts udp://{ip_receiver}:{port}/", shell=True)
+    subprocess.check_output(f"ffplay -fflags nobuffer -flags low_delay -framedrop -f mpegts udp://{ip_receiver}:{port}/", shell=True)
+    # no buffer wichtig, sonst sehr viel latency
+    # andere parameter noch evaluieren
 
 
 threading.Thread(target=start_stream_bindings).start()
