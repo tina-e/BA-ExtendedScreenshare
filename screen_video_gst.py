@@ -9,10 +9,16 @@ from gi.repository import Gst, GLib, GstApp
 
 Gst.init()
 
+reciever_ip = "192.168.178.169"
+port = "5000"
+start_x = 50
+start_y = 50
+end_x = 800
+end_y = 750
+
 main_loop = GLib.MainLoop()
 main_loop_thread = Thread(target=main_loop.run)
 main_loop_thread.start()
-
 
 # ! video/x-raw,width=750,height=500   legt größe des streams fest
 # use-damage=0 angeblich CPU fordernd
@@ -22,13 +28,13 @@ main_loop_thread.start()
 
 # https://gist.github.com/esrever10/7d39fe2d4163c5b2d7006495c3c911bb
 # gst-launch-1.0 -v ximagesrc startx=50 starty=10 endx=800 endy=800 ! video/x-raw,framerate=20/1 ! videoscale ! videoconvert ! x264enc tune=zerolatency bitrate=500 speed-preset=superfast ! rtph264pay ! udpsink host=192.168.178.169 port=5111
-pipeline = Gst.parse_launch("ximagesrc startx=50 starty=10 endx=800 endy=800 "
+pipeline = Gst.parse_launch(f"ximagesrc startx={start_x} starty={start_y} endx={end_x} endy={end_y} "
                             "! video/x-raw,framerate=20/1 "
                             "! videoscale "
                             "! videoconvert "
                             "! x264enc tune=zerolatency bitrate=500 speed-preset=superfast "
                             "! rtph264pay "
-                            "! udpsink host=192.168.178.169 port=5111")
+                            f"! udpsink host={reciever_ip} port={port}")
 print(pipeline)
 print(type(pipeline))
 pipeline.set_state(Gst.State.PLAYING)
