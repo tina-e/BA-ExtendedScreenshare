@@ -8,7 +8,7 @@ Der Accessor kann diese Region einsehen und auch steuern.
 > Der Sharer gibt eine Region seines Bildschirms für den Accessor frei.
 Der Accessor soll die Möglichkeit haben, aktiv einzugreifen.
 Er kann Klicken, Eingaben machen und Dinge von seinem lokalen Gerät einfügen.
-  - Streamen einer Bildschirmregion (z.B. via GStreamer) *(möglich)*
+  - Empfangen eines Streams einer bestimmten Bildschirmregion (z.B. via GStreamer) *(möglich)*
   - Weitergeben von Mouse- und Keyboard-Events
   - Funktionierende Zwischenablage *(bedingt möglich)*
 
@@ -32,12 +32,13 @@ Der Accessor soll die Möglichkeit haben, beiden zu starten. Die geöffneten Fen
 
 
 #### Control Access (Sharer)
-> Das Festlegen, welche Region geteilt wird, soll für den Sharer so einfach wie möglich sein.
+> Das Festlegen, welche Region geteilt wird und mit wem, soll für den Sharer so einfach wie möglich sein.
 Auch während der Stream läuft soll diese Region für den Sharer klar ersichtlich sein.
 Falls er die geteilte Region für sich privat braucht, ohne dass der Accessor diese weiterhin einsehen kann,
 soll der Sharer die Möglichkeit haben, die geteilte Region frei auf seinem Bildschirm zu verschieben und zu skalieren.
 Außerdem soll er den Stream pausieren können.
 
+  - Auswahl des Accessors *(möglich)*
   - Größe und Position des Streams zu Beginn einfach festlegen (z.B. bestimmte Region "aufziehen") *(mit übergebenen Werten möglich)*
   - Markierung der geteilten Region auf dem Bildschirm des Sharers (z.B. farbiges Rechteck)
   - Größe und Position der geteilten Region "on-the-run" steuern (z.B. farbiges Rechteck bewegen/skalieren) *(mit übergebenen Werten möglich)*
