@@ -1,11 +1,11 @@
 import socket
 import os
 
-server_host = "localhost"
+server_host = "192.168.178.169"
 # or 0.0.0.0 for more than 1 network
 server_port = 5000
 
-SEPARATOR = "<SEPARATOR>"
+SEPARATOR = "<SEP>"
 BUFFER_SIZE = 4096
 
 server_socket = socket.socket()
@@ -18,9 +18,7 @@ client_socket, address = server_socket.accept()
 print(f"{address} is connected.")
 
 received = client_socket.recv(BUFFER_SIZE).decode()
-filename, filesize = received.split(SEPARATOR)
-filename = os.path.basename(filename)
-filesize = int(filesize)
+filename = received.split(SEPARATOR)[0]
 
 with open(filename, "wb") as file:
     while True:
