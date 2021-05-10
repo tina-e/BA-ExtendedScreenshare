@@ -1,5 +1,7 @@
 # BA-CrossDeviceCommunication
 ## Shared Screen Region
+User A - der Sharer - kann eine bestimmte Region seines Bildschirmes an User B - den Accessor - freigeben.  
+Der Accessor kann diese Region einsehen und auch steuern.
 ### Hintergrund
 ### Anforderungen
 #### Remote Control
