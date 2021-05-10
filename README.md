@@ -8,7 +8,7 @@ Der Accessor soll die Möglichkeit haben, aktiv einzugreifen.
 Er kann Klicken, Eingaben machen und Dinge von seinem lokalen Gerät einfügen.
   - Streamen einer Bildschirmregion (z.B. via GStreamer) *(möglich)*
   - Weitergeben von Mouse- und Keyboard-Events
-  - Funktionierende Zwischenablage (funktioniert bedingt)
+  - Funktionierende Zwischenablage *(bedingt möglich)*
 
 
 #### Neues Öffnen
