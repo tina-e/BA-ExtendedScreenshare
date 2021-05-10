@@ -9,7 +9,7 @@ from gi.repository import Gst, GLib, GstApp
 
 Gst.init()
 
-reciever_ip = "192.168.178.169"
+reciever_ip = "192.168.178.136"
 port = "5000"
 start_x = 50
 start_y = 50
@@ -53,11 +53,21 @@ try:
         #    continue
         #print("sample")
 except KeyboardInterrupt:
-    pass
-
-pipeline.set_state(Gst.State.NULL)
-main_loop.quit()
-main_loop_thread.join()
+    pipeline.set_state(Gst.State.PAUSED)
+    start_x=200
+    start_y=200
+    pipeline = Gst.parse_launch(f"ximagesrc startx={start_x} starty={start_y} endx={end_x} endy={end_y} "
+                            "! video/x-raw,framerate=20/1 "
+                            "! videoscale "
+                            "! videoconvert "
+                            "! x264enc tune=zerolatency bitrate=500 speed-preset=superfast "
+                            "! rtph264pay "
+                            f"! udpsink host={reciever_ip} port={port}")
+    pipeline.set_state(Gst.State.PLAYING)
+#    pass
+#pipeline.set_state(Gst.State.NULL)
+#main_loop.quit()
+#main_loop_thread.join()
 
 
 
