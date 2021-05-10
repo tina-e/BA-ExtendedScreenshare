@@ -10,7 +10,7 @@ host = "192.168.178.169" # receiver-ip
 port = 5000
 filename = "/home/martinaemmert/Documents/network_send_test.txt"
 
-#filesize = os.path.getsize(filename)
+# filesize = os.path.getsize(filename)
 
 client_socket = socket.socket()
 print(f"[+] Connecting to {host}:{port}")

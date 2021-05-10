@@ -18,7 +18,7 @@ client_socket, address = server_socket.accept()
 print(f"{address} is connected.")
 
 received = client_socket.recv(BUFFER_SIZE).decode()
-filename = received.split(SEPARATOR)[0]
+filename = os.path.basename(received.split(SEPARATOR)[0])
 
 with open(filename, "wb") as file:
     while True:
