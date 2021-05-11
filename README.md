@@ -3,6 +3,58 @@
 User A - der Sharer - kann eine bestimmte Region seines Bildschirmes an User B - den Accessor - freigeben.  
 Der Accessor kann diese Region einsehen und auch steuern.
 ### Hintergrund
+#### *TODO: mehr zu collaborativem Arbeiten finden*
+#### Remote Lehre - Chertoff and Thompson
+- interaction is important
+- students need to feel connected to their classroom
+- techers have to be comfortable with the software -> software so einfach/usable wie möglich machen
+- student should have the possibility to monitore their progress
+
+#### Remote Lehre - Morgan
+- actively taking part
+- work with peers
+- students take an active role, demonstrate their competency, aquire feedback
+
+#### Remote Lehre - He et al.
+- project collaboration verbessert:
+  - Qualität
+  - Effizient
+- gut und wichtig: automatically (save and) sync
+
+#### Warum Bildschirmregion? - Hawkey and Inkpen
+- nearly no privacy possible in classical screen sharing
+- trotzdem: screen sharing for collaboration gut, weil Leute in gewohnter Umgebung effizient arbeiten
+- also: balance privacy of the sharer and control of the accessor
+
+#### Ähnliche Anwendung - Begole et al.
+- Umbauen einer einzelnen Single-User-Anwendung zu einer Multi-User-Anwendung
+
+#### Ähnliche Anwendung - Berry et al.
+- presenter (active): shares
+- audience (passive): watches
+- presenter may want to keep certain screen area or certain parts private / to do sth else parallel
+- audience may want to see evth (not interested in evth going on on the presenter's screen) / follow the presenter easier (Pointer/Annotation)
+
+#### Ähnliche Anwendung - Tee et al. (recht alt I think)
+- others can point
+- sharer can blurr
+- shared region is marked
+
+#### Ähnliche Anwendung - Masaki et al.
+- Grabbing certains screen area and share it
+- control and pointing possible
+- Communication via Tablet and PC (sperrig; mir nicht ganz klar, was hier passiert)
+
+#### Ähnliche Anwendung - Frees and Kessler
+- "ShowMe"
+- Capturing certain screen area and share it
+- Learning-by-Doing: Control not possible, only annotation
+- Multi-User possible
+
+> "Neu"/Vorteile hier:
+> - Dateien übertragen / Zwischenablage möglich statt nur Steuerung (?)
+> - Nicht nur 1 Anwendung -> mehr Flexibilität
+
 ### Anforderungen
 #### Remote Control
 > Der Sharer gibt eine Region seines Bildschirms für den Accessor frei.
@@ -48,4 +100,27 @@ Außerdem soll er den Stream pausieren können.
 
 ## Annotation-Tool for Screen Sharing
 ### Hintergrund
+#### *TODO: Mehr zu Annotation finden*
+#### Remote Lehre - Chertoff and Thompson
+- interaction is important
+- students need to feel connected to their classroom
+- techers have to be comfortable with the software -> software so einfach/usable wie möglich machen
+- student should have the possibility to monitore their progress
+
+#### Remote Lehre - Morgan
+- actively taking part
+- work with peers
+- students take an active role, demonstrate their competency, aquire feedback
+
+#### Warum zeichnen? - Baudisch et al.
+- Mouse Cursor kann man schwer folgen/nicht gut sichtbar
+
+#### Ähnliche Anwendung - Frees and Kessler
+- "ShowMe"
+- Capturing certain screen area and share it
+- Learning-by-Doing: Control not possible, only annotation
+- Multi-User possible
 ### Anforderungen
+- Screen Streaming
+- Mouse Events übertragen
+- Drawing
