@@ -9,8 +9,20 @@ capabilities = {
     e.EV_KEY: (e.BTN_LEFT, e.BTN_RIGHT),
 }
 
-mouse_ui = UInput(capabilities)
-key_ui = UInput()
+mouse_ui = None
+key_ui = None
+
+def mouse():
+    global mouse_ui
+    mouse_ui = UInput(capabilities, name="mouse")
+
+def key():
+    global key_ui
+    key_ui = UInput(name="key")
+
+
+threading.Thread(target=mouse).start()
+threading.Thread(target=key).start()
 
 output = subprocess.check_output("xinput list", shell=True).decode("utf-8")
 print(output)
@@ -21,10 +33,10 @@ print(output)
 output = subprocess.check_output("xinput list", shell=True).decode("utf-8")
 print(output)
 
-time.sleep(30)
+time.sleep(90)
 
-mouse_ui.write(e.EV_REL, e.REL_X, 1000)
-mouse_ui.syn()
+#mouse_ui.write(e.EV_REL, e.REL_X, 1000)
+#mouse_ui.syn()
 while True:
     mouse_ui.write(e.EV_REL, e.REL_X, 50)
     mouse_ui.syn()
