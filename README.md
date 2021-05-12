@@ -4,6 +4,16 @@ User A - der Sharer - kann eine bestimmte Region seines Bildschirmes an User B -
 Der Accessor kann diese Region einsehen und auch steuern.
 ### Hintergrund
 #### *TODO: mehr zu collaborativem Arbeiten finden*
+
+#### Collaboration - Kim et al.
+- WYSIWIS vs. independent views of remote and local user
+
+#### Collaboration - Tang and Minneman
+- VideoWhiteboard allows users (sometimes) to work more closely than if they were in the same room
+
+#### Collaboration - Pallot et al.
+(Volltext fehlt noch) This paper presents the results and discusses the findings of a survey on collaboration barriers, built from a list of collaboration distance factors, which was conducted from June 2007 to June 2008. It also explores the role of Collaborative Working Environments (CWE) and collaboration tools in creating, compressing or bridging collaborative distances and raising or overcoming related collaboration barriers.
+
 #### Remote Lehre - Chertoff and Thompson
 - interaction is important
 - students need to feel connected to their classroom
@@ -64,7 +74,6 @@ Er kann Klicken, Eingaben machen und Dinge von seinem lokalen Gerät einfügen.
   - Weitergeben von Mouse- und Keyboard-Events
   - Funktionierende Zwischenablage *(bedingt möglich)*
 
-
 #### Neues Öffnen
 > In der vom Sharer geteilten Bildschirmregion liegen Verknüpfungen zu Programmen und zu Dateien.
 Der Accessor soll die Möglichkeit haben, beiden zu starten. Die geöffneten Fenster sollen dann wiederum vom Accessor gesteuert werden können.
@@ -81,7 +90,6 @@ Der Accessor soll die Möglichkeit haben, beiden zu starten. Die geöffneten Fen
   - nicht nur Accessor kann Daten an den Sharer übermitteln, sondern auch anders rum
   - Accessor hat File auch noch nach der Session zur Verfügung
   - Zwei unabhängige Dateien existieren
-
 
 #### Control Access (Sharer)
 > Das Festlegen, welche Region geteilt wird und mit wem, soll für den Sharer so einfach wie möglich sein.
@@ -101,6 +109,15 @@ Außerdem soll er den Stream pausieren können.
 ## Annotation-Tool for Screen Sharing
 ### Hintergrund
 #### *TODO: Mehr zu Annotation finden*
+
+#### Annotation - Kim et al.
+- (mind.) 2 verwandte Arbeiten zu Annotation
+
+#### Annotation - Kim et al. (Comparing pointing and drawing)
+- Compared 4 cases: pointing/annotation on image/video
+- annotations: require fewer inputs on expert side + less cognitive load on the local worker
+- pointing on video required good verbal communication + annotations need to be erased after completing each step of task
+
 #### Remote Lehre - Chertoff and Thompson
 - interaction is important
 - students need to feel connected to their classroom
@@ -120,6 +137,7 @@ Außerdem soll er den Stream pausieren können.
 - Capturing certain screen area and share it
 - Learning-by-Doing: Control not possible, only annotation
 - Multi-User possible
+
 ### Anforderungen
 - Screen Streaming
 - Mouse Events übertragen
