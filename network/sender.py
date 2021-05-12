@@ -6,9 +6,9 @@ import os
 SEPARATOR = "<SEP>"
 BUFFER_SIZE = 4096
 
-host = "192.168.178.169" # receiver-ip
+host = "192.168.178.136" # receiver-ip
 port = 5000
-filename = "/home/martinaemmert/Documents/network_send_test.txt"
+filename = "/home/martinaemmert/Documents/test2.txt"
 
 filesize = os.path.getsize(filename)
 

@@ -2,11 +2,14 @@ import socket
 import os
 
 server_host = "0.0.0.0"
-# or 0.0.0.0 for more than 1 network
 server_port = 5000
 
 SEPARATOR = "<SEP>"
-BUFFER_SIZE = 4096 # TODO: problem mit kleinen Dateien -> nichts kommt an
+
+# TODO: problem mit kleinen Dateien -> nichts kommt an
+# moegliche Loesung: vorher Dateigroesse iw mitgeben
+BUFFER_SIZE = 4096
+# BUFFER_SIZE = 44
 
 server_socket = socket.socket()
 server_socket.bind((server_host, server_port))
