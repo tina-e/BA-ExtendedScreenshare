@@ -9,9 +9,14 @@ from evdev import UInput, ecodes as e
 import time
 
 # specify capabilities for our virtual input device
-capabilities = {
+cap_mouse = {
     e.EV_REL: (e.REL_X, e.REL_Y),
     e.EV_KEY: (e.BTN_LEFT, e.BTN_RIGHT),
+}
+
+cap_key = {
+    e.EV_KEY: (e.BTN_LEFT, e.BTN_RIGHT),
+    e.EV_KEY: (e.KEY_A, e.KEY_E),
 }
 
 
@@ -26,7 +31,7 @@ print(output)
 
 
 def handle_mouse():
-    with UInput(capabilities, name="mouse") as mouse_ui, UInput(name="key") as key_ui:
+    with UInput(cap_mouse, name="mouse") as mouse_ui, UInput(cap_key, name="key") as key_ui:
         output = subprocess.check_output("xinput list", shell=True).decode("utf-8")
         print(output)
         #output = subprocess.check_output("xinput reattach 25", shell=True)
@@ -35,7 +40,8 @@ def handle_mouse():
         #print(output)
 
         # click
-        time.sleep(60)
+        time.sleep(60) #TODO: programmatically reattach
+
         mouse_ui.write(e.EV_REL, e.REL_X, 1000)
         mouse_ui.syn()
         while True:
@@ -47,10 +53,10 @@ def handle_mouse():
             mouse_ui.syn()
             time.sleep(0.25)
 
-            mouse_ui.write(e.EV_KEY, e.BTN_LEFT, 1)
-            mouse_ui.syn()
-            mouse_ui.write(e.EV_KEY, e.BTN_LEFT, 0)
-            mouse_ui.syn()
+            key_ui.write(e.EV_KEY, e.BTN_LEFT, 1)
+            key_ui.syn()
+            key_ui.write(e.EV_KEY, e.BTN_LEFT, 0)
+            key_ui.syn()
             key_ui.write(e.EV_KEY, e.KEY_E, 1)
             key_ui.syn()
             key_ui.write(e.EV_KEY, e.KEY_E, 0)
@@ -65,31 +71,5 @@ def handle_mouse():
             mouse_ui.syn()
             time.sleep(0.25)
 
-def handle_keyboard():
-    with UInput() as device_key:
-        output = subprocess.check_output("xinput list", shell=True).decode("utf-8")
-        print(output)
-        output = subprocess.check_output("xinput reattach 25 26", shell=True)
-        print(output)
-        output = subprocess.check_output("xinput list", shell=True).decode("utf-8")
-        print(output)
-
-        device_key.write(e.EV_REL, e.REL_X, 1000)
-        device_key.syn()
-        while True:
-            device_key.write(e.EV_KEY, e.KEY_E, 1)
-            device_key.syn()
-            device_key.write(e.EV_KEY, e.KEY_E, 0)
-            device_key.syn()
-            time.sleep(0.5)
-
-try:
-    #threading.Thread(target=handle_mouse).start()
-    #threading.Thread(target=handle_keyboard).start()
-    handle_mouse()
-    #handle_keyboard()
-except KeyboardInterrupt:
-    pass
-
-subprocess.check_output("xinput remove-master 25", shell=True)
-subprocess.check_output("xinput remove-master 26", shell=True)
+handle_mouse()
+#TODO: programmatically remove-master
