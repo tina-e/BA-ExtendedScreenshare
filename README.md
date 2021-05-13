@@ -61,6 +61,7 @@ Der Accessor kann diese Region einsehen und auch steuern.
 - Learning-by-Doing: Control not possible, only annotation
 - Multi-User possible
 
+Geräte heute sind persönlich, früher war das nicht so
 > "Neu"/Vorteile hier:
 > - Dateien übertragen / Zwischenablage möglich statt nur Steuerung (?)
 > - Nicht nur 1 Anwendung -> mehr Flexibilität
