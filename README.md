@@ -1,9 +1,26 @@
 # BA-CrossDeviceCommunication
+
+todo:
+- use cases schreiben (wie wird das jetzt gemacht), priorisieren
+- -> technische features 
+- evaluation, was ist nötig?
+- ausblick vs. minimallsg. + zwischneschritte -> zeitplan
+
 ## Shared Screen Region
 User A - der Sharer - kann eine bestimmte Region seines Bildschirmes an User B - den Accessor - freigeben.  
 Der Accessor kann diese Region einsehen und auch steuern.
 ### Hintergrund
 #### *TODO: mehr zu collaborativem Arbeiten finden*
+
+#### Collaboration - Kim et al.
+- WYSIWIS vs. independent views of remote and local user
+
+#### Collaboration - Tang and Minneman
+- VideoWhiteboard allows users (sometimes) to work more closely than if they were in the same room
+
+#### Collaboration - Pallot et al.
+(Volltext fehlt noch) This paper presents the results and discusses the findings of a survey on collaboration barriers, built from a list of collaboration distance factors, which was conducted from June 2007 to June 2008. It also explores the role of Collaborative Working Environments (CWE) and collaboration tools in creating, compressing or bridging collaborative distances and raising or overcoming related collaboration barriers.
+
 #### Remote Lehre - Chertoff and Thompson
 - interaction is important
 - students need to feel connected to their classroom
@@ -51,6 +68,7 @@ Der Accessor kann diese Region einsehen und auch steuern.
 - Learning-by-Doing: Control not possible, only annotation
 - Multi-User possible
 
+Geräte heute sind persönlich, früher war das nicht so
 > "Neu"/Vorteile hier:
 > - Dateien übertragen / Zwischenablage möglich statt nur Steuerung (?)
 > - Nicht nur 1 Anwendung -> mehr Flexibilität
@@ -61,27 +79,28 @@ Der Accessor kann diese Region einsehen und auch steuern.
 Der Accessor soll die Möglichkeit haben, aktiv einzugreifen.
 Er kann Klicken, Eingaben machen und Dinge von seinem lokalen Gerät einfügen.
   - Empfangen eines Streams einer bestimmten Bildschirmregion (z.B. via GStreamer) *(möglich)*
-  - Weitergeben von Mouse- und Keyboard-Events
+  - Weitergeben von Mouse- und Keyboard-Events *(TODO: x2x, xrdp, fauxcon, uinput mapper, ...)*
+  - Unabhängige Eingabe auf Sharer-Gerät *(zweiter Mouse Cursor möglich, unabgängige Keyboard-Eingabe bedingt möglich)*
   - Funktionierende Zwischenablage *(bedingt möglich)*
-
 
 #### Neues Öffnen
 > In der vom Sharer geteilten Bildschirmregion liegen Verknüpfungen zu Programmen und zu Dateien.
 Der Accessor soll die Möglichkeit haben, beiden zu starten. Die geöffneten Fenster sollen dann wiederum vom Accessor gesteuert werden können.
 
 - Registrierung, dass ein neues Fenster geöffnet wurde ausgehend von der geteilten Region
-- Neues Gst-Window mit Programminhalt wird geöffnet *(möglich)*
-  - Kein zusätzlicher Aufwand bei der Implementierung
-- ODER: Neues xpra-Window des Programms wird geöffnet *(möglich)*
+- Neues Gst-Window mit Programminhalt wird geöffnet (vermutlich nicht sinnvoll)
+- ODER: Neues xpra-Window des Programms wird geöffnet
   - Sharer kann neues Fenster beliebig schließen/minimierenes
   - Sharer muss nicht zusätzlichen Platz auf seinem Screen freigeben/"opfern"
   - besser Qualität
   - unkompliziertere Übertragung und Verarbeitung der Input-Events als bei einem zweiten GStream
+- ODER: Gst-Window ändert automatisch die Größe, um neues Fenster mit anzuzeigen
+  - private Dinge vom Sharer könnten freigelegt werden
+- ODER: Sharer wird aufgefordert, Gst-Window anzupassen
 - Für File: File wird an den Accessor gesendet und lokal bei ihm geöffnet (sinnvoll?) *(senden von Files übers Netzwerk funktioniert ab bestimmter Größe)*
   - nicht nur Accessor kann Daten an den Sharer übermitteln, sondern auch anders rum
   - Accessor hat File auch noch nach der Session zur Verfügung
   - Zwei unabhängige Dateien existieren
-
 
 #### Control Access (Sharer)
 > Das Festlegen, welche Region geteilt wird und mit wem, soll für den Sharer so einfach wie möglich sein.
@@ -90,6 +109,7 @@ Falls er die geteilte Region für sich privat braucht, ohne dass der Accessor di
 soll der Sharer die Möglichkeit haben, die geteilte Region frei auf seinem Bildschirm zu verschieben und zu skalieren.
 Außerdem soll er den Stream pausieren können.
 
+  - geteilte Region als "Fenster"
   - Auswahl des Accessors *(möglich)*
   - Größe und Position des Streams zu Beginn einfach festlegen (z.B. bestimmte Region "aufziehen") *(mit übergebenen Werten möglich)*
   - Markierung der geteilten Region auf dem Bildschirm des Sharers (z.B. farbiges Rechteck)
@@ -101,6 +121,15 @@ Außerdem soll er den Stream pausieren können.
 ## Annotation-Tool for Screen Sharing
 ### Hintergrund
 #### *TODO: Mehr zu Annotation finden*
+
+#### Annotation - Kim et al.
+- (mind.) 2 verwandte Arbeiten zu Annotation
+
+#### Annotation - Kim et al. (Comparing pointing and drawing)
+- Compared 4 cases: pointing/annotation on image/video
+- annotations: require fewer inputs on expert side + less cognitive load on the local worker
+- pointing on video required good verbal communication + annotations need to be erased after completing each step of task
+
 #### Remote Lehre - Chertoff and Thompson
 - interaction is important
 - students need to feel connected to their classroom
@@ -120,6 +149,7 @@ Außerdem soll er den Stream pausieren können.
 - Capturing certain screen area and share it
 - Learning-by-Doing: Control not possible, only annotation
 - Multi-User possible
+
 ### Anforderungen
 - Screen Streaming
 - Mouse Events übertragen
