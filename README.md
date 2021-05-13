@@ -1,4 +1,11 @@
 # BA-CrossDeviceCommunication
+
+todo:
+- use cases schreiben (wie wird das jetzt gemacht), priorisieren
+- -> technische features 
+- evaluation, was ist nötig?
+- ausblick vs. minimallsg. + zwischneschritte -> zeitplan
+
 ## Shared Screen Region
 User A - der Sharer - kann eine bestimmte Region seines Bildschirmes an User B - den Accessor - freigeben.  
 Der Accessor kann diese Region einsehen und auch steuern.
