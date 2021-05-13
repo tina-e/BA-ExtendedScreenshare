@@ -71,7 +71,8 @@ Der Accessor kann diese Region einsehen und auch steuern.
 Der Accessor soll die Möglichkeit haben, aktiv einzugreifen.
 Er kann Klicken, Eingaben machen und Dinge von seinem lokalen Gerät einfügen.
   - Empfangen eines Streams einer bestimmten Bildschirmregion (z.B. via GStreamer) *(möglich)*
-  - Weitergeben von Mouse- und Keyboard-Events *(zweiter Mouse Cursor möglich, unabgängige Keyboard-Eingabe bedingt möglich)*
+  - Weitergeben von Mouse- und Keyboard-Events *(TODO: x2x, xrdp, fauxcon, uinput mapper, ...)*
+  - Unabhängige Eingabe auf Sharer-Gerät *(zweiter Mouse Cursor möglich, unabgängige Keyboard-Eingabe bedingt möglich)*
   - Funktionierende Zwischenablage *(bedingt möglich)*
 
 #### Neues Öffnen
