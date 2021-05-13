@@ -101,6 +101,7 @@ Falls er die geteilte Region für sich privat braucht, ohne dass der Accessor di
 soll der Sharer die Möglichkeit haben, die geteilte Region frei auf seinem Bildschirm zu verschieben und zu skalieren.
 Außerdem soll er den Stream pausieren können.
 
+  - geteilte Region als "Fenster"
   - Auswahl des Accessors *(möglich)*
   - Größe und Position des Streams zu Beginn einfach festlegen (z.B. bestimmte Region "aufziehen") *(mit übergebenen Werten möglich)*
   - Markierung der geteilten Region auf dem Bildschirm des Sharers (z.B. farbiges Rechteck)
