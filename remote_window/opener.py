@@ -8,8 +8,8 @@ window_class = [elem.lower() for elem in window.get_wm_class()]
 
 host = '192.168.178.169'
 user = 'lab'
-#password = ''
-password = getpass.getpass()
+password = 'afpelsaft'
+#password = getpass.getpass()
 
 client = SSHClient()
 #client.load_host_keys('/etc/hosts.allow')

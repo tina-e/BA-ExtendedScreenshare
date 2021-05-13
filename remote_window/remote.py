@@ -21,10 +21,10 @@ display = '100'
 #client command - accessing the application
 def accessing_command(is_self):
     server_user = 'lab'
-    server_password = ''
+    server_password = 'apfelsaft'
     server_ip = 'localhost'
     if not is_self:
-        server_ip = '192.168.178.'
+        server_ip = '192.168.178.169'
     host = 'ssh://' + server_user + ':' + server_password + '@' + server_ip + '/' + display
     return 'xpra attach ' + host + ' --sharing'
 
@@ -44,5 +44,4 @@ if not is_client:
     subprocess.Popen(command, shell=True)
     command = accessing_command(True)
 subprocess.Popen(command, shell=True)
-
 

@@ -3,6 +3,8 @@
 import subprocess
 import threading
 
+import xinput
+
 from evdev import UInput, ecodes as e
 import time
 
@@ -24,15 +26,16 @@ print(output)
 
 
 def handle_mouse():
-    with UInput(capabilities) as mouse_ui:
+    with UInput(capabilities, name="mouse") as mouse_ui, UInput(name="key") as key_ui:
         output = subprocess.check_output("xinput list", shell=True).decode("utf-8")
         print(output)
-        output = subprocess.check_output("xinput reattach 25", shell=True)
-        print(output)
-        output = subprocess.check_output("xinput list", shell=True).decode("utf-8")
-        print(output)
+        #output = subprocess.check_output("xinput reattach 25", shell=True)
+        #print(output)
+        #output = subprocess.check_output("xinput list", shell=True).decode("utf-8")
+        #print(output)
 
         # click
+        time.sleep(60)
         mouse_ui.write(e.EV_REL, e.REL_X, 1000)
         mouse_ui.syn()
         while True:
@@ -48,6 +51,10 @@ def handle_mouse():
             mouse_ui.syn()
             mouse_ui.write(e.EV_KEY, e.BTN_LEFT, 0)
             mouse_ui.syn()
+            key_ui.write(e.EV_KEY, e.KEY_E, 1)
+            key_ui.syn()
+            key_ui.write(e.EV_KEY, e.KEY_E, 0)
+            key_ui.syn()
             time.sleep(0.25)
 
             mouse_ui.write(e.EV_REL, e.REL_X, -50)
@@ -80,7 +87,7 @@ try:
     #threading.Thread(target=handle_mouse).start()
     #threading.Thread(target=handle_keyboard).start()
     handle_mouse()
-    handle_keyboard()
+    #handle_keyboard()
 except KeyboardInterrupt:
     pass
 
