@@ -80,13 +80,15 @@ Er kann Klicken, Eingaben machen und Dinge von seinem lokalen Gerät einfügen.
 Der Accessor soll die Möglichkeit haben, beiden zu starten. Die geöffneten Fenster sollen dann wiederum vom Accessor gesteuert werden können.
 
 - Registrierung, dass ein neues Fenster geöffnet wurde ausgehend von der geteilten Region
-- Neues Gst-Window mit Programminhalt wird geöffnet
-  - Kein zusätzlicher Aufwand bei der Implementierung
+- Neues Gst-Window mit Programminhalt wird geöffnet (vermutlich nicht sinnvoll)
 - ODER: Neues xpra-Window des Programms wird geöffnet
   - Sharer kann neues Fenster beliebig schließen/minimierenes
   - Sharer muss nicht zusätzlichen Platz auf seinem Screen freigeben/"opfern"
   - besser Qualität
   - unkompliziertere Übertragung und Verarbeitung der Input-Events als bei einem zweiten GStream
+- ODER: Gst-Window ändert automatisch die Größe, um neues Fenster mit anzuzeigen
+  - private Dinge vom Sharer könnten freigelegt werden
+- ODER: Sharer wird aufgefordert, Gst-Window anzupassen
 - Für File: File wird an den Accessor gesendet und lokal bei ihm geöffnet (sinnvoll?) *(senden von Files übers Netzwerk funktioniert ab bestimmter Größe)*
   - nicht nur Accessor kann Daten an den Sharer übermitteln, sondern auch anders rum
   - Accessor hat File auch noch nach der Session zur Verfügung
