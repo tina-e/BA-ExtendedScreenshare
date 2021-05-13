@@ -71,7 +71,7 @@ Der Accessor kann diese Region einsehen und auch steuern.
 Der Accessor soll die Möglichkeit haben, aktiv einzugreifen.
 Er kann Klicken, Eingaben machen und Dinge von seinem lokalen Gerät einfügen.
   - Empfangen eines Streams einer bestimmten Bildschirmregion (z.B. via GStreamer) *(möglich)*
-  - Weitergeben von Mouse- und Keyboard-Events
+  - Weitergeben von Mouse- und Keyboard-Events *(zweiter Mouse Cursor möglich, unabgängige Keyboard-Eingabe bedingt möglich)*
   - Funktionierende Zwischenablage *(bedingt möglich)*
 
 #### Neues Öffnen
@@ -79,9 +79,9 @@ Er kann Klicken, Eingaben machen und Dinge von seinem lokalen Gerät einfügen.
 Der Accessor soll die Möglichkeit haben, beiden zu starten. Die geöffneten Fenster sollen dann wiederum vom Accessor gesteuert werden können.
 
 - Registrierung, dass ein neues Fenster geöffnet wurde ausgehend von der geteilten Region
-- Neues Gst-Window mit Programminhalt wird geöffnet *(möglich)*
+- Neues Gst-Window mit Programminhalt wird geöffnet
   - Kein zusätzlicher Aufwand bei der Implementierung
-- ODER: Neues xpra-Window des Programms wird geöffnet *(möglich)*
+- ODER: Neues xpra-Window des Programms wird geöffnet
   - Sharer kann neues Fenster beliebig schließen/minimierenes
   - Sharer muss nicht zusätzlichen Platz auf seinem Screen freigeben/"opfern"
   - besser Qualität
