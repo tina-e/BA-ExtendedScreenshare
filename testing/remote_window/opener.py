@@ -1,5 +1,4 @@
 from paramiko import SSHClient, AutoAddPolicy
-import getpass
 #from rich import print, pretty, inspect
 import win_geo
 
