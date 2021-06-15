@@ -16,5 +16,5 @@ for event in device.read_loop():
     val = event.value
     _data = json.dumps({"event": str(event), "timestamp": timestamp, "code": code, "type": type, "val": val})
     headers = {'Content-type': 'application/json'}
-    connection.request('POST', f'http://{Config.HOST}:{Config.PORT}/{Config.MOUSE_EVENT}', _data, headers)
+    connection.request('POST', f"http://{Config.HOST}:{Config.PORT}/{Config.MOUSE_EVENT}", _data, headers)
     response = connection.getresponse()
