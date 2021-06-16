@@ -6,17 +6,12 @@ from server import Server
 from client import Client
 import Config
 
-start_x = 50
-start_y = 50
-end_x = 800
-end_y = 750
-
 def start_host():
     server = Server()
     server.start()
 
 def start_stream():
-    streamer = Streamer(start_x, start_y, end_x, end_y)
+    streamer = Streamer()
     streamer.open_stream()
     streamer.start_stream()
 
