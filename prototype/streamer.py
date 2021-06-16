@@ -16,7 +16,7 @@ class Streamer:
         self.end_x = end_x
         self.end_y = end_y
         self.pipeline = None
-        Gst.init()
+        Gst.init(None)
         main_loop = GLib.MainLoop()
         main_loop_thread = Thread(target=main_loop.run)
         main_loop_thread.start()

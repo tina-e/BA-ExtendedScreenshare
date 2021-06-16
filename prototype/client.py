@@ -4,7 +4,7 @@ import http.client as client
 
 class Client:
     def __init__(self):
-        self.connection = client.HTTPConnection(Config.RECEIVER, Config.EVENT_PORT)
+        self.connection = client.HTTPConnection(Config.HOST, Config.EVENT_PORT)
 
     def connect(self):
         self.connection.connect()
