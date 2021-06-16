@@ -1,5 +1,5 @@
 import threading
-from evdev import InputDevice, ecodes as e, events
+from evdev import InputDevice, ecodes, events
 from streamer import Streamer
 from accessor import Accessor
 from server import Server

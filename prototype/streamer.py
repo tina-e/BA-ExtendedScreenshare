@@ -7,6 +7,7 @@ import gi
 gi.require_version("Gst", "1.0")
 gi.require_version("GstApp", "1.0")
 from gi.repository import Gst, GLib, GstApp
+from evdev import UInput, ecodes
 import Config
 
 class Streamer:
@@ -20,6 +21,7 @@ class Streamer:
         main_loop = GLib.MainLoop()
         main_loop_thread = Thread(target=main_loop.run)
         main_loop_thread.start()
+        self.add_cursor()
 
     def open_stream(self):
         # https://gist.github.com/esrever10/7d39fe2d4163c5b2d7006495c3c911bb
@@ -51,6 +53,16 @@ class Streamer:
     #def end_stream(self):
         #TODO
 
+    def add_cursor(self):
+        # specify capabilities for our virtual input device
+        cap_mouse = {
+            ecodes.EV_REL: (ecodes.REL_X, ecodes.REL_Y),
+            ecodes.EV_KEY: (ecodes.BTN_LEFT, ecodes.BTN_RIGHT),
+        }
+        with UInput(cap_mouse, name="mouse") as mouse_ui:
+            mouse_ui.write(ecodes.EV_REL, ecodes.REL_X, self.start_x)
+            mouse_ui.write(ecodes.EV_REL, ecodes.REL_Y, self.start_y)
+            mouse_ui.syn()
 
 ##############################################################################################################################
 
