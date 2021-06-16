@@ -2,15 +2,15 @@ from threading import Thread
 import time
 
 # https://www.youtube.com/watch?v=HDY8pf-b1nA
+# sudo apt install python3-gst-1.0
 import gi
 gi.require_version("Gst", "1.0")
 gi.require_version("GstApp", "1.0")
 from gi.repository import Gst, GLib, GstApp
+import Config
 
 class Streamer:
-    def __init__(self, receiver_ip, port, start_x, start_y, end_x, end_y):
-        self.receiver_ip = receiver_ip
-        self.port = port
+    def __init__(self, start_x, start_y, end_x, end_y):
         self.start_x = start_x
         self.start_y = start_y
         self.end_x = end_x
@@ -32,7 +32,7 @@ class Streamer:
             "! videoconvert "
             "! x264enc tune=zerolatency bitrate=500 speed-preset=superfast "
             "! rtph264pay "
-            f"! udpsink host={self.receiver_ip} port={self.port} ")
+            f"! udpsink host={Config.RECEIVER} port={Config.STREAM_PORT} ")
         print(self.pipeline, "opened")
 
     def start_stream(self):
@@ -53,13 +53,6 @@ class Streamer:
 
 
 ##############################################################################################################################
-
-# reciever_ip = "192.168.178.136"
-# port = "5000"
-# start_x = 50
-# start_y = 50
-# end_x = 800
-# end_y = 750
 
 # ! video/x-raw,width=750,height=500   legt größe des streams fest
 # use-damage=0 angeblich CPU fordernd
