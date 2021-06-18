@@ -18,9 +18,7 @@ def start_stream():
 def start_client():
     client = Client()
     client.connect()
-    device = InputDevice('/dev/input/event11')
-    print(device)
-    client.listen_on_device(device)
+    client.listen_on_device()
 
 def access_stream():
     accessor = Accessor()

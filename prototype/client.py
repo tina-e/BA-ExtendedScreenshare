@@ -1,7 +1,7 @@
 import Config
 import json
 import http.client as client
-from evdev import ecodes
+from evdev import InputDevice, ecodes
 from pynput.mouse import Button, Controller
 from ewmh import EWMH
 ewmh = EWMH()
@@ -9,21 +9,29 @@ ewmh = EWMH()
 class Client:
     def __init__(self):
         self.connection = client.HTTPConnection(Config.HOST, Config.EVENT_PORT)
+        self.mouse_device = InputDevice('/dev/input/event11')
+        self.key_device = InputDevice('/dev/input/event3')
 
     def connect(self):
         self.connection.connect()
+        mouse_capas = self.mouse_device.capabilities()
+        key_capas = self.key_device.capabilities()
+        print(mouse_capas)
+        print(key_capas)
+        _data = json.dumps({"mouse": mouse_capas, "key": key_capas})
+        self.connection.request('POST', f"http://{Config.HOST}:{Config.CAP_PORT}/{Config.CAP_EVENT}", _data)
 
-    def listen_on_device(self, device):
-        for event in device.read_loop():
-            if is_relevant_input():
-                timestamp = event.timestamp()
-                code = event.code
-                type = event.type
-                val = event.value
-                _data = json.dumps({"event": str(event), "timestamp": timestamp, "code": code, "type": type, "val": val})
-                headers = {'Content-type': 'application/json'}
-                self.connection.request('POST', f"http://{Config.HOST}:{Config.EVENT_PORT}/{Config.MOUSE_EVENT}", _data, headers)
-                response = self.connection.getresponse()
+    def listen_on_device(self):
+        for event in self.mouse_device.read_loop():
+            #if is_relevant_input():
+            timestamp = event.timestamp()
+            code = event.code
+            type = event.type
+            val = event.value
+            _data = json.dumps({"event": str(event), "timestamp": timestamp, "code": code, "type": type, "val": val})
+            headers = {'Content-type': 'application/json'}
+            self.connection.request('POST', f"http://{Config.HOST}:{Config.EVENT_PORT}/{Config.MOUSE_EVENT}", _data, headers)
+            response = self.connection.getresponse()
 
 
 def is_relevant_input():
