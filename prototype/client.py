@@ -1,3 +1,5 @@
+import time
+
 import Config
 import json
 import http.client as client
@@ -19,7 +21,8 @@ class Client:
         print(mouse_capas)
         print(key_capas)
         _data = json.dumps({"mouse": mouse_capas, "key": key_capas})
-        self.connection.request('POST', f"http://{Config.HOST}:{Config.CAP_PORT}/{Config.CAP_EVENT}", _data)
+        headers = {'Content-type': 'application/json'}
+        self.connection.request('POST', f"http://{Config.HOST}:{Config.CAP_PORT}/{Config.CAP_EVENT}", _data, headers)
 
     def listen_on_device(self):
         for event in self.mouse_device.read_loop():

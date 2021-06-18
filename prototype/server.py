@@ -23,8 +23,12 @@ class Server:
 
     def cap_route(self):
         data = request.json
+        mouse_data = {int(key): value for key, value in data["mouse"].items()}
+        key_data = {int(key): value for key, value in data["keyboard"].items()}
         print(data)
-        mouse_handler.add_cursor(data)
+        print(mouse_data)
+        print(key_data)
+        mouse_handler.add_cursor(mouse_data, key_data)
         return Response(data, mimetype='application/json')
 
     def mouse_route(self):
