@@ -29,7 +29,7 @@ class Server:
         key_data = {int(key): tuple(value) for key, value in data["keyboard"].items()}
         print(mouse_data)
         print(key_data)
-        mouse_handler.add_cursor(position_data, mouse_data, key_data)
+        #mouse_handler.add_cursor(position_data, mouse_data, key_data)
         return Response(data, mimetype='application/json')
 
     def mouse_route(self):

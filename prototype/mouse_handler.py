@@ -3,8 +3,15 @@ import json
 from evdev import UInput, ecodes
 import Config
 
-mouse_ui = None
-key_ui = None
+cap_mouse = {
+    ecodes.EV_REL: (ecodes.REL_X, ecodes.REL_Y),
+    ecodes.EV_KEY: (ecodes.BTN_LEFT, ecodes.BTN_RIGHT),
+}
+mouse_ui = UInput(cap_mouse, name="mouse")
+# key_ui = UInput(key_capas, name="key")
+mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, Config.START_X)
+mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, Config.START_Y)
+mouse_ui.syn()
 
 def add_cursor(pos, mouse_capas, key_capas):
     # specify capabilities for our virtual input device

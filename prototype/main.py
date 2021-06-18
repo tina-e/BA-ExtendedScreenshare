@@ -29,7 +29,10 @@ if Config.IS_HOST:
     threading.Thread(target=start_host).start()
     threading.Thread(target=start_stream).start()
 else:
-    threading.Thread(target=start_client).start()
-    threading.Thread(target=access_stream).start()
+    access_stream()
+    print("stream running")
+    start_client()
+    #threading.Thread(target=start_client).start()
+    #threading.Thread(target=access_stream).start()
 
 
