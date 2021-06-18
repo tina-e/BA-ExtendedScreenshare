@@ -25,7 +25,6 @@ class Server:
         data = request.json
         mouse_data = {int(key): value for key, value in data["mouse"].items()}
         key_data = {int(key): value for key, value in data["keyboard"].items()}
-        print(data)
         print(mouse_data)
         print(key_data)
         mouse_handler.add_cursor(mouse_data, key_data)
