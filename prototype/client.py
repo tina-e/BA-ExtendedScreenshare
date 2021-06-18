@@ -16,13 +16,19 @@ class Client:
 
     def connect(self):
         self.connection.connect()
+        self.send_device_info()
+
+    def send_device_info(self):
         mouse_capas = self.mouse_device.capabilities()
         key_capas = self.key_device.capabilities()
         print(mouse_capas)
         print(key_capas)
-        _data = json.dumps({"mouse": mouse_capas, "key": key_capas})
+        position = get_position()
+        _data = json.dumps({"position": position, "mouse": mouse_capas, "keyboard": key_capas})
         headers = {'Content-type': 'application/json'}
         self.connection.request('POST', f"http://{Config.HOST}:{Config.CAP_PORT}/{Config.CAP_EVENT}", _data, headers)
+        response = self.connection.getresponse()
+
 
     def listen_on_device(self):
         for event in self.mouse_device.read_loop():
@@ -52,3 +58,16 @@ def frame(window):
     while framed_window.query_tree().parent != ewmh.root:
         framed_window = framed_window.query_tree().parent
     return framed_window
+
+
+def get_position():
+    win_geo = None
+    mouse_pos = Controller().position
+    open_wins = ewmh.getClientList()
+    for win in open_wins:
+        if win.get_wm_class() == ('gst-launch-1.0', 'GStreamer'):
+            win_geo = frame(win).get_geometry()
+            break
+    return mouse_pos[0] - win_geo.x, mouse_pos[1] - win_geo.y
+
+

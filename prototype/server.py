@@ -15,6 +15,7 @@ class Server:
     def __init__(self):
         self.logs = []
         self.app = Flask(__name__)
+        self.app.add_url_rule(f'/{Config.CAP_EVENT}', Config.CAP_EVENT, self.cap_route, methods=['POST'])
         self.app.add_url_rule(f'/{Config.MOUSE_EVENT}', Config.MOUSE_EVENT, self.mouse_route, methods=['POST'])
         #mouse_handler.add_cursor()
 
@@ -23,11 +24,12 @@ class Server:
 
     def cap_route(self):
         data = request.json
-        mouse_data = {int(key): value for key, value in data["mouse"].items()}
-        key_data = {int(key): value for key, value in data["keyboard"].items()}
+        position_data = data["position"]
+        mouse_data = {int(key): tuple(value) for key, value in data["mouse"].items()}
+        key_data = {int(key): tuple(value) for key, value in data["keyboard"].items()}
         print(mouse_data)
         print(key_data)
-        mouse_handler.add_cursor(mouse_data, key_data)
+        mouse_handler.add_cursor(position_data, mouse_data, key_data)
         return Response(data, mimetype='application/json')
 
     def mouse_route(self):
