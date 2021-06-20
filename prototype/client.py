@@ -16,17 +16,19 @@ class Client:
 
     def connect(self):
         self.connection.connect()
-        self.send_device_info()
+        self.connection.request('GET', f"http://{Config.HOST}:{Config.CAP_PORT}/connect")
+        response = self.connection.getresponse()
+        #self.send_device_info()
 
     def send_device_info(self):
-        mouse_capas = self.mouse_device.capabilities()
-        key_capas = self.key_device.capabilities()
-        print(mouse_capas)
-        print(key_capas)
-        position = window_manager.get_mouse_pos_rel_to_stream()
-        _data = json.dumps({"position": position, "mouse": mouse_capas, "keyboard": key_capas})
+        #mouse_capas = self.mouse_device.capabilities()
+        #key_capas = self.key_device.capabilities()
+        #print(mouse_capas)
+        #print(key_capas)
+        #position = window_manager.get_mouse_pos_rel_to_stream()
+        #_data = json.dumps({"position": position, "mouse": mouse_capas, "keyboard": key_capas})
         headers = {'Content-type': 'application/json'}
-        self.connection.request('POST', f"http://{Config.HOST}:{Config.CAP_PORT}/{Config.CAP_EVENT}", _data, headers)
+        #self.connection.request('POST', f"http://{Config.HOST}:{Config.CAP_PORT}/{Config.CAP_EVENT}", _data, headers)
         response = self.connection.getresponse()
 
 

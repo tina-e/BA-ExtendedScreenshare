@@ -6,7 +6,7 @@ import json
 from flask import Flask, request, Response
 #import common.log
 import Config
-from mouse_handler import InputDevice
+from mouse_handler import CustomInputDevice
 #from matching.matcher import Matcher
 #from common.utility import get_current_ms
 from evdev import InputDevice, ecodes as e, events
@@ -16,8 +16,8 @@ class Server:
         self.logs = []
         self.app = Flask(__name__)
         self.client_pointer = None
-        self.app.add_url_rule("/", "connect", self.connect_route)
-        self.app.add_url_rule(f'/{Config.CAP_EVENT}', Config.CAP_EVENT, self.cap_route, methods=['POST'])
+        self.app.add_url_rule("/connect", "connect", self.connect_route)
+        self.app.add_url_rule(f'/{Config.CAP_EVENT}', Config.CAP_EVENT, self.cap_route_rel, methods=['POST'])
         #self.app.add_url_rule(f'/{Config.MOUSE_EVENT}', Config.MOUSE_EVENT, self.mouse_route, methods=['POST'])
         self.app.add_url_rule(f'/{Config.MOUSE_EVENT}', Config.MOUSE_EVENT, self.mouse_route_abs, methods=['POST'])
 
@@ -25,7 +25,8 @@ class Server:
         self.app.run(host=Config.HOST, port=Config.EVENT_PORT, threaded=True)
 
     def connect_route(self):
-        self.client_pointer = InputDevice()
+        self.client_pointer = CustomInputDevice()
+        print("Client connected to server")
 
     def cap_route_rel(self):
         data = request.json

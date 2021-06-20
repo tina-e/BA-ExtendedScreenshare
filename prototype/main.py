@@ -28,9 +28,9 @@ def access_stream():
 
 if Config.IS_HOST:
     threading.Thread(target=start_host).start()
-    threading.Thread(target=start_stream).start()
+    #threading.Thread(target=start_stream).start()
 else:
-    access_stream()
+    #access_stream()
     print("stream running")
     start_client()
     #threading.Thread(target=start_client).start()
