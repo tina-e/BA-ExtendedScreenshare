@@ -1,54 +1,42 @@
 import json
 import subprocess
+import time
 
 from evdev import UInput, ecodes
 import Config
 
-subprocess.Popen("xinput create-master master", shell=True)
+class InputDevice:
+    def __init__(self):
+        self.cap_mouse = {
+            ecodes.EV_REL: (ecodes.REL_X, ecodes.REL_Y),
+            ecodes.EV_KEY: (ecodes.BTN_LEFT, ecodes.BTN_RIGHT),
+        }
+        self.mouse_ui = UInput(self.cap_mouse, name='mouse')
+        # self.key_ui = UInput(self.cap_key, name="key")
 
-cap_mouse = {
-    ecodes.EV_REL: (ecodes.REL_X, ecodes.REL_Y),
-    ecodes.EV_KEY: (ecodes.BTN_LEFT, ecodes.BTN_RIGHT),
-}
-mouse_ui = UInput(cap_mouse, name="mouse")
-#key_ui = UInput(cap_key, name="key")
+        subprocess.check_output("xinput create-master master", shell=True)
+        self.master_pointer_id = subprocess.check_output("xinput list --id-only 'master pointer'", shell=True)
+        # self.master_keyboard_id = subprocess.check_output("xinput list --id-only 'master keyboard'", shell=True)
+        self.mouse_id = subprocess.check_output("xinput list --id-only 'mouse'", shell=True)
+        # self.key_id = subprocess.check_output("xinput list --id-only 'key'", shell=True)
 
-master_pointer_id = subprocess.check_output("xinput list --id-only 'master pointer'", shell=True)
-master_keyboard_id = subprocess.check_output("xinput list --id-only 'master keyboard'", shell=True)
-mouse_id = subprocess.check_output("xinput list --id-only 'mouse'", shell=True)
-#key_id = subprocess.check_output("xinput list --id-only 'key'", shell=True)
+        subprocess.check_output(f"xinput reattach {self.mouse_id} {self.master_pointer_id}", shell=True)
+        # subprocess.Popen(f"xinput reattach {key_id} {master_keyboard_id}", shell=True)
 
-subprocess.Popen(f"xinput reattach {mouse_id} {master_pointer_id}", shell=True)
-#subprocess.Popen(f"xinput reattach {key_id} {master_keyboard_id}", shell=True)
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, Config.START_X)
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, Config.START_Y)
+        self.mouse_ui.syn()
 
 
-mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, Config.START_X)
-mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, Config.START_Y)
-mouse_ui.syn()
+    def map_input(self, data):
+        self.mouse_ui.write(data["type"], data["code"], data["val"])
+        self.mouse_ui.syn()
 
-#TODO: richtiges Mapping
 
-def add_cursor(pos, mouse_capas, key_capas):
-    # specify capabilities for our virtual input device
-    cap_mouse = {
-        ecodes.EV_REL: (ecodes.REL_X, ecodes.REL_Y),
-        ecodes.EV_KEY: (ecodes.BTN_LEFT, ecodes.BTN_RIGHT),
-    }
+    def map_input_abs(self, data):
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, data["x"])
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, data["y"])
+        self.mouse_ui.syn()
 
-    print(cap_mouse)
-    print(mouse_capas)
 
-    mouse_ui = UInput(cap_mouse, name="mouse")
-    #key_ui = UInput(key_capas, name="key")
-
-    mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, int(pos[0]))
-    mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, int(pos[1]))
-    mouse_ui.syn()
-    #with UInput(cap_mouse, name="mouse") as mouse_ui:
-    #    mouse_ui.write(ecodes.EV_REL, ecodes.REL_X, Config.START_X)
-    #    mouse_ui.write(ecodes.EV_REL, ecodes.REL_Y, Config.START_Y)
-    #    mouse_ui.syn()
-
-def map_input(data):
-    mouse_ui.write(data["type"], data["code"], data["val"])
-    mouse_ui.syn()
+#TODO: richtiges Mapping + !! mouse_handler wird zu oft/an falschen stellen aufgerufen

@@ -18,7 +18,8 @@ def start_stream():
 def start_client():
     client = Client()
     client.connect()
-    client.listen_on_device()
+    #client.listen_on_device()
+    client.listen_on_device_abs()
 
 def access_stream():
     accessor = Accessor()
