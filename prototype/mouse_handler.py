@@ -8,9 +8,18 @@ import Config
 
 class CustomInputDevice():
     def __init__(self):
+        #self.cap_mouse = {
+        #    ecodes.EV_KEY: [ecodes.BTN_LEFT, ecodes.BTN_RIGHT],
+        #    ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
+        #}
+
         self.cap_mouse = {
             ecodes.EV_KEY: [ecodes.BTN_LEFT, ecodes.BTN_RIGHT],
-            ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
+            #ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
+            ecodes.EV_ABS: [
+                (ecodes.ABS_X, AbsInfo(value=0, min=0, max=4000, fuzz = 0, flat = 0, resolution = 31)),
+                (ecodes.ABS_Y, AbsInfo(0, 0, 3000, 0, 0, 31)),
+                (ecodes.ABS_PRESSURE, AbsInfo(0, 0, 4000, 0, 0, 31))],
         }
 
         self.mouse_ui = UInput(self.cap_mouse, name='mouse', version=0x3)
@@ -43,4 +52,5 @@ class CustomInputDevice():
         self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, data["y"])
         self.mouse_ui.syn()
 
-#TODO: richtiges Mapping + !! mouse_handler wird zu oft/an falschen stellen aufgerufen
+
+#TODO: richtiges Mapping -> Absolute Positionen???

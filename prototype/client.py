@@ -33,17 +33,16 @@ class Client:
 
 
     def listen_on_device(self):
-        if window_manager.is_in_focus():
-            for event in self.mouse_device.read_loop():
+        for event in self.mouse_device.read_loop():
             #if window_manager.is_in_focus():
-                timestamp = event.timestamp()
-                code = event.code
-                type = event.type
-                val = event.value
-                _data = json.dumps({"event": str(event), "timestamp": timestamp, "code": code, "type": type, "val": val})
-                headers = {'Content-type': 'application/json'}
-                self.connection.request('POST', f"http://{Config.HOST}:{Config.EVENT_PORT}/{Config.MOUSE_EVENT}", _data, headers)
-                response = self.connection.getresponse()
+            timestamp = event.timestamp()
+            code = event.code
+            type = event.type
+            val = event.value
+            _data = json.dumps({"event": str(event), "timestamp": timestamp, "code": code, "type": type, "val": val})
+            headers = {'Content-type': 'application/json'}
+            self.connection.request('POST', f"http://{Config.HOST}:{Config.EVENT_PORT}/{Config.MOUSE_EVENT}", _data, headers)
+            response = self.connection.getresponse()
 
     def on_move(self, x, y):
         _data = json.dumps({"x": x, "y": y})
