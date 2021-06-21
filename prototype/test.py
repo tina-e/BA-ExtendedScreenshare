@@ -13,9 +13,9 @@ cap_mouse = {
 
 
 with UInput(cap_mouse, name='mouse', version=0x3) as mouse_ui:
-    print(mouse_ui.capabilities())
+    #print(mouse_ui.capabilities())
 
-    time.sleep(60)
+    #time.sleep(60)
     mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, 100)
     mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, 10)
     mouse_ui.syn()

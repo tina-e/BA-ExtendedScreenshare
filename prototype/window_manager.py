@@ -33,12 +33,11 @@ def is_stream_open():
     return False
 
 
-def get_mouse_pos_rel_to_stream():
+def get_pos_rel_to_stream(x, y):
     win_geo = None
-    mouse_pos = Controller().position
     open_wins = ewmh.getClientList()
     for win in open_wins:
         if win.get_wm_class() == ('gst-launch-1.0', 'GStreamer'):
             win_geo = frame(win).get_geometry()
             break
-    return mouse_pos[0] - win_geo.x, mouse_pos[1] - win_geo.y
+    return x - win_geo.x, y - win_geo.y

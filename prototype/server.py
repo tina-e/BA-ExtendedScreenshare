@@ -22,7 +22,7 @@ class Server:
         #self.app.add_url_rule(f'/{Config.MOUSE_EVENT}', Config.MOUSE_EVENT, self.mouse_route_abs, methods=['POST'])
 
     def start(self):
-        self.app.run(host=Config.HOST, port=Config.EVENT_PORT, threaded=True)
+        self.app.run(host=Config.STREAMER_ADDRESS, port=Config.EVENT_PORT, threaded=True)
 
     def connect_route(self):
         self.client_pointer = CustomInputDevice()

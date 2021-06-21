@@ -32,7 +32,7 @@ class Streamer:
             "! videoconvert "
             "! x264enc tune=zerolatency bitrate=500 speed-preset=superfast "
             "! rtph264pay "
-            f"! udpsink host={Config.RECEIVER} port={Config.STREAM_PORT} ")
+            f"! udpsink host={Config.RECEIVER_ADDRESS} port={Config.STREAM_PORT} ")
         print(self.pipeline, "opened")
 
     def start_stream(self):
