@@ -11,11 +11,7 @@ Probleme aktuell:
 
 -> Umfang? Fokusgruppen noch wie geplant sinnvoll wenn Umfang eingeschränkter werden sollte?
 
-todo:
-- use cases schreiben (wie wird das jetzt gemacht), priorisieren
-- -> technische features 
-- evaluation, was ist nötig?
-- ausblick vs. minimallsg. + zwischneschritte -> zeitplan
+
 
 ## Shared Screen Region
 User A - der Sharer - kann eine bestimmte Region seines Bildschirmes an User B - den Accessor - freigeben.  
