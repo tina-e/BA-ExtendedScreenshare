@@ -1,10 +1,17 @@
 # BA-CrossDeviceCommunication
 
-todo:
-- use cases schreiben (wie wird das jetzt gemacht), priorisieren
-- -> technische features 
-- evaluation, was ist nötig?
-- ausblick vs. minimallsg. + zwischneschritte -> zeitplan
+Probleme aktuell:
+- Performance: Fenstergröße muss irgendwie verrechnet werden -> wird vermutlich sehr langsam
+
+- Cursor-Positionen: Am Anfang auf gemeinsame Startposition würde gehen, aber was, wenn Zuschauer außerhalb des Streams etwas macht und dann in Stream zurückkehrt? "Rückkehrposition" muss irgendwie berücksichtigt werden -> ständige Abfrage/Listener, ob Cursor in Stream oder nicht; oder über in Fokus arbeiten und absolute Klickposition weitergeben
+
+- Begrenzung: Zuschauer hat ja volle Kontrolle über den geteilten Bereich...auch die Ränder? -> er kann das Fenster beliebig vergrößern/verschieben
+
+- Keyboard-Inputs: Das was RW sagt
+
+-> Umfang? Fokusgruppen noch wie geplant sinnvoll wenn Umfang eingeschränkter werden sollte?
+
+
 
 ## Shared Screen Region
 User A - der Sharer - kann eine bestimmte Region seines Bildschirmes an User B - den Accessor - freigeben.  
