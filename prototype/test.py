@@ -11,6 +11,7 @@ cap_mouse = {
         (ecodes.ABS_PRESSURE, AbsInfo(0, 0, 4000, 0, 0, 31))],
 }
 
+
 with UInput(cap_mouse, name='mouse', version=0x3) as mouse_ui:
     print(mouse_ui.capabilities())
 

@@ -18,8 +18,8 @@ class Server:
         self.client_pointer = None
         self.app.add_url_rule("/connect", "connect", self.connect_route)
         self.app.add_url_rule(f'/{Config.CAP_EVENT}', Config.CAP_EVENT, self.cap_route_rel, methods=['POST'])
-        #self.app.add_url_rule(f'/{Config.MOUSE_EVENT}', Config.MOUSE_EVENT, self.mouse_route, methods=['POST'])
-        self.app.add_url_rule(f'/{Config.MOUSE_EVENT}', Config.MOUSE_EVENT, self.mouse_route_abs, methods=['POST'])
+        self.app.add_url_rule(f'/{Config.MOUSE_EVENT}', Config.MOUSE_EVENT, self.mouse_route, methods=['POST'])
+        #self.app.add_url_rule(f'/{Config.MOUSE_EVENT}', Config.MOUSE_EVENT, self.mouse_route_abs, methods=['POST'])
 
     def start(self):
         self.app.run(host=Config.HOST, port=Config.EVENT_PORT, threaded=True)
@@ -37,15 +37,15 @@ class Server:
         print(key_data)
         return Response(data, mimetype='application/json')
 
-    def mouse_route_abs(self):
-        data = request.json
-        print(data)
-        self.client_pointer.map_input_abs(data)
-        return Response(data, mimetype='application/json')
-
     def mouse_route(self):
         data = request.json
         print(data)
         self.client_pointer.map_input(data)
+        return Response(data, mimetype='application/json')
+
+    def mouse_route_abs(self):
+        data = request.json
+        print(data)
+        self.client_pointer.map_input_abs(data)
         return Response(data, mimetype='application/json')
 

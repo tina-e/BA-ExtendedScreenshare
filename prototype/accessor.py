@@ -20,4 +20,4 @@ class Accessor:
         while True:
             if window_manager.is_stream_open():
                 return
-            time.sleep(1)
+            time.sleep(0.5)

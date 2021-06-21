@@ -44,6 +44,8 @@ class Client:
             self.connection.request('POST', f"http://{Config.HOST}:{Config.EVENT_PORT}/{Config.MOUSE_EVENT}", _data, headers)
             response = self.connection.getresponse()
 
+
+
     def on_move(self, x, y):
         _data = json.dumps({"x": x, "y": y})
         headers = {'Content-type': 'application/json'}
