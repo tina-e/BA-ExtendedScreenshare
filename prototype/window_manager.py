@@ -33,11 +33,16 @@ def is_stream_open():
     return False
 
 
-def get_pos_rel_to_stream(x, y):
+def get_pos_in_stream(x, y):
     win_geo = None
     open_wins = ewmh.getClientList()
     for win in open_wins:
         if win.get_wm_class() == ('gst-launch-1.0', 'GStreamer'):
             win_geo = frame(win).get_geometry()
             break
-    return x - win_geo.x, y - win_geo.y
+    rel_x = x - win_geo.x
+    rel_y = y - win_geo.y
+    if 0 <= rel_x <= win_geo.width and 0 <= rel_y <= win_geo.height:
+        return rel_x, rel_y
+    print("cursor out of stream")
+    return None, None

@@ -17,6 +17,7 @@ def on_click(x,y,button,pressed):
         print(f"released at {x}, {y}")
         is_p = False
     # end listener by clicking the right mouse button
+    print(pressed)
     if button == Button.right:
         return False
 

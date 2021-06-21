@@ -39,7 +39,7 @@ def start_event_sender():
 
 
 
-if Config.IS_HOST:
+if Config.IS_STREAMER:
     #threading.Thread(target=start_host).start()
     threading.Thread(target=start_event_receiver())
     threading.Thread(target=start_stream).start()
