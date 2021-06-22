@@ -34,6 +34,5 @@ class Receiver:
                     event_dy = int.from_bytes(data[7:9], 'big', signed=True)
                     print(f"scrolled {event_dx}, {event_dy}")
                     self.handler.map_mouse_scroll(event_dx, event_dy)
-                #TODO: verarbeite event
             except UnicodeDecodeError:
                 continue
