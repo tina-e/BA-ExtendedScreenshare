@@ -1,17 +1,7 @@
 # BA-CrossDeviceCommunication
 
 Probleme aktuell:
-- Performance: Fenstergröße muss irgendwie verrechnet werden -> wird vermutlich sehr langsam
-
-- Cursor-Positionen: Am Anfang auf gemeinsame Startposition würde gehen, aber was, wenn Zuschauer außerhalb des Streams etwas macht und dann in Stream zurückkehrt? "Rückkehrposition" muss irgendwie berücksichtigt werden -> ständige Abfrage/Listener, ob Cursor in Stream oder nicht; oder über in Fokus arbeiten und absolute Klickposition weitergeben
-
-- Begrenzung: Zuschauer hat ja volle Kontrolle über den geteilten Bereich...auch die Ränder? -> er kann das Fenster beliebig vergrößern/verschieben
-
-- Keyboard-Inputs: Das was RW sagt
-
--> Umfang? Fokusgruppen noch wie geplant sinnvoll wenn Umfang eingeschränkter werden sollte?
-
-
+- Performance
 
 ## Shared Screen Region
 User A - der Sharer - kann eine bestimmte Region seines Bildschirmes an User B - den Accessor - freigeben.  
@@ -122,42 +112,3 @@ Außerdem soll er den Stream pausieren können.
   - Markierung der geteilten Region auf dem Bildschirm des Sharers (z.B. farbiges Rechteck)
   - Größe und Position der geteilten Region "on-the-run" steuern (z.B. farbiges Rechteck bewegen/skalieren) *(mit übergebenen Werten möglich)*
   - Stream pausieren *(möglich)*
-
----
-
-## Annotation-Tool for Screen Sharing
-### Hintergrund
-#### *TODO: Mehr zu Annotation finden*
-
-#### Annotation - Kim et al.
-- (mind.) 2 verwandte Arbeiten zu Annotation
-
-#### Annotation - Kim et al. (Comparing pointing and drawing)
-- Compared 4 cases: pointing/annotation on image/video
-- annotations: require fewer inputs on expert side + less cognitive load on the local worker
-- pointing on video required good verbal communication + annotations need to be erased after completing each step of task
-
-#### Remote Lehre - Chertoff and Thompson
-- interaction is important
-- students need to feel connected to their classroom
-- techers have to be comfortable with the software -> software so einfach/usable wie möglich machen
-- student should have the possibility to monitore their progress
-
-#### Remote Lehre - Morgan
-- actively taking part
-- work with peers
-- students take an active role, demonstrate their competency, aquire feedback
-
-#### Warum zeichnen? - Baudisch et al.
-- Mouse Cursor kann man schwer folgen/nicht gut sichtbar
-
-#### Ähnliche Anwendung - Frees and Kessler
-- "ShowMe"
-- Capturing certain screen area and share it
-- Learning-by-Doing: Control not possible, only annotation
-- Multi-User possible
-
-### Anforderungen
-- Screen Streaming
-- Mouse Events übertragen
-- Drawing
