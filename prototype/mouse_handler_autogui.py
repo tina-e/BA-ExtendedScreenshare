@@ -26,8 +26,10 @@ class MouseHandler:
         # subprocess.Popen(f"xinput reattach {key_id} {master_keyboard_id}", shell=True)
 
     def map_mouse_movement(self, x, y):
-        pyautogui.moveTo(x, y)
+        pyautogui.moveTo(x + Config.START_X, y + Config.START_Y)
 
-    #def map_mouse_click(self, x, y):
+    def map_mouse_click(self, x, y, button):
+        pyautogui.click(x + Config.START_X, y + Config.START_Y, button=str(button).split('.')[1])
 
-    #def map_mouse_scroll(self, dx, dy):
+    def map_mouse_scroll(self, dx, dy):
+        pyautogui.scroll(dy)
