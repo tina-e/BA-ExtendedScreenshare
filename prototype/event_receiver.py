@@ -1,6 +1,7 @@
 import socket
 import threading
 import Config
+from mouse_handler_autogui import MouseHandler
 from event_types import EventTypes, get_button_by_id
 
 
@@ -8,6 +9,7 @@ class Receiver:
     def __init__(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((Config.STREAMER_ADDRESS, Config.EVENT_PORT))
+        self.handler = MouseHandler()
         connection_thread = threading.Thread(target=self._receive)
         connection_thread.start()
 
@@ -21,6 +23,7 @@ class Receiver:
                 event_y = int.from_bytes(data[3:5], 'big')
                 if event_type == EventTypes.MOUSE_MOVEMENT:
                     print(f"moved {event_x}, {event_y}")
+                    self.handler.map_mouse_movement(event_x, event_y)
                 elif event_type == EventTypes.MOUSE_CLICK:
                     event_button = get_button_by_id(data[5])
                     event_was_pressed = data[6]
