@@ -28,8 +28,12 @@ class MouseHandler:
     def map_mouse_movement(self, x, y):
         pyautogui.moveTo(x + Config.START_X, y + Config.START_Y)
 
-    def map_mouse_click(self, x, y, button):
-        pyautogui.click(x + Config.START_X, y + Config.START_Y, button=str(button).split('.')[1])
+    def map_mouse_click(self, x, y, button, was_pressed):
+        if was_pressed:
+            pyautogui.mouseDown(x + Config.START_X, y + Config.START_Y, button=str(button).split('.')[1])
+        else:
+            pyautogui.mouseUp(x + Config.START_X, y + Config.START_Y, button=str(button).split('.')[1])
+        #pyautogui.click(x + Config.START_X, y + Config.START_Y, button=str(button).split('.')[1])
 
     def map_mouse_scroll(self, dx, dy):
         pyautogui.scroll(dy)

@@ -28,7 +28,7 @@ class Receiver:
                     event_button = get_button_by_id(data[5])
                     event_was_pressed = data[6]
                     print(f"clicked at {event_x}, {event_y} with button {event_button}; pressed: {event_was_pressed}")
-                    self.handler.map_mouse_click(event_x, event_y, event_button)
+                    self.handler.map_mouse_click(event_x, event_y, event_button, event_was_pressed)
                 elif event_type == EventTypes.MOUSE_SCROLL:
                     event_dx = int.from_bytes(data[5:7], 'big', signed=True)
                     event_dy = int.from_bytes(data[7:9], 'big', signed=True)
