@@ -10,12 +10,13 @@ import Config
 class Sender:
     def __init__(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-        device_thread = threading.Thread(target=self.listen_device)
-        device_thread.start()
         self.mouse = Controller()
         movement_thread = threading.Thread(target=self.send_mouse_pos)
         movement_thread.start()
+        device_thread = threading.Thread(target=self.listen_device)
+        device_thread.start() #TODO: Fehlermeldung beim Scrollen
+        #self.listen_device()
+
 
     def send(self, message):
         self.sock.sendto(message, (Config.STREAMER_ADDRESS, Config.EVENT_PORT))

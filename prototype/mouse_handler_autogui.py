@@ -5,7 +5,7 @@ import Config
 
 class MouseHandler:
     def __init__(self):
-        self.mouse_ui = UInput.from_device(Config.MOUSE_DEVICE_STREAMER_POINT, name='mouse')
+        self.mouse_ui = UInput.from_device(Config.MOUSE_DEVICE_STREAMER_POINT, Config.MOUSE_DEVICE_STREAMER_CLICK, name='mouse')
         self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK, name="key")
         print(subprocess.check_output("xinput list", shell=True))
 
@@ -43,6 +43,3 @@ class MouseHandler:
         subprocess.check_output(f"xinput reattach {self.scroll_id} {standard_master_pointer_id}", shell=True)
         subprocess.check_output(f"xinput reattach {self.click_id} {standard_master_keyboard_id}", shell=True)
         subprocess.check_output(f"xinput reattach {self.key_id} {standard_master_keyboard_id}", shell=True)
-
-
-#TODO: mapping mit pyautogui? inkl. scrollen und allem ODER: "echte" Maus auf Master attachen

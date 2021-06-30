@@ -1,3 +1,4 @@
+import sys
 import threading
 from evdev import InputDevice, ecodes, events
 from streamer import Streamer
@@ -8,6 +9,7 @@ from event_sender import Sender
 from client import Client
 import Config
 import subprocess
+import signal
 
 
 def start_stream():
@@ -38,6 +40,7 @@ def start_event_sender():
     sen = Sender()
 
 def reattach_back():
+    print("test")
     if Config.IS_STREAMER:
         mouse_id = subprocess.check_output(f"xinput list --id-only '{Config.MOUSE_DEVICE_STREAMER_POINT.name}'", shell=True).strip().decode()
         scroll_id = subprocess.check_output(f"xinput list --id-only 'pointer:{Config.MOUSE_DEVICE_STREAMER_CLICK.name}'", shell=True).strip().decode()
@@ -51,23 +54,23 @@ def reattach_back():
         standard_master_keyboard_id = subprocess.check_output("xinput list --id-only 'Virtual core keyboard",shell=True).strip().decode()
         subprocess.check_output(f"xinput reattach {click_id} {standard_master_keyboard_id}", shell=True)
         subprocess.check_output(f"xinput reattach {key_id} {standard_master_keyboard_id}", shell=True)
+    sys.exit(0)
 
 
-while True:
-    try:
-        if Config.IS_STREAMER:
-            #threading.Thread(target=start_host).start()
-            threading.Thread(target=start_event_receiver())
-            threading.Thread(target=start_stream).start()
-        else:
-            access_stream()
-            print("stream running")
-            #start_client()
-            start_event_sender()
-            #threading.Thread(target=start_client).start()
-            #threading.Thread(target=access_stream).start()
-    except KeyboardInterrupt:
-        reattach_back()
-        exit(0)
+
+if Config.IS_STREAMER:
+    #threading.Thread(target=start_host).start()
+    threading.Thread(target=start_event_receiver())
+    threading.Thread(target=start_stream).start()
+    signal.signal(signal.SIGINT, reattach_back) #TODO: Fehlermeldung, reattach_back() wird nicht ausgeführt
+else:
+    access_stream()
+    print("stream running")
+    #start_client()
+    start_event_sender()
+    signal.signal(signal.SIGINT, reattach_back)
+    #threading.Thread(target=start_client).start()
+    #threading.Thread(target=access_stream).start()
+
 
 
