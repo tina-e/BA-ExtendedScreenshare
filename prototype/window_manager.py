@@ -31,7 +31,7 @@ def get_pos_in_stream(x, y):
             win_geo = frame(win).get_geometry()
             break
     rel_x = x - win_geo.x
-    rel_y = y - win_geo.y
+    rel_y = y - win_geo.y - win_geo.depth
     if 0 <= rel_x <= win_geo.width and 0 <= rel_y <= win_geo.height:
         return rel_x, rel_y
     print("cursor out of stream")
