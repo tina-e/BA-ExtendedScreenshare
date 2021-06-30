@@ -1,6 +1,6 @@
 import time
 
-from evdev import UInput, ecodes, AbsInfo
+from evdev import UInput, ecodes, AbsInfo, InputDevice
 
 cap_mouse = {
     ecodes.EV_KEY: [ecodes.BTN_LEFT, ecodes.BTN_RIGHT],
@@ -9,6 +9,11 @@ cap_mouse = {
         (ecodes.ABS_X, AbsInfo(value=0, min=0, max=4000, fuzz = 0, flat = 0, resolution = 31)),
         (ecodes.ABS_Y, AbsInfo(0, 0, 3000, 0, 0, 31)),
         (ecodes.ABS_PRESSURE, AbsInfo(0, 0, 4000, 0, 0, 31))],
+}
+
+cap_mouse = {
+    ecodes.EV_KEY: [ecodes.BTN_LEFT, ecodes.BTN_RIGHT],
+    ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
 }
 
 
@@ -20,4 +25,8 @@ cap_mouse = {
     #mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, 10)
     #mouse_ui.syn()
 
-print("Button.right".split('.')[1])
+#print("Button.right".split('.')[1])
+
+mouse_device = InputDevice('/dev/input/event11')
+key_device = InputDevice('/dev/input/event3')
+print(mouse_device.name)

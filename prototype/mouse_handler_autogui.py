@@ -5,25 +5,24 @@ import Config
 
 class MouseHandler:
     def __init__(self):
-        self.cap_mouse = {
-            ecodes.EV_KEY: [ecodes.BTN_LEFT, ecodes.BTN_RIGHT],
-            ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
-        }
-
-        self.mouse_ui = UInput(self.cap_mouse, name='mouse')
-        # self.key_ui = UInput(self.cap_key, name="key")
+        self.mouse_ui = UInput.from_device(Config.MOUSE_DEVICE_STREAMER_POINT, name='mouse')
+        self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK, name="key")
         print(subprocess.check_output("xinput list", shell=True))
 
         subprocess.check_output("xinput create-master master", shell=True)
         self.master_pointer_id = subprocess.check_output("xinput list --id-only 'master pointer'", shell=True).strip().decode()
-        print(self.master_pointer_id)
-        # self.master_keyboard_id = subprocess.check_output("xinput list --id-only 'master keyboard'", shell=True)
-        self.mouse_id = subprocess.check_output("xinput list --id-only 'mouse'", shell=True).strip().decode()
-        print(self.mouse_id)
-        # self.key_id = subprocess.check_output("xinput list --id-only 'key'", shell=True)
+        self.master_keyboard_id = subprocess.check_output("xinput list --id-only 'master keyboard'", shell=True).strip().decode()
+
+        self.mouse_id = subprocess.check_output(f"xinput list --id-only '{Config.MOUSE_DEVICE_STREAMER_POINT.name}'", shell=True).strip().decode()
+        self.scroll_id = subprocess.check_output(f"xinput list --id-only 'pointer:{Config.MOUSE_DEVICE_STREAMER_CLICK.name}'", shell=True).strip().decode()
+        self.click_id = subprocess.check_output(f"xinput list --id-only 'keyboard:{Config.MOUSE_DEVICE_STREAMER_CLICK.name}'", shell=True).strip().decode()
+        self.key_id = subprocess.check_output(f"xinput list --id-only '{Config.KEYBOARD_DEVICE_STREAMER.name}'", shell=True).strip().decode()
 
         subprocess.check_output(f"xinput reattach {self.mouse_id} {self.master_pointer_id}", shell=True)
-        # subprocess.Popen(f"xinput reattach {key_id} {master_keyboard_id}", shell=True)
+        subprocess.check_output(f"xinput reattach {self.scroll_id} {self.master_pointer_id}", shell=True)
+        subprocess.check_output(f"xinput reattach {self.click_id} {self.master_keyboard_id}", shell=True)
+        subprocess.check_output(f"xinput reattach {self.key_id} {self.master_keyboard_id}", shell=True)
+        print(subprocess.check_output("xinput list", shell=True))
 
     def map_mouse_movement(self, x, y):
         pyautogui.moveTo(x + Config.START_X, y + Config.START_Y)
@@ -37,3 +36,6 @@ class MouseHandler:
 
     def map_mouse_scroll(self, dx, dy):
         pyautogui.scroll(dy)
+
+
+#TODO: mapping mit pyautogui? inkl. scrollen und allem ODER: "echte" Maus auf Master attachen
