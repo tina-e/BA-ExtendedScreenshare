@@ -32,10 +32,17 @@ class MouseHandler:
             pyautogui.mouseDown(x + Config.START_X, y + Config.START_Y, button=str(button).split('.')[1])
         else:
             pyautogui.mouseUp(x + Config.START_X, y + Config.START_Y, button=str(button).split('.')[1])
-        #pyautogui.click(x + Config.START_X, y + Config.START_Y, button=str(button).split('.')[1])
 
     def map_mouse_scroll(self, dx, dy):
         pyautogui.scroll(dy)
+
+    def reattach_back(self):
+        standard_master_pointer_id = subprocess.check_output("xinput list --id-only 'Virtual core pointer", shell=True).strip().decode()
+        standard_master_keyboard_id = subprocess.check_output("xinput list --id-only 'Virtual core keyboard", shell=True).strip().decode()
+        subprocess.check_output(f"xinput reattach {self.mouse_id} {standard_master_pointer_id}", shell=True)
+        subprocess.check_output(f"xinput reattach {self.scroll_id} {standard_master_pointer_id}", shell=True)
+        subprocess.check_output(f"xinput reattach {self.click_id} {standard_master_keyboard_id}", shell=True)
+        subprocess.check_output(f"xinput reattach {self.key_id} {standard_master_keyboard_id}", shell=True)
 
 
 #TODO: mapping mit pyautogui? inkl. scrollen und allem ODER: "echte" Maus auf Master attachen
