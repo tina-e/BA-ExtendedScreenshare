@@ -11,22 +11,31 @@ cap_mouse = {
         (ecodes.ABS_PRESSURE, AbsInfo(0, 0, 4000, 0, 0, 31))],
 }
 
-cap_mouse = {
-    ecodes.EV_KEY: [ecodes.BTN_LEFT, ecodes.BTN_RIGHT],
-    ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
-}
+#cap_mouse = {
+#    ecodes.EV_KEY: [ecodes.BTN_LEFT, ecodes.BTN_RIGHT],
+#    ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
+#}
 
+mouse_ui = UInput(cap_mouse, name='mouse')
+time.sleep(0.1)
+#while True:
+mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, 100)
+mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, 10)
+mouse_ui.syn()
+mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, 200)
+mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, 100)
+mouse_ui.syn()
 
-#with UInput(cap_mouse, name='mouse', version=0x3) as mouse_ui:
+#with UInput(cap_mouse, name='mouse') as mouse_ui:
     #print(mouse_ui.capabilities())
 
-    #time.sleep(60)
-    #mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, 100)
-    #mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, 10)
-    #mouse_ui.syn()
+#    time.sleep(0.05)
+#    mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, 100)
+#    mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, 10)
+#    mouse_ui.syn()
 
 #print("Button.right".split('.')[1])
 
-mouse_device = InputDevice('/dev/input/event11')
-key_device = InputDevice('/dev/input/event3')
-print(mouse_device.name)
+#mouse_device = InputDevice('/dev/input/event11')
+#key_device = InputDevice('/dev/input/event3')
+#print(mouse_device.name)

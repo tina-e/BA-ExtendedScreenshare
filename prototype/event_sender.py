@@ -1,3 +1,4 @@
+import selectors
 import socket
 import threading
 import time
@@ -13,14 +14,16 @@ class Sender:
     def __init__(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.mouse = MouseController()  # self.keyboard = KeyController()
+        #self.mouse = InputDevice('/dev/input/event12')
         self.keyboard = InputDevice('/dev/input/event3')
         movement_thread = threading.Thread(target=self.listen_mouse_pos)
         movement_thread.start()
+        button_thread = MouseListener(on_click=self.on_click, on_scroll=self.on_scroll)
+        button_thread.start()
         keyboard_thread = threading.Thread(target=self.listen_keyboard)
         keyboard_thread.start()
-        # button_thread = threading.Thread(target=self.listen_mouse_buttons)
-        # button_thread.start() #TODO: Fehlermeldung beim Scrollen
-        self.listen_mouse_buttons()
+        # todo: manchmal immer noch absturz, threading?
+        #  xlib.threaded nutzen aber nicht möglich, da in allen bibliotheken benutzt
 
     def send(self, message):
         self.sock.sendto(message, (Config.STREAMER_ADDRESS, Config.EVENT_PORT))
@@ -46,6 +49,7 @@ class Sender:
                 message += rel_y.to_bytes(2, 'big')
                 message += get_id_by_button(button).to_bytes(1, 'big')
                 message += was_pressed.to_bytes(1, 'big')
+                print(message)
                 self.send(message)
 
     def on_scroll(self, x, y, dx, dy):
@@ -57,13 +61,8 @@ class Sender:
                 message += rel_y.to_bytes(2, 'big')
                 message += dx.to_bytes(2, 'big', signed=True)
                 message += dy.to_bytes(2, 'big', signed=True)
+                print(message)
                 self.send(message)
-
-    def listen_mouse_buttons(self):
-        with MouseListener(on_click=self.on_click, on_scroll=self.on_scroll) as mouse_listener:
-            # KeyListener(on_press=self.on_press, on_release=self.on_release) as key_listener
-            mouse_listener.join()
-            # key_listener.join()
 
     def listen_keyboard(self):
         for event in self.keyboard.read_loop():
@@ -71,11 +70,23 @@ class Sender:
                 if event.type == ecodes.EV_KEY:
                     message = EventTypes.KEYBOARD.to_bytes(1, 'big')
                     message += event.code.to_bytes(2, 'big')  # key
-                    message += event.value.to_bytes(1, 'big')  # down=1, up=0, hold=2
+                    message += event.value.to_bytes(1, 'big')  # down = 1, up = 0, hold = 2
                     self.send(message)
 
     ###################################################################################################################
 
+    def listen_device(self):
+        # todo: cannot read absolute postitons with evdev??
+        selector = selectors.DefaultSelector()
+        selector.register(self.mouse, selectors.EVENT_READ)
+        selector.register(self.keyboard, selectors.EVENT_READ)
+        while True:
+            for k, m in selector.select():
+                device = k.fileobj
+                for event in device.read():
+                    print(event)
+
+    # too much delay
     def on_mouse_moved(self, x, y):
         if window_manager.is_in_focus():
             rel_x, rel_y = window_manager.get_pos_in_stream(x, y)
@@ -84,23 +95,3 @@ class Sender:
                 message += rel_x.to_bytes(2, 'big')
                 message += rel_y.to_bytes(2, 'big')
                 self.send(message)
-
-    def on_press(self, key):
-        print(key)
-        # if window_manager.is_in_focus():
-        message = EventTypes.KEYBOARD.to_bytes(1, 'big')
-        message += key.to_bytes(2, 'big')
-        message += True.to_bytes(1, 'big')
-        print(message)
-        print("-----")
-        # self.send(message)
-
-    def on_release(self, key):
-        print(key)
-        # if window_manager.is_in_focus():
-        message = EventTypes.KEYBOARD.to_bytes(1, 'big')
-        message += key.to_bytes(2, 'big')
-        message += False.to_bytes(1, 'big')
-        print(message)
-        print("-----")
-        # self.send(message)hallooo
