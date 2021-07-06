@@ -6,7 +6,7 @@ import json
 from flask import Flask, request, Response
 #import common.log
 import Config
-from mouse_handler import CustomInputDevice
+from mouse_handler import EventHandlerEvdev
 #from matching.matcher import Matcher
 #from common.utility import get_current_ms
 from evdev import InputDevice, ecodes as e, events
@@ -25,7 +25,7 @@ class Server:
         self.app.run(host=Config.STREAMER_ADDRESS, port=Config.EVENT_PORT, threaded=True)
 
     def connect_route(self):
-        self.client_pointer = CustomInputDevice()
+        self.client_pointer = EventHandlerEvdev()
         print("Client connected to server")
 
     def cap_route_rel(self):
