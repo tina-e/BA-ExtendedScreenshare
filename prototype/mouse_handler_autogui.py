@@ -3,7 +3,7 @@ from evdev import UInput, ecodes, AbsInfo
 import pyautogui
 import Config
 
-class MouseHandler:
+class EventHandler:
     def __init__(self):
         self.mouse_ui = UInput.from_device(Config.MOUSE_DEVICE_STREAMER_POINT, Config.MOUSE_DEVICE_STREAMER_CLICK, name='mouse')
         self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK, name="key")
@@ -35,6 +35,10 @@ class MouseHandler:
 
     def map_mouse_scroll(self, dx, dy):
         pyautogui.scroll(dy)
+
+    def map_keyboard(self, key, value):
+        self.key_ui.write(ecodes.EV_KEY, key, value)
+        self.key_ui.syn()
 
     def reattach_back(self):
         standard_master_pointer_id = subprocess.check_output("xinput list --id-only 'Virtual core pointer", shell=True).strip().decode()
