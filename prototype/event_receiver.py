@@ -38,8 +38,8 @@ class Receiver:
                     self.handler.map_mouse_scroll(event_dx, event_dy)
                 elif event_type == EventTypes.KEYBOARD:
                     event_key = int.from_bytes(data[1:3], 'big')
-                    event_value = data[4]
+                    event_value = data[3]
                     print(f"key {event_key}: {event_value} (down=1, up=0, hold=2)")
-                    self.handler(map_keyboard(event_key, event_value))
+                    self.handler.map_keyboard(event_key, event_value)
             except UnicodeDecodeError:
                 continue
