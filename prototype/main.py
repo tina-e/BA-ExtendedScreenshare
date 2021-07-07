@@ -67,7 +67,7 @@ else:
     access_stream()
     print("stream running")
     #start_client()
-    start_event_sender()
+    threading.Thread(target=start_event_sender).start()
     signal.signal(signal.SIGINT, reattach_back)
     #threading.Thread(target=start_client).start()
     #threading.Thread(target=access_stream).start()

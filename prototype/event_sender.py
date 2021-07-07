@@ -16,14 +16,14 @@ class Sender:
         self.mouse = MouseController()  # self.keyboard = KeyController()
         #self.mouse = InputDevice('/dev/input/event12')
         self.keyboard = InputDevice('/dev/input/event3')
-        movement_thread = threading.Thread(target=self.listen_mouse_pos)
-        movement_thread.start()
         button_thread = MouseListener(on_click=self.on_click, on_scroll=self.on_scroll)
         button_thread.start()
         keyboard_thread = threading.Thread(target=self.listen_keyboard)
         keyboard_thread.start()
         # todo: manchmal immer noch absturz, threading?
         #  xlib.threaded nutzen aber nicht möglich, da in allen bibliotheken benutzt
+        # movement_thread = threading.Thread(target=self.listen_mouse_pos)
+        # movement_thread.start()
 
     def send(self, message):
         self.sock.sendto(message, (Config.STREAMER_ADDRESS, Config.EVENT_PORT))
@@ -49,7 +49,7 @@ class Sender:
                 message += rel_y.to_bytes(2, 'big')
                 message += get_id_by_button(button).to_bytes(1, 'big')
                 message += was_pressed.to_bytes(1, 'big')
-                print(message)
+                #print(message)
                 self.send(message)
 
     def on_scroll(self, x, y, dx, dy):
@@ -61,7 +61,7 @@ class Sender:
                 message += rel_y.to_bytes(2, 'big')
                 message += dx.to_bytes(2, 'big', signed=True)
                 message += dy.to_bytes(2, 'big', signed=True)
-                print(message)
+                #print(message)
                 self.send(message)
 
     def listen_keyboard(self):
