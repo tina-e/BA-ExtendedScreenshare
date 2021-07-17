@@ -69,3 +69,4 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+/*https://stackoverflow.com/questions/57078155/draw-border-frame-using-xlib*/

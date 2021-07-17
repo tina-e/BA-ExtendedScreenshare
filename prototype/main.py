@@ -1,12 +1,9 @@
 import sys
 import threading
-from evdev import InputDevice, ecodes, events
 from streamer import Streamer
 from accessor import Accessor
-from server import Server
 from event_receiver import Receiver
 from event_sender import Sender
-from client import Client
 import Config
 import subprocess
 import signal

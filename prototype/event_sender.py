@@ -16,8 +16,12 @@ class Sender:
         self.mouse = MouseController()  # self.keyboard = KeyController()
         #self.mouse = InputDevice('/dev/input/event12')
         self.keyboard = InputDevice('/dev/input/event3')
+
+        #self.lock = threading.Lock()
+        #with lock:
         button_thread = MouseListener(on_click=self.on_click, on_scroll=self.on_scroll)
         button_thread.start()
+
         keyboard_thread = threading.Thread(target=self.listen_keyboard)
         keyboard_thread.start()
         # todo: manchmal immer noch absturz, threading?
@@ -26,19 +30,23 @@ class Sender:
         # movement_thread.start()
 
     def send(self, message):
-        self.sock.sendto(message, (Config.STREAMER_ADDRESS, Config.EVENT_PORT))
+        try:
+            self.sock.sendto(message, (Config.STREAMER_ADDRESS, Config.EVENT_PORT))
+        except:
+            print("hello")
 
     def listen_mouse_pos(self):
-        while window_manager.is_in_focus():
-            mouse_x = self.mouse.position[0]
-            mouse_y = self.mouse.position[1]
-            rel_x, rel_y = window_manager.get_pos_in_stream(mouse_x, mouse_y)
-            if rel_x:
-                message = EventTypes.MOUSE_MOVEMENT.to_bytes(1, 'big')
-                message += rel_x.to_bytes(2, 'big')
-                message += rel_y.to_bytes(2, 'big')
-                self.send(message)
-            time.sleep(0.1)
+        with self.lock:
+            while window_manager.is_in_focus():
+                mouse_x = self.mouse.position[0]
+                mouse_y = self.mouse.position[1]
+                rel_x, rel_y = window_manager.get_pos_in_stream(mouse_x, mouse_y)
+                if rel_x:
+                    message = EventTypes.MOUSE_MOVEMENT.to_bytes(1, 'big')
+                    message += rel_x.to_bytes(2, 'big')
+                    message += rel_y.to_bytes(2, 'big')
+                    self.send(message)
+                time.sleep(0.1)
 
     def on_click(self, x, y, button, was_pressed):
         if window_manager.is_in_focus():

@@ -1,7 +1,10 @@
+import threading
+
 from pynput.mouse import Button, Controller
 from ewmh import EWMH
 ewmh = EWMH()
 
+#lock = threading.Lock()
 
 def is_in_focus():
     window = ewmh.getActiveWindow()
@@ -24,6 +27,7 @@ def is_stream_open():
 
 
 def get_pos_in_stream(x, y):
+    #with lock:
     win_geo = None
     open_wins = ewmh.getClientList()
     for win in open_wins:

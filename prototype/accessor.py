@@ -2,6 +2,7 @@
 import subprocess
 import time
 
+from gi.repository import Gst, GLib, GstApp
 import Config
 import window_manager
 from ewmh import EWMH
@@ -12,7 +13,7 @@ class Accessor:
         print("Accessor alive")
 
     def access_stream(self):
-        print("Accessor benachrichten!") #TODO
+        print("Accessor benachrichten!")
         subprocess.Popen(f"gst-launch-1.0 -v udpsrc address={Config.RECEIVER_ADDRESS} port={Config.STREAM_PORT} "
                          "caps = \"application/x-rtp, media=(string)video, "
                          "clock-rate=(int)90000, encoding-name=(string)H264, "
