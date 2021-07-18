@@ -69,6 +69,7 @@ class Streamer:
     def handle_view(self, is_viewing):
         if is_viewing:
             self.open_stream()
+            self.start_stream()
         else:
             self.end_stream()
 
@@ -91,15 +92,15 @@ class Streamer:
         self.pipeline.set_state(Gst.State.PLAYING)
         self.frame.show()
 
-    def pause_stream(self):
-        self.pipeline.set_state(Gst.State.PAUSED)
+    #def pause_stream(self):
+    #    self.pipeline.set_state(Gst.State.PAUSED)
 
     def end_stream(self):
         self.pipeline.set_state(Gst.State.NULL)
         self.frame.end()
 
     def move_stream(self):
-        self.pause_stream()
+        self.end_stream()
         # self.start_x = 200
         # self.start_y = 200
         self.open_stream()

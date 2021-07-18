@@ -66,27 +66,27 @@ class EventSender:
 
     def listen_mouse_pos(self):
         while True:
-            # if window_manager.is_in_focus():
-            mouse_x = self.mouse.position[0]
-            mouse_y = self.mouse.position[1]
-            rel_x, rel_y = window_manager.get_pos_in_stream(mouse_x, mouse_y)
-            if rel_x:
-                message = EventTypes.MOUSE_MOVEMENT.to_bytes(1, 'big')
-                message += rel_x.to_bytes(2, 'big')
-                message += rel_y.to_bytes(2, 'big')
-                print("POINT", message)
-                self.send(message)
+            if window_manager.is_in_focus():
+                mouse_x = self.mouse.position[0]
+                mouse_y = self.mouse.position[1]
+                rel_x, rel_y = window_manager.get_pos_in_stream(mouse_x, mouse_y)
+                if rel_x:
+                    message = EventTypes.MOUSE_MOVEMENT.to_bytes(1, 'big')
+                    message += rel_x.to_bytes(2, 'big')
+                    message += rel_y.to_bytes(2, 'big')
+                    print("POINT", message)
+                    self.send(message)
             time.sleep(0.1)
 
     def listen_keyboard(self):
         for event in self.keyboard.read_loop():
-            #if window_manager.is_in_focus():
-            if event.type == ecodes.EV_KEY:
-                message = EventTypes.KEYBOARD.to_bytes(1, 'big')
-                message += event.code.to_bytes(2, 'big')  # key
-                message += event.value.to_bytes(1, 'big')  # down = 1, up = 0, hold = 2
-                print("KEY", message)
-                self.send(message)
+            if window_manager.is_in_focus():
+                if event.type == ecodes.EV_KEY:
+                    message = EventTypes.KEYBOARD.to_bytes(1, 'big')
+                    message += event.code.to_bytes(2, 'big')  # key
+                    message += event.value.to_bytes(1, 'big')  # down = 1, up = 0, hold = 2
+                    print("KEY", message)
+                    self.send(message)
 
     ###################################################################################################################
 
