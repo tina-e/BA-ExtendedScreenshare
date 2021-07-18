@@ -3,7 +3,7 @@ import os
 import threading
 import time
 
-import prototype.Config as Config
+import Config
 
 
 class Frame:

@@ -1,10 +1,9 @@
 import threading
 import time
 
-from prototype.streamer.streamer import Streamer
-from prototype.viewer.viewer import Viewer
-from prototype.streamer.event_receiver import Receiver
-from prototype.viewer.event_sender import EventSender
+from streamer.streamer import Streamer
+from viewer.viewer import Viewer
+
 import Config
 import subprocess
 

@@ -5,10 +5,10 @@ import time
 from evdev import InputDevice, ecodes, categorize
 from pynput.mouse import Listener as MouseListener, Controller as MouseController
 from pynput.keyboard import Key, Listener as KeyListener, Controller as KeyController
-from prototype.event_types import EventTypes, get_id_by_button
-import prototype.window_manager as window_manager
-import prototype.window_manager_test as window_manager_test
-import prototype.Config as Config
+from event_types import EventTypes, get_id_by_button
+import window_manager
+import window_manager_test as window_manager_test
+import Config
 
 
 class EventSender:

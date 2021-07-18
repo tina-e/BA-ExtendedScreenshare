@@ -3,9 +3,9 @@ import subprocess
 import time
 
 from gi.repository import Gst, GLib, GstApp
-import prototype.Config as Config
-import prototype.window_manager as window_manager
-from event_sender import EventSender
+import Config
+import window_manager
+from viewer.event_sender import EventSender
 #from ewmh import EWMH
 #ewmh = EWMH()
 
