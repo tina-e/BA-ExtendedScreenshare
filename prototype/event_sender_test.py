@@ -6,8 +6,7 @@ from evdev import InputDevice, ecodes, categorize
 from pynput.mouse import Listener as MouseListener, Controller as MouseController
 from pynput.keyboard import Key, Listener as KeyListener, Controller as KeyController
 from event_types import EventTypes, get_id_by_button
-import window_manager
-import window_manager_test
+from window_manager_test import WindowManager
 import Config
 
 
@@ -17,6 +16,8 @@ class Sender:
         self.mouse = MouseController()  # self.keyboard = KeyController()
         #self.mouse = InputDevice('/dev/input/event12')
         self.keyboard = InputDevice('/dev/input/event3')
+
+        self.window_manager = WindowManager()
 
         #self.lock = threading.Lock()
         #with lock:
@@ -35,10 +36,11 @@ class Sender:
 
     def listen_mouse_pos(self):
         while True:
-            if window_manager.is_in_focus():
+            #if window_manager.is_in_focus():
+            if "CrossDeviceCommunication" in self.window_manager.get_active_window_title():
                 mouse_x = self.mouse.position[0]
                 mouse_y = self.mouse.position[1]
-                rel_x, rel_y = window_manager.get_pos_in_stream(mouse_x, mouse_y)
+                rel_x, rel_y = self.window_manager.get_pos_in_stream(mouse_x, mouse_y)
                 if rel_x:
                     message = EventTypes.MOUSE_MOVEMENT.to_bytes(1, 'big')
                     message += rel_x.to_bytes(2, 'big')
@@ -48,8 +50,9 @@ class Sender:
             time.sleep(0.1)
 
     def on_click(self, x, y, button, was_pressed):
-        if window_manager.is_in_focus():
-            rel_x, rel_y = window_manager.get_pos_in_stream(x, y)
+        #if window_manager.is_in_focus():
+        if "CrossDeviceCommunication" in self.window_manager.get_active_window_title():
+            rel_x, rel_y = self.window_manager.get_pos_in_stream(x, y)
             if rel_x:
                 message = EventTypes.MOUSE_CLICK.to_bytes(1, 'big')
                 message += rel_x.to_bytes(2, 'big')
@@ -58,10 +61,12 @@ class Sender:
                 message += was_pressed.to_bytes(1, 'big')
                 print(message)
                 self.send(message)
+                message += rel_y.to_bytes(2, 'big')
 
     def on_scroll(self, x, y, dx, dy):
-        if window_manager.is_in_focus():
-            rel_x, rel_y = window_manager.get_pos_in_stream(x, y)
+        #if window_manager.is_in_focus():
+        if "CrossDeviceCommunication" in self.window_manager.get_active_window_title():
+            rel_x, rel_y = self.window_manager.get_pos_in_stream(x, y)
             if rel_x:
                 message = EventTypes.MOUSE_SCROLL.to_bytes(1, 'big')
                 message += rel_x.to_bytes(2, 'big')
@@ -73,7 +78,7 @@ class Sender:
 
     def listen_keyboard(self):
         for event in self.keyboard.read_loop():
-            if window_manager.is_in_focus():
+            if self.window_manager.is_in_focus():
                 if event.type == ecodes.EV_KEY:
                     message = EventTypes.KEYBOARD.to_bytes(1, 'big')
                     message += event.code.to_bytes(2, 'big')  # key
@@ -95,10 +100,12 @@ class Sender:
 
     # too much delay
     def on_mouse_moved(self, x, y):
-        if window_manager.is_in_focus():
-            rel_x, rel_y = window_manager.get_pos_in_stream(x, y)
+        if self.window_manager.is_in_focus():
+            rel_x, rel_y = self.window_manager.get_pos_in_stream(x, y)
             if rel_x:
                 message = EventTypes.MOUSE_MOVEMENT.to_bytes(1, 'big')
                 message += rel_x.to_bytes(2, 'big')
                 message += rel_y.to_bytes(2, 'big')
                 self.send(message)
+
+sender = Sender()
