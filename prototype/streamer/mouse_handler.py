@@ -27,12 +27,12 @@ class EventHandlerEvdev():
 
         self.mouse_id = subprocess.check_output(f"xinput list --id-only 'mouse'", shell=True).strip().decode()
         self.scroll_id = subprocess.check_output(f"xinput list --id-only 'pointer:mouse'", shell=True).strip().decode()
-        self.click_id = subprocess.check_output(f"xinput list --id-only 'keyboard:mouse'", shell=True).strip().decode()
+        #self.click_id = subprocess.check_output(f"xinput list --id-only 'keyboard:mouse'", shell=True).strip().decode()
         self.key_id = subprocess.check_output(f"xinput list --id-only 'key'", shell=True).strip().decode()
 
         subprocess.check_output(f"xinput reattach {self.mouse_id} {self.master_pointer_id}", shell=True)
         subprocess.check_output(f"xinput reattach {self.scroll_id} {self.master_pointer_id}", shell=True)
-        subprocess.check_output(f"xinput reattach {self.click_id} {self.master_keyboard_id}", shell=True)
+        #subprocess.check_output(f"xinput reattach {self.click_id} {self.master_keyboard_id}", shell=True)
         subprocess.check_output(f"xinput reattach {self.key_id} {self.master_keyboard_id}", shell=True)
         print(subprocess.check_output("xinput list", shell=True))
 
