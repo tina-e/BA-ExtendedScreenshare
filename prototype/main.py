@@ -19,7 +19,7 @@ def reattach_back():
         #click_id = subprocess.check_output(f"xinput list --id-only 'keyboard:{Config.MOUSE_DEVICE_STREAMER_CLICK.name}'", shell=True).strip().decode()
         #key_id = subprocess.check_output(f"xinput list --id-only '{Config.KEYBOARD_DEVICE_STREAMER.name}'", shell=True).strip().decode()
 
-        standard_master_pointer_id = subprocess.check_output("xinput list --id-only 'master pointer", shell=True).strip().decode()
+        standard_master_pointer_id = subprocess.check_output("xinput list --id-only 'master pointer'", shell=True).strip().decode()
         #subprocess.check_output(f"xinput reattach {mouse_id} {standard_master_pointer_id}", shell=True)
         #subprocess.check_output(f"xinput reattach {scroll_id} {standard_master_pointer_id}", shell=True)
 

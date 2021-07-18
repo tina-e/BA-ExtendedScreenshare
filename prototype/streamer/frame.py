@@ -8,7 +8,7 @@ import Config
 
 class Frame:
     def __init__(self):
-        self.frame = ctypes.CDLL("/home/martinaemmert/Documents/Bachelorarbeit/CrossDeviceCommunication/prototype/libframe.so")
+        self.frame = ctypes.CDLL("/home/tina/PycharmProjects/BA-CrossDeviceCommunication/prototype/streamer/libframe.so")
         self.frame.setup.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.is_visible = False
         self.drawing_thread = threading.Thread(target=self.__draw, daemon=True)
