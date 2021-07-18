@@ -1,79 +1,57 @@
-import sys
 import threading
-from streamer import Streamer
-from accessor import Accessor
-from event_receiver import Receiver
-from event_sender import Sender
+import time
+
+from prototype.streamer.streamer import Streamer
+from prototype.viewer.viewer import Viewer
+from prototype.streamer.event_receiver import Receiver
+from prototype.viewer.event_sender import EventSender
 import Config
 import subprocess
-import signal
 
 
-def start_stream():
-    streamer = Streamer()
-    streamer.open_stream()
-    streamer.start_stream()
-
-def access_stream():
-    accessor = Accessor()
-    accessor.access_stream()
+streamer = None
+viewer = None
 
 
-#def start_host():
-    # server = Server()
-    # server.start()
-
-#def start_client():
-    # client = Client()
-    # client.connect()
-    # client.listen_on_device()
-    # client.listen_on_device_abs()
-
-
-def start_event_receiver():
-    rec = Receiver()
-
-def start_event_sender():
-    sen = Sender()
-
-def reattach_back(a,b):
+def reattach_back():
     print("test")
     if Config.IS_STREAMER:
-        mouse_id = subprocess.check_output(f"xinput list --id-only '{Config.MOUSE_DEVICE_STREAMER_POINT.name}'", shell=True).strip().decode()
-        scroll_id = subprocess.check_output(f"xinput list --id-only 'pointer:{Config.MOUSE_DEVICE_STREAMER_CLICK.name}'", shell=True).strip().decode()
-        click_id = subprocess.check_output(f"xinput list --id-only 'keyboard:{Config.MOUSE_DEVICE_STREAMER_CLICK.name}'", shell=True).strip().decode()
-        key_id = subprocess.check_output(f"xinput list --id-only '{Config.KEYBOARD_DEVICE_STREAMER.name}'", shell=True).strip().decode()
+        #mouse_id = subprocess.check_output(f"xinput list --id-only '{Config.MOUSE_DEVICE_STREAMER_POINT.name}'", shell=True).strip().decode()
+        #scroll_id = subprocess.check_output(f"xinput list --id-only 'pointer:{Config.MOUSE_DEVICE_STREAMER_CLICK.name}'", shell=True).strip().decode()
+        #click_id = subprocess.check_output(f"xinput list --id-only 'keyboard:{Config.MOUSE_DEVICE_STREAMER_CLICK.name}'", shell=True).strip().decode()
+        #key_id = subprocess.check_output(f"xinput list --id-only '{Config.KEYBOARD_DEVICE_STREAMER.name}'", shell=True).strip().decode()
 
         standard_master_pointer_id = subprocess.check_output("xinput list --id-only 'Virtual core pointer", shell=True).strip().decode()
-        subprocess.check_output(f"xinput reattach {mouse_id} {standard_master_pointer_id}", shell=True)
-        subprocess.check_output(f"xinput reattach {scroll_id} {standard_master_pointer_id}", shell=True)
+        #subprocess.check_output(f"xinput reattach {mouse_id} {standard_master_pointer_id}", shell=True)
+        #subprocess.check_output(f"xinput reattach {scroll_id} {standard_master_pointer_id}", shell=True)
 
-        standard_master_keyboard_id = subprocess.check_output("xinput list --id-only 'Virtual core keyboard",shell=True).strip().decode()
-        subprocess.check_output(f"xinput reattach {click_id} {standard_master_keyboard_id}", shell=True)
-        subprocess.check_output(f"xinput reattach {key_id} {standard_master_keyboard_id}", shell=True)
-    sys.exit(0)
-
-
+        #standard_master_keyboard_id = subprocess.check_output("xinput list --id-only 'Virtual core keyboard",shell=True).strip().decode()
+        #subprocess.check_output(f"xinput reattach {click_id} {standard_master_keyboard_id}", shell=True)
+        #subprocess.check_output(f"xinput reattach {key_id} {standard_master_keyboard_id}", shell=True)
+        subprocess.check_output(f"xinput remove-master {standard_master_pointer_id}")
+    else:
+        viewer.end_stream()
 
 if Config.IS_STREAMER:
-    #threading.Thread(target=start_host).start()
-    event_thread = threading.Thread(target=start_event_receiver)
-    event_thread.daemon = True
-    event_thread.start()
-    stream_thread = threading.Thread(target=start_stream)
-    stream_thread.daemon = True
-    stream_thread.start()
-    signal.signal(signal.SIGINT, reattach_back) #TODO: Fehlermeldung, reattach_back() wird nicht ausgeführt
+    #signal.signal(signal.SIGINT, reattach_back)
+    streamer = Streamer()
+
 else:
-    access_stream()
-    print("stream running")
-    #start_client()
-    event_thread = threading.Thread(target=start_event_sender)
-    event_thread.daemon = True
-    event_thread.start()
-    signal.signal(signal.SIGINT, reattach_back)
-    #threading.Thread(target=start_client).start()
-    #threading.Thread(target=access_stream).start()
+    #signal.signal(signal.SIGINT, reattach_back)
+    viewer = Viewer()
+    viewer.access_stream()
+    # event_thread = threading.Thread(target=start_event_sender)
+    # event_thread.daemon = True
+    # event_thread.start()
 
 
+
+
+while True:
+    try:
+        time.sleep(1)
+    except KeyboardInterrupt:
+        print("stop")
+        reattach_back()
+        break
 

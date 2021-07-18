@@ -3,7 +3,7 @@ import os
 import threading
 import time
 
-import Config
+import prototype.Config as Config
 
 
 class Frame:
@@ -11,7 +11,7 @@ class Frame:
         self.frame = ctypes.CDLL("/home/martinaemmert/Documents/Bachelorarbeit/CrossDeviceCommunication/prototype/libframe.so")
         self.frame.setup.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.is_visible = False
-        self.drawing_thread = threading.Thread(target=self.__draw)
+        self.drawing_thread = threading.Thread(target=self.__draw, daemon=True)
 
     def setup(self):
         self.frame.setup(Config.START_X, Config.START_Y, Config.END_X, Config.END_Y)

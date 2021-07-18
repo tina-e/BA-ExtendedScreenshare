@@ -4,7 +4,7 @@ import time
 
 from evdev import UInput, ecodes, AbsInfo
 
-import Config
+import prototype.Config as Config
 
 class EventHandlerEvdev():
     def __init__(self):

@@ -1,7 +1,7 @@
 import subprocess
 from evdev import UInput, ecodes, AbsInfo
 import pyautogui
-import Config
+import prototype.Config as Config
 
 class EventHandler:
     def __init__(self):
