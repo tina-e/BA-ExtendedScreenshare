@@ -36,7 +36,7 @@ def start_event_receiver():
 def start_event_sender():
     sen = Sender()
 
-def reattach_back():
+def reattach_back(a,b):
     print("test")
     if Config.IS_STREAMER:
         mouse_id = subprocess.check_output(f"xinput list --id-only '{Config.MOUSE_DEVICE_STREAMER_POINT.name}'", shell=True).strip().decode()
@@ -57,14 +57,20 @@ def reattach_back():
 
 if Config.IS_STREAMER:
     #threading.Thread(target=start_host).start()
-    threading.Thread(target=start_event_receiver())
-    threading.Thread(target=start_stream).start()
+    event_thread = threading.Thread(target=start_event_receiver)
+    event_thread.daemon = True
+    event_thread.start()
+    stream_thread = threading.Thread(target=start_stream)
+    stream_thread.daemon = True
+    stream_thread.start()
     signal.signal(signal.SIGINT, reattach_back) #TODO: Fehlermeldung, reattach_back() wird nicht ausgeführt
 else:
     access_stream()
     print("stream running")
     #start_client()
-    threading.Thread(target=start_event_sender).start()
+    event_thread = threading.Thread(target=start_event_sender)
+    event_thread.daemon = True
+    event_thread.start()
     signal.signal(signal.SIGINT, reattach_back)
     #threading.Thread(target=start_client).start()
     #threading.Thread(target=access_stream).start()
