@@ -16,11 +16,14 @@ class EventHandlerEvdev():
             ecodes.EV_ABS: [
                 (ecodes.ABS_X, AbsInfo(value=0, min=0, max=4000, fuzz = 0, flat = 0, resolution = 31)),
                 (ecodes.ABS_Y, AbsInfo(0, 0, 3000, 0, 0, 31)),
-                (ecodes.ABS_PRESSURE, AbsInfo(0, 0, 4000, 0, 0, 31))],
+                (ecodes.ABS_MT_POSITION_X, AbsInfo(0, 0, 4000, 0, 0, 31))],
         }
-
-        self.mouse_ui = UInput(self.cap_mouse, name='mouse', version=0x3)
-        self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK, name='key')
+        self.mouse_ui = UInput.from_device(Config.MOUSE_DEVICE_STREAMER_POINT, Config.MOUSE_DEVICE_STREAMER_CLICK,
+                                           name='mouse')
+        self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK,
+                                         name="key")
+        #self.mouse_ui = UInput(self.cap_mouse, name='mouse', version=0x3)
+        #self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK, name='key')
         print(self.mouse_ui.capabilities(absinfo=True))
         print(self.key_ui.capabilities(absinfo=True))
 
@@ -32,7 +35,7 @@ class EventHandlerEvdev():
 
         self.mouse_id = subprocess.check_output(f"xinput list --id-only 'pointer:mouse'", shell=True).strip().decode()
         self.click_id = subprocess.check_output(f"xinput list --id-only 'keyboard:mouse'", shell=True).strip().decode()
-        self.key_id = subprocess.check_output(f"xinput list --id-only 'key'", shell=True).strip().decode()
+        self.key_id = subprocess.check_output(f"xinput list --id-only 'keyboard:key'", shell=True).strip().decode()
 
         subprocess.check_output(f"xinput reattach {self.mouse_id} {self.master_pointer_id}", shell=True)
         subprocess.check_output(f"xinput reattach {self.click_id} {self.master_keyboard_id}", shell=True)
@@ -81,7 +84,7 @@ time.sleep(1)
 handler.map_mouse_movement(50, 50)
 time.sleep(1)
 handler.map_mouse_movement(10, 10)
-subprocess.check_output(f"xinput remove-master 27", shell=True)
+subprocess.check_output(f"xinput remove-master 20", shell=True)
 
 #{0: [0, 1, 2, 3, 21], 1: [272, 273], 2: [0, 1], 3: [(0, AbsInfo(value=0, min=0, max=4000, fuzz=0, flat=0, resolution=31)), (1, AbsInfo(value=0, min=0, max=3000, fuzz=0, flat=0, resolution=31)), (24, AbsInfo(value=0, min=0, max=4000, fuzz=0, flat=0, resolution=31))]}
 #{0: [0, 1, 5, 21], 1: [116], 5: [0]}

@@ -12,7 +12,8 @@ gi.require_version("GstApp", "1.0")
 from gi.repository import Gst, GLib, GstApp
 
 from streamer.frame import Frame
-from streamer.mouse_handler import EventHandlerEvdev
+#from streamer.mouse_handler import EventHandlerEvdev
+from streamer.mouse_handler_autogui import EventHandler
 from event_types import EventTypes, get_button_by_id
 import socket
 import threading
@@ -27,7 +28,8 @@ class Streamer:
         # event communication
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((Config.STREAMER_ADDRESS, Config.EVENT_PORT))
-        self.event_handler = EventHandlerEvdev()
+        #self.event_handler = EventHandlerEvdev()
+        self.event_handler = EventHandler()
         connection_thread = threading.Thread(target=self.receive, daemon=True)
         connection_thread.start()
 
@@ -98,6 +100,7 @@ class Streamer:
     def end_stream(self):
         self.pipeline.set_state(Gst.State.NULL)
         self.frame.end()
+        self.event_handler.reattach_back()
 
     def move_stream(self):
         self.end_stream()
