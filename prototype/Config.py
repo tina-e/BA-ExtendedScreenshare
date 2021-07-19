@@ -1,6 +1,6 @@
 from evdev import InputDevice
 
-IS_STREAMER = True
+IS_STREAMER = False
 STREAMER_ADDRESS = '192.168.178.23'
 RECEIVER_ADDRESS = '192.168.178.136'
 

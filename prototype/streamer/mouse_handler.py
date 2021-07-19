@@ -14,16 +14,18 @@ class EventHandlerEvdev():
             #ecodes.EV_KEY: [ecodes.BTN_LEFT, ecodes.BTN_RIGHT],
             ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
             ecodes.EV_ABS: [
-                (ecodes.ABS_X, AbsInfo(value=0, min=0, max=4000, fuzz = 0, flat = 0, resolution = 31)),
-                (ecodes.ABS_Y, AbsInfo(0, 0, 3000, 0, 0, 31)),
-                (ecodes.ABS_MT_POSITION_X, AbsInfo(0, 0, 4000, 0, 0, 31))],
+                (ecodes.ABS_X, AbsInfo(value=0, min=0, max=3600, fuzz = 0, flat = 0, resolution = 12)),
+                (ecodes.ABS_Y, AbsInfo(value=0, min=0, max=2064, fuzz = 0, flat = 0, resolution = 12)),
+                (ecodes.ABS_MT_ORIENTATION, AbsInfo(value=0, min=0, max=1, fuzz = 0, flat = 0, resolution = 0)),
+                (ecodes.ABS_MT_POSITION_X, AbsInfo(value=0, min=0, max=3600, fuzz = 0, flat = 0, resolution = 0)),
+                (ecodes.ABS_MT_POSITION_Y, AbsInfo(value=0, min=0, max=2064, fuzz = 0, flat = 0, resolution = 0)),
+                (ecodes.ABS_MT_TOOL_X, AbsInfo(value=0, min=0, max=3600, fuzz = 0, flat = 0, resolution = 12)),
+                (ecodes.ABS_MT_TOOL_Y, AbsInfo(value=0, min=0, max=2064, fuzz = 0, flat = 0, resolution = 12)),
+                (ecodes.ABS_MT_TRACKING_ID, AbsInfo(0, 0, 65535, 0, 0, 0))],
         }
-        self.mouse_ui = UInput.from_device(Config.MOUSE_DEVICE_STREAMER_POINT, Config.MOUSE_DEVICE_STREAMER_CLICK,
-                                           name='mouse')
-        self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK,
-                                         name="key")
-        #self.mouse_ui = UInput(self.cap_mouse, name='mouse', version=0x3)
-        #self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK, name='key')
+
+        self.mouse_ui = UInput(self.cap_mouse, name='mouse', version=0x3)
+        self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK, name='key')
         print(self.mouse_ui.capabilities(absinfo=True))
         print(self.key_ui.capabilities(absinfo=True))
 
