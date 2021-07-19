@@ -72,8 +72,10 @@ class Streamer:
         if is_viewing:
             self.open_stream()
             self.start_stream()
+            self.event_handler.setup_new()
         else:
             self.end_stream()
+            self.event_handler.reattach_back()
 
     def open_stream(self):
         # https://gist.github.com/esrever10/7d39fe2d4163c5b2d7006495c3c911bb
@@ -100,7 +102,6 @@ class Streamer:
     def end_stream(self):
         self.pipeline.set_state(Gst.State.NULL)
         self.frame.end()
-        self.event_handler.reattach_back()
 
     def move_stream(self):
         self.end_stream()
