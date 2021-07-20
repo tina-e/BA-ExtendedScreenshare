@@ -5,9 +5,9 @@ import time
 from evdev import InputDevice, ecodes, categorize
 from pynput.mouse import Listener as MouseListener, Controller as MouseController
 from pynput.keyboard import Key, Listener as KeyListener, Controller as KeyController
-from event_types import EventTypes, get_id_by_button
-from window_manager_test import WindowManager
-import Config
+from prototype.event_types import EventTypes, get_id_by_button
+from prototype.window_manager_test import WindowManager
+import prototype.Config as Config
 
 
 class Sender:
@@ -24,6 +24,7 @@ class Sender:
         button_thread = MouseListener(on_click=self.on_click, on_scroll=self.on_scroll)
         button_thread.start()
 
+        #self.listen_keyboard()
         keyboard_thread = threading.Thread(target=self.listen_keyboard)
         keyboard_thread.start()
         # todo: manchmal immer noch absturz, threading?
@@ -45,7 +46,7 @@ class Sender:
                     message = EventTypes.MOUSE_MOVEMENT.to_bytes(1, 'big')
                     message += rel_x.to_bytes(2, 'big')
                     message += rel_y.to_bytes(2, 'big')
-                    print(message)
+                    #print(message)
                     self.send(message)
             time.sleep(0.1)
 
@@ -59,7 +60,7 @@ class Sender:
                 message += rel_y.to_bytes(2, 'big')
                 message += get_id_by_button(button).to_bytes(1, 'big')
                 message += was_pressed.to_bytes(1, 'big')
-                print(message)
+                #print(message)
                 self.send(message)
                 message += rel_y.to_bytes(2, 'big')
 
@@ -73,39 +74,40 @@ class Sender:
                 message += rel_y.to_bytes(2, 'big')
                 message += dx.to_bytes(2, 'big', signed=True)
                 message += dy.to_bytes(2, 'big', signed=True)
-                print(message)
+                #print(message)
                 self.send(message)
 
     def listen_keyboard(self):
         for event in self.keyboard.read_loop():
-            if self.window_manager.is_in_focus():
-                if event.type == ecodes.EV_KEY:
-                    message = EventTypes.KEYBOARD.to_bytes(1, 'big')
-                    message += event.code.to_bytes(2, 'big')  # key
-                    message += event.value.to_bytes(1, 'big')  # down = 1, up = 0, hold = 2
-                    self.send(message)
+            #if self.window_manager.is_in_focus():
+            if event.type == ecodes.EV_KEY:
+                message = EventTypes.KEYBOARD.to_bytes(1, 'big')
+                message += event.code.to_bytes(2, 'big')  # key
+                message += event.value.to_bytes(1, 'big')  # down = 1, up = 0, hold = 2
+                print(message)
+                self.send(message)
 
     ###################################################################################################################
 
-    def listen_device(self):
-        # todo: cannot read absolute postitons with evdev??
-        selector = selectors.DefaultSelector()
-        selector.register(self.mouse, selectors.EVENT_READ)
-        selector.register(self.keyboard, selectors.EVENT_READ)
-        while True:
-            for k, m in selector.select():
-                device = k.fileobj
-                for event in device.read():
-                    print(event)
+    #def listen_device(self):
+    #    # todo: cannot read absolute postitons with evdev??
+    #    selector = selectors.DefaultSelector()
+    #    selector.register(self.mouse, selectors.EVENT_READ)
+    #    selector.register(self.keyboard, selectors.EVENT_READ)
+    #    while True:
+    #        for k, m in selector.select():
+    #            device = k.fileobj
+    #            for event in device.read():
+    #                print(event)
 
     # too much delay
-    def on_mouse_moved(self, x, y):
-        if self.window_manager.is_in_focus():
-            rel_x, rel_y = self.window_manager.get_pos_in_stream(x, y)
-            if rel_x:
-                message = EventTypes.MOUSE_MOVEMENT.to_bytes(1, 'big')
-                message += rel_x.to_bytes(2, 'big')
-                message += rel_y.to_bytes(2, 'big')
-                self.send(message)
+    #def on_mouse_moved(self, x, y):
+    #    if self.window_manager.is_in_focus():
+    #        rel_x, rel_y = self.window_manager.get_pos_in_stream(x, y)
+    #        if rel_x:
+    #            message = EventTypes.MOUSE_MOVEMENT.to_bytes(1, 'big')
+    #            message += rel_x.to_bytes(2, 'big')
+    #            message += rel_y.to_bytes(2, 'big')
+    #            self.send(message)
 
-sender = Sender()
+#sender = Sender()

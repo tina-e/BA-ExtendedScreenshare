@@ -8,7 +8,7 @@ class CHandler:
         self.frame = ctypes.CDLL("./libframe.so")
         self.frame.setup.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.frame.setup(x, y, width, height)
-        self.drawing_thread = threading.Thread(target=self.draw)
+        self.drawing_thread = threading.Thread(target=self.draw, daemon=True)
 
     def show_frame(self):
         self.drawing_thread.start()

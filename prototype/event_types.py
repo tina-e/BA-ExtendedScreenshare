@@ -2,12 +2,13 @@ from enum import IntEnum
 from pynput.mouse import Button
 
 class EventTypes(IntEnum):
-    MOUSE_MOVEMENT = 0
-    MOUSE_CLICK = 1
-    MOUSE_SCROLL = 2
-    KEYBOARD = 3
-    CAPABILITY_MOUSE = 4
-    CAPABILITY_KEYBOARD = 5
+    VIEWING = 0
+    MOUSE_MOVEMENT = 1
+    MOUSE_CLICK = 2
+    MOUSE_SCROLL = 3
+    KEYBOARD = 4
+    CAPABILITY_MOUSE = 5
+    CAPABILITY_KEYBOARD = 6
 
 def get_button_by_id(id):
     if id == 0: return Button.left

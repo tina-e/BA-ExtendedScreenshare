@@ -8,8 +8,7 @@ ewmh = EWMH()
 
 def is_in_focus():
     window = ewmh.getActiveWindow()
-    #return window.get_wm_class() == ('gst-launch-1.0', 'GStreamer')
-    return window.get_wm_class() == ('jetbrains-pycharm-ce', 'jetbrains-pycharm-ce')
+    return window.get_wm_class() == ('gst-launch-1.0', 'GStreamer')
 
 
 def frame(window):
@@ -22,8 +21,7 @@ def frame(window):
 def is_stream_open():
     open_wins = ewmh.getClientList()
     for win in open_wins:
-        #if win.get_wm_class() == ('gst-launch-1.0', 'GStreamer'):
-        if win.get_wm_class() == ('jetbrains-pycharm-ce', 'jetbrains-pycharm-ce'):
+        if win.get_wm_class() == ('gst-launch-1.0', 'GStreamer'):
             return True
     return False
 
@@ -33,8 +31,7 @@ def get_pos_in_stream(x, y):
     win_geo = None
     open_wins = ewmh.getClientList()
     for win in open_wins:
-        # if win.get_wm_class() == ('gst-launch-1.0', 'GStreamer'):
-        if win.get_wm_class() == ('jetbrains-pycharm-ce', 'jetbrains-pycharm-ce'):
+        if win.get_wm_class() == ('gst-launch-1.0', 'GStreamer'):
             win_geo = frame(win).get_geometry()
             break
     rel_x = x - win_geo.x
@@ -49,8 +46,7 @@ def get_pos_in_stream(x, y):
 
 def is_relevant_input():
     window = ewmh.getActiveWindow()
-    # if window.get_wm_class() == ('gst-launch-1.0', 'GStreamer'):
-    if window.get_wm_class() == ('jetbrains-pycharm-ce', 'jetbrains-pycharm-ce'):
+    if window.get_wm_class() == ('gst-launch-1.0', 'GStreamer'):
         mouse_pos = Controller().position
         win_geo = frame(window).get_geometry()
         if (win_geo.x <= mouse_pos[0] <= (win_geo.width + win_geo.x)) and (win_geo.y <= mouse_pos[1] <= (win_geo.height + win_geo.y)):
