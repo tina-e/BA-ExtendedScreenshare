@@ -3,8 +3,7 @@ import subprocess
 import time
 
 from evdev import UInput, ecodes, AbsInfo, InputDevice
-
-#import Config
+import Config
 
 class EventHandlerEvdev():
     def __init__(self):
@@ -34,7 +33,7 @@ class EventHandlerEvdev():
         }
 
         self.mouse_ui = UInput(self.cap_mouse, name='mouse', version=0x3)
-        self.key_ui = UInput.from_device(KEYBOARD_DEVICE_STREAMER, MOUSE_DEVICE_STREAMER_CLICK, name='key')
+        self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK, name='key')
         print(self.mouse_ui.capabilities(absinfo=True))
         print(self.key_ui.capabilities(absinfo=True))
 
@@ -63,8 +62,8 @@ class EventHandlerEvdev():
 
     def map_mouse_movement(self, x, y):
         print(x, y)
-        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x)
-        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y)
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x+Config.START_X)
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y+Config.START_Y)
         self.mouse_ui.syn()
         time.sleep(0.006)
 
@@ -79,7 +78,7 @@ class EventHandlerEvdev():
         self.key_ui.syn()
 
     def reattach_back(self):
-        subprocess.check_output(f"xinput remove-master {self.master_pointer_id}")
+        subprocess.check_output(f"xinput remove-master {self.master_pointer_id}", shell=True)
 
 #TODO: richtiges Mapping -> Absolute Positionen???
 #handler = EventHandlerEvdev()

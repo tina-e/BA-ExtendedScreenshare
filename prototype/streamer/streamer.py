@@ -72,7 +72,7 @@ class Streamer:
         if is_viewing:
             self.is_stream_running = True
             self.stream.start()
-            self.event_handler.setup_new()
+            #self.event_handler.setup_new()
         elif self.is_stream_running:
             self.is_stream_running = False
             self.stream.end()
