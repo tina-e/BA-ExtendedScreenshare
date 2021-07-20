@@ -10,7 +10,7 @@ import Config
 
 
 from streamer.stream import Stream
-#from streamer.mouse_handler import EventHandlerEvdev
+from streamer.mouse_handler import EventHandlerEvdev
 from streamer.mouse_handler_autogui import EventHandler
 from event_types import EventTypes, get_button_by_id
 import socket
@@ -26,8 +26,8 @@ class Streamer:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         #self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((Config.STREAMER_ADDRESS, Config.EVENT_PORT))
-        #self.event_handler = EventHandlerEvdev()
-        self.event_handler = EventHandler()
+        self.event_handler = EventHandlerEvdev()
+        #self.event_handler = EventHandler()
         connection_thread = threading.Thread(target=self.receive, daemon=True)
         connection_thread.start()
 

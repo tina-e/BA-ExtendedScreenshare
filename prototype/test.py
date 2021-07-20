@@ -1,5 +1,5 @@
 import time
-
+import subprocess
 from evdev import UInput, ecodes, AbsInfo, InputDevice
 
 cap_mouse = {
@@ -17,14 +17,42 @@ cap_mouse = {
 #}
 
 mouse_ui = UInput(cap_mouse, name='mouse')
-time.sleep(0.1)
+
+subprocess.check_output("xinput create-master master", shell=True)
+master_pointer_id = subprocess.check_output("xinput list --id-only 'master pointer'", shell=True).strip().decode()
+master_keyboard_id = subprocess.check_output("xinput list --id-only 'master keyboard'", shell=True).strip().decode()
+
+mouse_id = subprocess.check_output(f"xinput list --id-only 'pointer:mouse'", shell=True).strip().decode()
+subprocess.check_output(f"xinput reattach {mouse_id} {master_pointer_id}", shell=True)
+time.sleep(20)
+
+def map_mouse_movement(x, y):
+    print(x, y)
+    mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x)
+    mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y)
+    mouse_ui.syn()
+
+
+#time.sleep(0.1)
 #while True:
-mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, 100)
-mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, 10)
-mouse_ui.syn()
-mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, 200)
-mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, 100)
-mouse_ui.syn()
+
+map_mouse_movement(100, 100)
+time.sleep(0.006)
+map_mouse_movement(550, 505)
+time.sleep(0.006)
+map_mouse_movement(1000, 1000)
+time.sleep(0.006)
+map_mouse_movement(505, 505)
+time.sleep(0.006)
+map_mouse_movement(100, 100)
+time.sleep(0.006)
+map_mouse_movement(505, 550)
+time.sleep(0.006)
+map_mouse_movement(1000, 1000)
+time.sleep(0.006)
+map_mouse_movement(550, 505)
+time.sleep(0.006)
+map_mouse_movement(100, 100)
 
 #with UInput(cap_mouse, name='mouse') as mouse_ui:
     #print(mouse_ui.capabilities())
