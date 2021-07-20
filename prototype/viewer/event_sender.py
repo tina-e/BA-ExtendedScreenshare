@@ -7,7 +7,7 @@ from pynput.mouse import Listener as MouseListener, Controller as MouseControlle
 from pynput.keyboard import Key, Listener as KeyListener, Controller as KeyController
 from event_types import EventTypes, get_id_by_button
 import window_manager
-import window_manager_test as window_manager_test
+from window_manager_test import WindowManager
 import Config
 
 
@@ -40,6 +40,7 @@ class EventSender:
         message += is_viewing.to_bytes(1, 'big')
         print(message)
         self.send(message)
+        window_manager.setup()
 
     def on_click(self, x, y, button, was_pressed):
         if window_manager.is_in_focus():
