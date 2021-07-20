@@ -22,6 +22,7 @@ class Viewer:
                          "clock-rate=(int)90000, encoding-name=(string)H264, "
                          "payload=(int)96\" ! rtph264depay ! decodebin ! videoconvert ! autovideosink", shell=True)
         self.event_sender.on_view(True)
+        #todo: check output, close then
 
         #while True:
         #    if window_manager.is_stream_open():

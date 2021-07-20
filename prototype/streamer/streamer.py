@@ -15,7 +15,6 @@ from streamer.mouse_handler_autogui import EventHandler
 from event_types import EventTypes, get_button_by_id
 import socket
 import threading
-import daemon
 
 
 class Streamer:
@@ -89,7 +88,7 @@ class Streamer:
             self.event_handler.reattach_back()
         else:
             self.stream.close()
-            #self.event_handler.reattach_back()
+            self.event_handler.reattach_back()
 
 
     #def pause_stream(self):

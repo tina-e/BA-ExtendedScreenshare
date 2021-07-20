@@ -32,7 +32,7 @@ else:
 
 signal.signal(signal.SIGINT, close)
 while True:
-    pass
+    time.sleep(0.1)
     #try:
     #    time.sleep(1)
     #except KeyboardInterrupt:

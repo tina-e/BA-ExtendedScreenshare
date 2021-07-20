@@ -14,6 +14,7 @@ import Config
 class EventSender:
     def __init__(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        #self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.mouse = MouseController()  # self.keyboard = KeyController()
         #self.mouse = InputDevice('/dev/input/event12')
         self.keyboard = InputDevice('/dev/input/event3')
