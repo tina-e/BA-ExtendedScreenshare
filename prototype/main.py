@@ -6,17 +6,20 @@ from viewer.viewer import Viewer
 
 import Config
 import subprocess
+import signal
 
 
 streamer = None
 viewer = None
 
 
-def close():
+def close(a, b):
+    print(a, b)
     if Config.IS_STREAMER:
-        streamer.end_stream()
+        streamer.close_stream()
     else:
         viewer.end_stream()
+    exit(0)
 
 
 if Config.IS_STREAMER:
@@ -27,11 +30,12 @@ else:
     viewer = Viewer()
     viewer.access_stream()
 
-
+signal.signal(signal.SIGINT, close)
 while True:
-    try:
-        time.sleep(1)
-    except KeyboardInterrupt:
-        close()
-        break
+    pass
+    #try:
+    #    time.sleep(1)
+    #except KeyboardInterrupt:
+    #    close()
+    #    break
 
