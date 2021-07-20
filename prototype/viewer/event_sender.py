@@ -40,7 +40,7 @@ class EventSender:
         message += is_viewing.to_bytes(1, 'big')
         print(message)
         self.send(message)
-        window_manager.setup()
+        #window_manager.setup()
 
     def on_click(self, x, y, button, was_pressed):
         if window_manager.is_in_focus():
