@@ -32,11 +32,9 @@ class EventHandlerEvdev():
                 (ecodes.ABS_PRESSURE, AbsInfo(0, 0, 4000, 0, 0, 31))],
         }
 
+    def create_device(self):
         self.mouse_ui = UInput(self.cap_mouse, name='mouse', version=0x3)
         self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK, name='key')
-        print(self.mouse_ui.capabilities(absinfo=True))
-        print(self.key_ui.capabilities(absinfo=True))
-
         print(subprocess.check_output("xinput list", shell=True).decode('utf-8'))
 
         subprocess.check_output("xinput create-master master", shell=True)
@@ -56,14 +54,12 @@ class EventHandlerEvdev():
         print(subprocess.check_output("xinput list", shell=True).decode('utf-8'))
 
 
-        #self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, Config.START_X)
-        #self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, Config.START_Y)
-        #self.mouse_ui.syn()
-
     def map_mouse_movement(self, x, y):
+        x = x + Config.START_X
+        y = y + Config.START_Y
         print(x, y)
-        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x+Config.START_X)
-        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y+Config.START_Y)
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x)
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y)
         self.mouse_ui.syn()
         time.sleep(0.006)
 
@@ -77,7 +73,10 @@ class EventHandlerEvdev():
         self.key_ui.write(ecodes.EV_KEY, key, value)
         self.key_ui.syn()
 
-    def reattach_back(self):
+    def remove_device(self):
+        print("back")
+        self.mouse_ui.close()
+        self.key_ui.close()
         subprocess.check_output(f"xinput remove-master {self.master_pointer_id}", shell=True)
 
 #TODO: richtiges Mapping -> Absolute Positionen???

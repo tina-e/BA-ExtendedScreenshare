@@ -72,23 +72,23 @@ class Streamer:
         if is_viewing:
             self.is_stream_running = True
             self.stream.start()
-            #self.event_handler.setup_new()
+            self.event_handler.create_device()
         elif self.is_stream_running:
             self.is_stream_running = False
             self.stream.end()
-            self.event_handler.reattach_back()
+            self.event_handler.remove_device()
         else:
             self.stream.close()
-            self.event_handler.reattach_back()
+            self.event_handler.remove_device()
 
     def close_stream(self):
         if self.is_stream_running:
             self.is_stream_running = False
             self.stream.end()
-            self.event_handler.reattach_back()
+            self.event_handler.remove_device()
         else:
             self.stream.close()
-            self.event_handler.reattach_back()
+            #self.event_handler.remove_device()
 
 
     #def pause_stream(self):
