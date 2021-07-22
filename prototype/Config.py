@@ -10,11 +10,13 @@ EVENT_PORT = 8000
 MOUSE_EVENT = 'mouseevent'
 CAP_EVENT = 'capevent'
 
+RESOLUTION_X = 1366
+RESOLUTION_Y = 768
 KEYBOARD_DEVICE_STREAMER = InputDevice('/dev/input/event4') #keyboard
 MOUSE_DEVICE_STREAMER_POINT = InputDevice('/dev/input/event9') #mouse pointer (see xinput list: only listed at pointer)
 MOUSE_DEVICE_STREAMER_CLICK = InputDevice('/dev/input/event6') #mouse keys (see xinput list: listed at pointer AND keyboard)
 
-START_X = 1
-START_Y = 1
-END_X = 200
+START_X = 100
+START_Y = 100
+END_X = 700
 END_Y = 200

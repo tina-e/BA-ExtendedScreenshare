@@ -1,7 +1,7 @@
 import json
 import subprocess
 import time
-
+from event_types import get_device_by_button
 from evdev import UInput, ecodes, AbsInfo, InputDevice
 import Config
 
@@ -24,11 +24,11 @@ class EventHandlerEvdev():
         }
 
         self.cap_mouse = {
-            ecodes.EV_KEY: [ecodes.KEY_POWER, ecodes.BTN_LEFT, ecodes.BTN_MOUSE, ecodes.BTN_RIGHT],
-            # ecodes.EV_REL: [ecodes.REL_X, ecodes.REL_Y],
+            ecodes.EV_KEY: [ecodes.KEY_POWER, ecodes.BTN_LEFT, ecodes.BTN_MOUSE, ecodes.BTN_RIGHT, ecodes.BTN_MIDDLE],
+            ecodes.EV_REL: [ecodes.REL_WHEEL],
             ecodes.EV_ABS: [
-                (ecodes.ABS_X, AbsInfo(value=0, min=0, max=4000, fuzz=0, flat=0, resolution=31)),
-                (ecodes.ABS_Y, AbsInfo(0, 0, 3000, 0, 0, 31)),
+                (ecodes.ABS_X, AbsInfo(value=0, min=0, max=Config.RESOLUTION_X, fuzz=0, flat=0, resolution=31)),
+                (ecodes.ABS_Y, AbsInfo(0, 0, Config.RESOLUTION_Y, 0, 0, 31)),
                 (ecodes.ABS_PRESSURE, AbsInfo(0, 0, 4000, 0, 0, 31))],
         }
 
@@ -52,22 +52,22 @@ class EventHandlerEvdev():
         subprocess.check_output(f"xinput reattach {self.key_id} {self.master_keyboard_id}", shell=True)
 
         print(subprocess.check_output("xinput list", shell=True).decode('utf-8'))
-
+        self.map_mouse_movement(0, 0)
 
     def map_mouse_movement(self, x, y):
         x = x + Config.START_X
         y = y + Config.START_Y
-        print(x, y)
+        #print(x, y)
         self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x)
         self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y)
         self.mouse_ui.syn()
         time.sleep(0.006)
 
     def map_mouse_click(self, x, y, button, was_pressed):
-        return
+        self.mouse_ui.write(ecodes.EV_KEY, get_device_by_button(button), was_pressed)
 
     def map_mouse_scroll(self, dx, dy):
-        return
+        self.mouse_ui.write(ecodes.EV_REL, ecodes.REL_WHEEL, dy)
 
     def map_keyboard(self, key, value):
         self.key_ui.write(ecodes.EV_KEY, key, value)
