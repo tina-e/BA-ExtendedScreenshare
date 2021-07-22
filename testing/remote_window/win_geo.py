@@ -48,7 +48,8 @@ def get_win_at(x, y):
 #        print(child.get_geometry())
 
 
-
+for win in get_open_windows():
+    print(win.get_wm_class())
 
 
 
