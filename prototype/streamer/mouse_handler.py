@@ -33,6 +33,7 @@ class EventHandlerEvdev():
         }
 
     def create_device(self):
+        #todo: set cursor color
         self.mouse_ui = UInput(self.cap_mouse, name='mouse', version=0x3)
         self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK, name='key')
         print(subprocess.check_output("xinput list", shell=True).decode('utf-8'))
