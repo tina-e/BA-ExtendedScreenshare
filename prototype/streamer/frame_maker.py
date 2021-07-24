@@ -12,7 +12,7 @@ class FrameMaker:
         self.frame.setup.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.frame.draw.argtypes = [ctypes.c_int]
         x, y, width, height = self.get_frame_position()
-        self.frame.setup(x, y, width, height)
+        self.frame.setup(x, y, width, height, Config.BORDER_WIDTH)
         self.is_visible = False
         self.drawing_thread = threading.Thread(target=self.__draw, daemon=True)
         self.drawing_thread.start()
@@ -22,7 +22,7 @@ class FrameMaker:
         frame_x = Config.START_X - Config.BORDER_WIDTH
         frame_y = Config.START_Y - Config.BORDER_WIDTH
         frame_width = Config.WIDTH + 2 * Config.BORDER_WIDTH
-        frame_height = Config.HEIGHT + 2 * Config.BORDER_WIDTH, Config.BORDER_WIDTH
+        frame_height = Config.HEIGHT + 2 * Config.BORDER_WIDTH
         if frame_x <= 0:
             frame_x = 0
         if frame_y <= 0:
