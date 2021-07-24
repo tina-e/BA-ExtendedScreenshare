@@ -9,9 +9,10 @@ import Config
 class FrameMaker:
     def __init__(self):
         self.frame = ctypes.CDLL("/home/tina/PycharmProjects/BA-CrossDeviceCommunication/prototype/streamer/libframe.so")
-        self.frame.setup.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
+        self.frame.setup.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.frame.draw.argtypes = [ctypes.c_int]
-        self.frame.setup(Config.START_X, Config.START_Y, Config.WIDTH, Config.HEIGHT, Config.BORDER_WIDTH)
+        self.frame.setup(Config.START_X - Config.BORDER_WIDTH, Config.START_Y - Config.BORDER_WIDTH,
+                         Config.WIDTH + 2 * Config.BORDER_WIDTH, Config.HEIGHT + 2 * Config.BORDER_WIDTH, Config.BORDER_WIDTH)
         self.is_visible = False
         self.drawing_thread = threading.Thread(target=self.__draw, daemon=True)
         self.drawing_thread.start()
