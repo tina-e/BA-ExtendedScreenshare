@@ -1,7 +1,11 @@
+import math
 import threading
 
 from pynput.mouse import Button, Controller
 from ewmh import EWMH
+
+import Config
+
 ewmh = EWMH()
 
 #lock = threading.Lock()
@@ -27,17 +31,16 @@ def is_stream_open():
 
 
 def get_pos_in_stream(x, y):
-    #with lock:
     win_geo = None
     open_wins = ewmh.getClientList()
     for win in open_wins:
         if win.get_wm_class() == ('gst-launch-1.0', 'GStreamer'):
             win_geo = frame(win).get_geometry()
             break
-    rel_x = x - win_geo.x
-    rel_y = y - win_geo.y - win_geo.depth
-    if 0 <= rel_x <= win_geo.width and 0 <= rel_y <= win_geo.height:
-        return rel_x, rel_y
+    if win_geo.x < x < (win_geo.x + win_geo.width) and (win_geo.y + win_geo.depth) < y < (win_geo.y + win_geo.height):
+        rel_x = (x - win_geo.x) / win_geo.width
+        rel_y = (y - win_geo.y) / win_geo.height
+        return round(Config.WIDTH * rel_x), round(Config.HEIGHT * rel_y)
     print("cursor out of stream")
     return None, None
 

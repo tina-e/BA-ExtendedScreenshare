@@ -11,7 +11,7 @@ class FrameMaker:
         self.frame = ctypes.CDLL("/home/tina/PycharmProjects/BA-CrossDeviceCommunication/prototype/streamer/libframe.so")
         self.frame.setup.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.frame.draw.argtypes = [ctypes.c_int]
-        self.frame.setup(Config.START_X, Config.START_Y, Config.END_X, Config.END_Y)
+        self.frame.setup(Config.START_X, Config.START_Y, Config.WIDTH, Config.HEIGHT, Config.BORDER_WIDTH)
         self.is_visible = False
         self.drawing_thread = threading.Thread(target=self.__draw, daemon=True)
         self.drawing_thread.start()
