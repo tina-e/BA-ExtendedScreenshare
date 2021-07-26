@@ -39,6 +39,11 @@ class Tray():
                 ),
                 menu.SEPARATOR,
                 item(
+                    'Access stream',
+                    lambda item: self.access_stream(),
+                ),
+                menu.SEPARATOR,
+                item(
                     'Quit',
                     lambda icon: self.onclick_quit()
                 )
@@ -55,6 +60,8 @@ class Tray():
     def play_stream(self, playing):
         return
 
+    def access_stream(self):
+        return
 
 
     def get_icon(self):
