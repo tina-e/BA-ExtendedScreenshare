@@ -37,10 +37,16 @@ def get_pos_in_stream(x, y):
         if win.get_wm_class() == ('gst-launch-1.0', 'GStreamer'):
             win_geo = frame(win).get_geometry()
             break
-    if win_geo.x < x < (win_geo.x + win_geo.width) and (win_geo.y + win_geo.depth) < y < (win_geo.y + win_geo.height):
-        rel_x = (x - win_geo.x) / win_geo.width
-        rel_y = (y - win_geo.y) / win_geo.height
-        return round(Config.WIDTH * rel_x), round((Config.HEIGHT - win_geo.depth) * rel_y)
+
+    win_x = win_geo.x
+    win_y = win_geo.y + win_geo.depth
+    win_w = win_geo.width
+    win_h = win_geo.height - win_geo.depth
+
+    if win_x < x < (win_x + win_w) and win_y < y < (win_y + win_h):
+        rel_x = (x - win_x) / win_w
+        rel_y = (y - win_y) / win_h
+        return round(Config.WIDTH * rel_x), round(Config.HEIGHT * rel_y)
     print("cursor out of stream")
     return None, None
 

@@ -1,6 +1,7 @@
 import time
 from evdev import UInput, InputDevice
 import uinput
+import pygame
 
 def main():
     events = (
@@ -26,5 +27,11 @@ def main():
 
 if __name__ == "__main__":
     #main()
-    TOUCHSCREEN = InputDevice('/dev/input/event7')
-    print(TOUCHSCREEN.capabilities(verbose=True))
+    #TOUCHSCREEN = InputDevice('/dev/input/event7')
+    #print(TOUCHSCREEN.capabilities(verbose=True))
+    pygame.init()
+    hotspot = (0, 0)
+    surface = pygame.Surface((10, 10))
+    color_cursor = pygame.cursors.Cursor(hotspot, surface)
+    pygame.mouse.set_cursor(color_cursor)
+    time.sleep(10)
