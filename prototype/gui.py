@@ -1,3 +1,5 @@
+import threading
+
 from PIL import Image, ImageDraw
 from pystray import Icon, Menu as menu, MenuItem as item
 from PyQt5.QtWidgets import QApplication
@@ -10,10 +12,14 @@ import base64
 import sys
 
 import Config
-from area import Area
+from prototype.streamer.area import Area
+from prototype.streamer.streamer import Streamer
+from prototype.viewer.viewer import Viewer
+
 
 class Tray():
     def __init__(self, app_name, stream_app):
+        self.app = app
         self.stream_app = stream_app
         self.app_name = app_name
         self.icon = Icon(
@@ -21,12 +27,12 @@ class Tray():
             icon=self.get_icon(),
             menu=menu(
                 item(
-                    'Stream Full-Screen',
-                    lambda item: self.setup_stream_fullscreen(),
+                    'Stream full screen',
+                    lambda item: self.setup_stream(),
                 ),
                 item(
-                    'Drag new stream region',
-                    lambda item: self.open_area_chooser(),
+                    'Stream region',
+                    lambda item: self.open_area(),
                 ),
                 menu.SEPARATOR,
                 item(
@@ -51,17 +57,25 @@ class Tray():
         )
 
 
-    def setup_stream_fullscreen(self):
-        return
+    def setup_stream(self):
+        Config.IS_STREAMER = True
+        Config.set_ips()
+        streamer = Streamer()
 
-    def open_area_chooser(self):
-        self.stream_app.show()
+    def open_area(self):
+        self.stream_app.exec()
+        dimensions = self.stream_app.get_coords()
+        Config.set_coords(dimensions)
+        self.setup_stream()
 
     def play_stream(self, playing):
         return
 
     def access_stream(self):
-        return
+        Config.IS_STREAMER = False
+        Config.set_ips()
+        viewer = Viewer()
+        viewer.access_stream()
 
 
     def get_icon(self):

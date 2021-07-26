@@ -9,13 +9,13 @@ import Config
 
 
 
-from streamer.stream import Stream
-from streamer.mouse_handler import EventHandlerEvdev
-from streamer.mouse_handler_autogui import EventHandler
+from prototype.streamer.stream import Stream
+from prototype.streamer.mouse_handler import EventHandlerEvdev
+
+#from streamer.mouse_handler_autogui import EventHandler
 from event_types import EventTypes, get_button_by_id
 import socket
 import threading
-
 
 class Streamer:
     def __init__(self):

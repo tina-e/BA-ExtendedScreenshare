@@ -6,7 +6,7 @@ from evdev import UInput, ecodes, AbsInfo, InputDevice
 import Config
 
 class EventHandlerEvdev():
-    def __init__(self):
+    def __init__(self, ):
         self.cap_mouse = {
             #ecodes.EV_SYN: [ecodes.SYN_REPORT, ecodes.SYN_CONFIG, ecodes.SYN_MT_REPORT, ecodes.SYN_DROPPED, 21],
             ecodes.EV_KEY: [ecodes.KEY_POWER, ecodes.BTN_LEFT, ecodes.BTN_MOUSE, ecodes.BTN_RIGHT],
@@ -80,7 +80,7 @@ class EventHandlerEvdev():
         self.key_ui.close()
         subprocess.check_output(f"xinput remove-master {self.master_pointer_id}", shell=True)
 
-#TODO: richtiges Mapping -> Absolute Positionen???
+
 #handler = EventHandlerEvdev()
 #handler.map_mouse_movement(100, 100)
 #handler.map_mouse_movement(550, 505)
