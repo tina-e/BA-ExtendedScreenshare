@@ -40,7 +40,7 @@ def get_pos_in_stream(x, y):
     if win_geo.x < x < (win_geo.x + win_geo.width) and (win_geo.y + win_geo.depth) < y < (win_geo.y + win_geo.height):
         rel_x = (x - win_geo.x) / win_geo.width
         rel_y = (y - win_geo.y) / win_geo.height
-        return round(Config.WIDTH * rel_x), round(Config.HEIGHT * rel_y)
+        return round(Config.WIDTH * rel_x), round((Config.HEIGHT - win_geo.depth) * rel_y)
     print("cursor out of stream")
     return None, None
 

@@ -36,8 +36,7 @@ def get_win_at(x, y):
 
 for i, win in enumerate(get_open_windows()):
     print(i, win.get_wm_class())
-    if i == 3:
-        print(win.get_geometry())
+    print(win.get_geometry())
 #if __name__ == '__main__':
 #    found_win = get_win_at(100, 100)
 #
