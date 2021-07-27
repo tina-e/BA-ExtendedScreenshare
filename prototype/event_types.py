@@ -8,8 +8,10 @@ class EventTypes(IntEnum):
     MOUSE_CLICK = 2
     MOUSE_SCROLL = 3
     KEYBOARD = 4
-    CAPABILITY_MOUSE = 5
-    CAPABILITY_KEYBOARD = 6
+    PASTE = 5
+    COPY = 6
+    CAPABILITY_MOUSE = 7
+    CAPABILITY_KEYBOARD = 8
 
 def get_button_by_id(id):
     if id == 0: return Button.left
