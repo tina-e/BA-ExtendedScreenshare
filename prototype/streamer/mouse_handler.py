@@ -56,7 +56,7 @@ class EventHandlerEvdev():
         self.map_mouse_movement(0, 0)
         self.create_cursor_highlighting()
 
-    def create_cursor_highlighting(self):
+    #todo: def create_cursor_highlighting(self):
 
 
     def map_mouse_movement(self, x, y):
