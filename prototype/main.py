@@ -1,14 +1,11 @@
-import threading
 import time
 
 from streamer.streamer import Streamer
 from viewer.viewer import Viewer
 
 import Config
-import subprocess
 import signal
 
-from viewer.stream_window import StreamWindow
 from gi.repository import GObject
 from PyQt5.QtWidgets import *
 import sys
@@ -18,8 +15,8 @@ streamer = None
 viewer = None
 
 
-def close(a, b):
-    print(a, b)
+def close():
+    print()
     if Config.IS_STREAMER:
         streamer.close_stream()
     else:

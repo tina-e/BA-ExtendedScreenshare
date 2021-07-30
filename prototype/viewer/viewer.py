@@ -29,6 +29,7 @@ class Viewer:
                          "payload=(int)96\" ! rtph264depay ! decodebin ! videoconvert ! autovideosink", shell=True)'''
 
         self.event_sender.on_view(True)
+        #self.stream.get_stream_coords()
 
 
     def end_stream(self):

@@ -8,10 +8,10 @@ from gi.repository import Gst, GLib, GstApp
 STREAM_PORT = 5000
 STREAMER_ADDRESS = '192.168.178.23'
 RECEIVER_ADDRESS = '192.168.178.136'
-START_X = 2000
-START_Y = 200
-END_X = 2500
-END_Y = 730
+START_X = 100
+START_Y = 100
+END_X = 500
+END_Y = 500
 
 Gst.init(None)
 # https://gist.github.com/esrever10/7d39fe2d4163c5b2d7006495c3c911bb
