@@ -30,6 +30,8 @@ from gi.repository import Gst
 Gst.init(None)
 from gi.repository import GObject
 
+from viewer.event_sender import EventSender
+
 from PIL import Image
 
 if 1:
@@ -48,7 +50,7 @@ class StreamWindow(QMainWindow):
         self.gstWindowId = None
         self.x_pos = None
         self.y_pos = None
-        #self.source = Gst.ElementFactory.make("videotestsrc", "video-source")
+        self.event_sender = EventSender(self)
         self.setupGst()
         assert self.gstWindowId
         self.show()
@@ -61,6 +63,7 @@ class StreamWindow(QMainWindow):
     def start_gstreamer(self):
         print("Starting gstreamer pipeline")
         self.player.set_state(Gst.State.PLAYING)
+        self.event_sender.on_view(True)
 
     def setupGst(self):
         self.gstWindowId = self.winId()
@@ -97,6 +100,19 @@ class StreamWindow(QMainWindow):
 
     def is_active(self):
         return self.isActiveWindow()
+
+    def get_position_in_stream(self, x, y):
+        depth = self.style().pixelMetric(QStyle.PM_TitleBarHeight)
+        x_calculated = x - self.x_pos
+        y_calculated = y - self.y_pos - depth
+        if 0 <= x_calculated <= self.width() and 0 <= y_calculated <= self.height():
+            return x_calculated, y_calculated
+        print("cursor out of stream")
+        return None, None
+
+    def closeEvent(self, event):
+        print("end watching")
+        self.event_sender.on_view(False)
 
 
 

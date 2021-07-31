@@ -1,7 +1,9 @@
 import time
 
 from streamer.streamer import Streamer
-from viewer.viewer import Viewer
+
+#from viewer.viewer import Viewer
+from viewer.stream_window import StreamWindow
 
 import Config
 import signal
@@ -19,8 +21,6 @@ def close():
     print()
     if Config.IS_STREAMER:
         streamer.close_stream()
-    else:
-        viewer.end_stream()
     exit(0)
 
 
@@ -31,11 +31,8 @@ else:
     #signal.signal(signal.SIGINT, close)
     GObject.threads_init()
     app = QApplication(sys.argv)
-    viewer = Viewer(app)
-    viewer.access_stream()
-    app.exec_()
-    close()
-    sys.exit(0)
+    stream_window = StreamWindow()
+    sys.exit(app.exec_())
 
 signal.signal(signal.SIGINT, close)
 while True:
