@@ -9,13 +9,13 @@ import Config
 
 
 
-from streamer.stream import Stream
-#from streamer.mouse_handler import EventHandlerEvdev
-from streamer.mouse_handler_autogui import EventHandler
+from prototype.streamer.stream import Stream
+from prototype.streamer.mouse_handler import EventHandlerEvdev
+
+#from streamer.mouse_handler_autogui import EventHandler
 from event_types import EventTypes, get_button_by_id
 import socket
 import threading
-
 
 class Streamer:
     def __init__(self):
@@ -26,8 +26,8 @@ class Streamer:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         #self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((Config.STREAMER_ADDRESS, Config.EVENT_PORT))
-        #self.event_handler = EventHandlerEvdev()
-        self.event_handler = EventHandler()
+        self.event_handler = EventHandlerEvdev()
+        #self.event_handler = EventHandler()
         connection_thread = threading.Thread(target=self.receive, daemon=True)
         connection_thread.start()
 
@@ -53,17 +53,17 @@ class Streamer:
                         event_y = int.from_bytes(data[3:5], 'big')
                         event_button = get_button_by_id(data[5])
                         event_was_pressed = data[6]
-                        # print(f"clicked at {event_x}, {event_y} with button {event_button}; pressed: {event_was_pressed}")
+                        #print(f"clicked at {event_x}, {event_y} with button {event_button}; pressed: {event_was_pressed}")
                         self.event_handler.map_mouse_click(event_x, event_y, event_button, event_was_pressed)
                     elif event_type == EventTypes.MOUSE_SCROLL:
                         event_dx = int.from_bytes(data[5:7], 'big', signed=True)
                         event_dy = int.from_bytes(data[7:9], 'big', signed=True)
-                        # print(f"scrolled {event_dx}, {event_dy}")
+                        #print(f"scrolled {event_dx}, {event_dy}")
                         self.event_handler.map_mouse_scroll(event_dx, event_dy)
                     elif event_type == EventTypes.KEYBOARD:
                         event_key = int.from_bytes(data[1:3], 'big')
                         event_value = data[3]
-                        # print(f"key {event_key}: {event_value} (down=1, up=0, hold=2)")
+                        #print(f"key {event_key}: {event_value} (down=1, up=0, hold=2)")
                         self.event_handler.map_keyboard(event_key, event_value)
             except UnicodeDecodeError:
                 continue
@@ -72,23 +72,23 @@ class Streamer:
         if is_viewing:
             self.is_stream_running = True
             self.stream.start()
-            self.event_handler.setup_new()
+            self.event_handler.create_device()
         elif self.is_stream_running:
             self.is_stream_running = False
             self.stream.end()
-            self.event_handler.reattach_back()
+            self.event_handler.remove_device()
         else:
             self.stream.close()
-            self.event_handler.reattach_back()
+            self.event_handler.remove_device()
 
     def close_stream(self):
         if self.is_stream_running:
             self.is_stream_running = False
             self.stream.end()
-            self.event_handler.reattach_back()
+            self.event_handler.remove_device()
         else:
             self.stream.close()
-            self.event_handler.reattach_back()
+            #self.event_handler.remove_device()
 
 
     #def pause_stream(self):

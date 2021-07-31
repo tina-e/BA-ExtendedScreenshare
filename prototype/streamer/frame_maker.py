@@ -9,12 +9,29 @@ import Config
 class FrameMaker:
     def __init__(self):
         self.frame = ctypes.CDLL("/home/martinaemmert/Documents/Bachelorarbeit/CrossDeviceCommunication/prototype/streamer/libframe.so")
-        self.frame.setup.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
+        self.frame.setup_rect.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.frame.draw.argtypes = [ctypes.c_int]
-        self.frame.setup(Config.START_X, Config.START_Y, Config.END_X, Config.END_Y)
+        x, y, width, height = self.get_frame_position()
+        self.frame.setup_rect(x, y, width, height, Config.BORDER_WIDTH)
         self.is_visible = False
         self.drawing_thread = threading.Thread(target=self.__draw, daemon=True)
         self.drawing_thread.start()
+
+    def get_frame_position(self):
+        #todo: dragable area
+        frame_x = Config.START_X - Config.BORDER_WIDTH
+        frame_y = Config.START_Y - Config.BORDER_WIDTH
+        frame_width = Config.WIDTH + 2 * Config.BORDER_WIDTH
+        frame_height = Config.HEIGHT + 2 * Config.BORDER_WIDTH
+        if frame_x <= 0:
+            frame_x = 0
+        if frame_y <= 0:
+            frame_y = 0
+        if frame_width + frame_x > Config.RESOLUTION_X:
+            frame_width = Config.RESOLUTION_X - frame_x
+        if frame_height + frame_y > Config.RESOLUTION_Y:
+            frame_height = Config.RESOLUTION_Y - frame_y
+        return frame_x, frame_y, frame_width, frame_height
 
     def toggle_visibility(self):
         self.is_visible = not self.is_visible
