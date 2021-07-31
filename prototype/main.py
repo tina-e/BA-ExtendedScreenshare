@@ -1,24 +1,26 @@
-import threading
 import time
 
 from streamer.streamer import Streamer
-from viewer.viewer import Viewer
+
+#from viewer.viewer import Viewer
+from viewer.stream_window import StreamWindow
 
 import Config
-import subprocess
 import signal
+
+from gi.repository import GObject
+from PyQt5.QtWidgets import *
+import sys
 
 
 streamer = None
 viewer = None
 
 
-def close(a, b):
-    print(a, b)
+def close():
+    print()
     if Config.IS_STREAMER:
         streamer.close_stream()
-    else:
-        viewer.end_stream()
     exit(0)
 
 
@@ -27,8 +29,10 @@ if Config.IS_STREAMER:
     streamer = Streamer()
 else:
     #signal.signal(signal.SIGINT, close)
-    viewer = Viewer()
-    viewer.access_stream()
+    GObject.threads_init()
+    app = QApplication(sys.argv)
+    stream_window = StreamWindow()
+    sys.exit(app.exec_())
 
 signal.signal(signal.SIGINT, close)
 while True:

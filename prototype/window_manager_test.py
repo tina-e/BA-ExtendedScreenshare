@@ -12,7 +12,7 @@ class WindowManager:
         self.ewmh = EWMH()
         self.x = self.y = self.width = self.height = self.depth = 0
 
-    def setup(self):
+    def __set_stream_coords(self):
         time.sleep(10)
         self.x, self.y, self.width, self.height, self.depth = self.__get_stream_coordinates()
 

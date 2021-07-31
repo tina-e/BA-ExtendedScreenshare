@@ -59,7 +59,5 @@ MOUSE_DEVICE_STREAMER_POINT = InputDevice('/dev/input/event9') #mouse pointer (s
 MOUSE_DEVICE_STREAMER_CLICK = InputDevice('/dev/input/event6') #mouse keys (see xinput list: listed at pointer AND keyboard)
 
 
-
-
 #MOUSE_EVENT = 'mouseevent'
 #CAP_EVENT = 'capevent'

@@ -52,7 +52,8 @@ for i, win in enumerate(get_open_windows()):
 #        print(child.get_geometry())
 
 
-
+for win in get_open_windows():
+    print(win.get_wm_class())
 
 
 
