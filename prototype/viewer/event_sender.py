@@ -3,12 +3,15 @@ import socket
 import threading
 import time
 
+import gi
 import pyautogui
 from evdev import InputDevice, ecodes, categorize
 from pynput.mouse import Listener as MouseListener, Controller as MouseController
 import pyperclip
 from tkinter import Tk
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
+
 from pynput.keyboard import Key, Listener as KeyListener, Controller as KeyController
 from event_types import EventTypes, get_id_by_button
 import window_manager

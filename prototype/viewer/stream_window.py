@@ -53,6 +53,7 @@ class StreamWindow(QMainWindow):
         self.event_sender = EventSender(self)
         self.setupGst()
         assert self.gstWindowId
+        print("show")
         self.show()
         self.start_gstreamer()
 
@@ -69,8 +70,7 @@ class StreamWindow(QMainWindow):
         self.gstWindowId = self.winId()
         print("Setting up gstreamer pipeline, win id %s" % (self.gstWindowId,))
 
-        # todo: pipeline anpassen (ip und port angeben)
-        self.player = Gst.parse_launch('udpsrc port=5000 caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! decodebin ! videoconvert ! ximagesink name=sinkx_overview')
+        self.player = Gst.parse_launch(f'udpsrc address={Config.RECEIVER_ADDRESS} port={Config.STREAM_PORT} caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! decodebin ! videoconvert ! ximagesink name=sinkx_overview')
         #self.player = Gst.parse_launch('videotestsrc ! videoconvert ! videoscale ! ximagesink name=sinkx_overview')
 
         bus = self.player.get_bus()

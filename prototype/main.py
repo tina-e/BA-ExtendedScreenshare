@@ -34,9 +34,9 @@ else:
     stream_window = StreamWindow()
     sys.exit(app.exec_())
 
-signal.signal(signal.SIGINT, close)
-while True:
-    time.sleep(0.1)
+#signal.signal(signal.SIGINT, close)
+#while True:
+#    time.sleep(0.1)
     #try:
     #    time.sleep(1)
     #except KeyboardInterrupt:
