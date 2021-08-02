@@ -68,7 +68,7 @@ class Area(QDialog):
 
             self.begin, self.destination = QPoint(), QPoint()
             self.update()
-            self.close()
+            self.hide()
 
 
     #todo: escape

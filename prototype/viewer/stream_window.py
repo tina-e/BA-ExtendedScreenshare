@@ -98,6 +98,10 @@ class StreamWindow(QMainWindow):
     def get_stream_coords(self):
         return self.x_pos, self.y_pos
 
+    def update_stream_dimensions(self):
+        self.setFixedWidth(Config.WIDTH)
+        self.setFixedHeight(Config.HEIGHT)
+
     def is_active(self):
         return self.isActiveWindow()
 

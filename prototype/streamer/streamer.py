@@ -31,6 +31,14 @@ class Streamer:
         connection_thread = threading.Thread(target=self.receive, daemon=True)
         connection_thread.start()
 
+    def send_stream_coords(self):
+        message = EventTypes.STREAM_COORDS.to_bytes(1, 'big')
+        message += Config.START_X.to_bytes(2, 'big')
+        message += Config.START_Y.to_bytes(2, 'big')
+        message += Config.WIDTH.to_bytes(2, 'big')
+        message += Config.HEIGHT.to_bytes(2, 'big')
+        self.sock.sendto(message, (Config.RECEIVER_ADDRESS, Config.EVENT_PORT))
+
     def receive(self):
         print("Waiting for viewer...")
         receiving = True
@@ -73,6 +81,7 @@ class Streamer:
             self.is_stream_running = True
             self.stream.start()
             self.event_handler.create_device()
+            self.send_stream_coords()
         elif self.is_stream_running:
             self.is_stream_running = False
             self.stream.end()

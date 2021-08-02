@@ -2,14 +2,20 @@ import sys
 from PyQt5.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QWidget, QAction
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
 
 import Config
 from streamer.streamer import Streamer
 from viewer.stream_window import StreamWindow
+from streamer.area import Area
 
 class Menu(QSystemTrayIcon):
-    def __init__(self, icon, parent):
+    def __init__(self, icon, parent, stream_app):
         QSystemTrayIcon.__init__(self, icon, parent)
+        self.stream_app = stream_app
+        self.streamer = None
+        self.stream_viewer = None
+        self.is_stream_paused = False
 
         menu = QMenu(parent)
         self.setContextMenu(menu)
@@ -35,7 +41,8 @@ class Menu(QSystemTrayIcon):
         print("setup stream")
         Config.IS_STREAMER = True
         Config.set_ips()
-        streamer = Streamer()
+        if self.stream_viewer == None:
+            self.streamer = Streamer()
 
     def area(self):
         print("area")
@@ -46,15 +53,18 @@ class Menu(QSystemTrayIcon):
 
     def play(self):
         print("play")
+        self.is_stream_paused = False
 
     def pause(self):
         print("pause")
+        self.is_stream_paused = True
 
     def access(self):
         print("access")
         Config.IS_STREAMER = False
         Config.set_ips()
-        stream_viewer = StreamWindow()
+        if self.stream_viewer == None:
+            self.stream_viewer = StreamWindow()
 
     def quit(self):
         print("end")
@@ -63,8 +73,13 @@ class Menu(QSystemTrayIcon):
 
 def main():
    app = QApplication(sys.argv)
+
+   stream_app = Area()
+   stream_app.setAttribute(Qt.WA_NoSystemBackground, True)
+   stream_app.setAttribute(Qt.WA_TranslucentBackground, True)
+
    w = QWidget()
-   trayIcon = Menu(QIcon("icon.png"), w)
+   trayIcon = Menu(QIcon("icon.png"), w, stream_app)
    trayIcon.show()
    sys.exit(app.exec_())
 

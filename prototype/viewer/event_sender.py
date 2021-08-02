@@ -30,6 +30,9 @@ class EventSender:
         self.tk = Tk()
         self.ctr_hold = False
 
+        receiving_thread = threading.Thread(target=self.receive, daemon=True)
+        receiving_thread.start()
+
         button_thread = MouseListener(on_click=self.on_click, on_scroll=self.on_scroll)
         button_thread.daemon = True
         button_thread.start()
@@ -40,6 +43,22 @@ class EventSender:
         keyboard_thread = threading.Thread(target=self.listen_keyboard, daemon=True)
         keyboard_thread.start()
 
+    def receive(self):
+        receiving = True
+        while receiving:
+            data, addr = self.sock.recvfrom(1024)
+            try:
+                event_type = EventTypes(data[0])
+                if event_type == EventTypes.STREAM_COORDS:
+                    x = int.from_bytes(data[1:3], 'big')
+                    y = int.from_bytes(data[3:5], 'big')
+                    width = int.from_bytes(data[5:7], 'big')
+                    height = int.from_bytes(data[7:9], 'big')
+                    print(f"stream coords: {x} {y} {width} {height}")
+                    Config.set_coords((x, y, width, height))
+                    self.stream_window.update_stream_dimensions()
+            except UnicodeDecodeError:
+                continue
 
     def send(self, message):
         self.sock.sendto(message, (Config.STREAMER_ADDRESS, Config.EVENT_PORT))
@@ -49,7 +68,6 @@ class EventSender:
         message += is_viewing.to_bytes(1, 'big')
         print("VIEW", message)
         self.send(message)
-
 
     def on_click(self, x, y, button, was_pressed):
         if self.stream_window.is_active():

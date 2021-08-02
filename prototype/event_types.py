@@ -4,14 +4,15 @@ from evdev import ecodes
 
 class EventTypes(IntEnum):
     VIEWING = 0
-    MOUSE_MOVEMENT = 1
-    MOUSE_CLICK = 2
-    MOUSE_SCROLL = 3
-    KEYBOARD = 4
-    PASTE = 5
-    COPY = 6
-    CAPABILITY_MOUSE = 7
-    CAPABILITY_KEYBOARD = 8
+    STREAM_COORDS = 1
+    MOUSE_MOVEMENT = 2
+    MOUSE_CLICK = 3
+    MOUSE_SCROLL = 4
+    KEYBOARD = 5
+    PASTE = 6
+    COPY = 7
+    CAPABILITY_MOUSE = 8
+    CAPABILITY_KEYBOARD = 9
 
 def get_button_by_id(id):
     if id == 0: return Button.left
