@@ -3,14 +3,14 @@ import pyautogui
 import socket
 
 # IPs and Ports
-DEVICE_ADDRESS_LIST = [('tina', '192.168.178.23'), ('tinapc', '192.168.178.136')]
+DEVICE_ADDRESS_LIST = [('tina-EasyNote-TH36', '192.168.178.23'), ('tinapc', '192.168.178.136')]
 STREAMER_ADDRESS = ''
 RECEIVER_ADDRESS = ''
 IS_STREAMER = False
 
 
 def set_ips():
-    global STREAMER_ADDRESS, RECEIVER_ADDRESS
+    global STREAMER_ADDRESS, RECEIVER_ADDRESS, IS_STREAMER
     if IS_STREAMER:
         if DEVICE_ADDRESS_LIST[0][0] == socket.gethostname():
             STREAMER_ADDRESS = DEVICE_ADDRESS_LIST[0][1]
@@ -34,7 +34,9 @@ EVENT_PORT = 8000
 
 # GUI
 RESOLUTION_X = pyautogui.size().width
+print(RESOLUTION_X)
 RESOLUTION_Y = pyautogui.size().height
+print(RESOLUTION_Y)
 
 START_X = 0
 START_Y = 0
@@ -43,18 +45,12 @@ END_Y = 0
 WIDTH = 0
 HEIGHT = 0
 
-
 def set_coords(dimensions):
-    global START_X, START_Y, END_X, END_Y
+    global START_X, START_Y, END_X, END_Y, WIDTH, HEIGHT
     START_X = dimensions[0]
     START_Y = dimensions[1]
     END_X = dimensions[2]
     END_Y = dimensions[3]
-    calc_dimensions()
-
-
-def calc_dimensions():
-    global START_X, START_Y, END_X, END_Y, WIDTH, HEIGHT
     WIDTH = END_X - START_X
     HEIGHT = END_Y - START_Y
 

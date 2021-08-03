@@ -1,4 +1,4 @@
-from prototype.streamer.frame_maker import FrameMaker
+from streamer.frame_maker import FrameMaker
 import Config
 import gi
 gi.require_version("Gst", "1.0")

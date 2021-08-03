@@ -9,8 +9,8 @@ import Config
 
 
 
-from prototype.streamer.stream import Stream
-from prototype.streamer.mouse_handler import EventHandlerEvdev
+from streamer.stream import Stream
+from streamer.mouse_handler import EventHandlerEvdev
 
 #from streamer.mouse_handler_autogui import EventHandler
 from event_types import EventTypes, get_button_by_id
@@ -32,11 +32,13 @@ class Streamer:
         connection_thread.start()
 
     def send_stream_coords(self):
+        #time.sleep(10)
+        print("sending coords")
         message = EventTypes.STREAM_COORDS.to_bytes(1, 'big')
         message += Config.START_X.to_bytes(2, 'big')
         message += Config.START_Y.to_bytes(2, 'big')
-        message += Config.WIDTH.to_bytes(2, 'big')
-        message += Config.HEIGHT.to_bytes(2, 'big')
+        message += Config.END_X.to_bytes(2, 'big')
+        message += Config.END_Y.to_bytes(2, 'big')
         self.sock.sendto(message, (Config.RECEIVER_ADDRESS, Config.EVENT_PORT))
 
     def receive(self):
@@ -46,7 +48,9 @@ class Streamer:
             data, addr = self.sock.recvfrom(1024)
             try:
                 event_type = EventTypes(data[0])
-                if event_type == EventTypes.VIEWING:
+                if event_type == EventTypes.REGISTER:
+                    self.send_stream_coords()
+                elif event_type == EventTypes.VIEWING:
                     is_viewing = data[1]
                     print(f"is someone watching stream? {is_viewing}")
                     self.handle_view(is_viewing)
@@ -81,7 +85,7 @@ class Streamer:
             self.is_stream_running = True
             self.stream.start()
             self.event_handler.create_device()
-            self.send_stream_coords()
+            #self.send_stream_coords()
         elif self.is_stream_running:
             self.is_stream_running = False
             self.stream.end()
@@ -93,7 +97,8 @@ class Streamer:
     def close_stream(self):
         if self.is_stream_running:
             self.is_stream_running = False
-            self.stream.end()
+            #self.stream.end()
+            self.stream.close()
             self.event_handler.remove_device()
         else:
             self.stream.close()

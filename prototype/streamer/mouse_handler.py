@@ -54,7 +54,7 @@ class EventHandlerEvdev():
 
         print(subprocess.check_output("xinput list", shell=True).decode('utf-8'))
         self.map_mouse_movement(0, 0)
-        self.create_cursor_highlighting()
+        #self.create_cursor_highlighting()
 
     #todo: def create_cursor_highlighting(self):
 

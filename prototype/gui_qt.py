@@ -12,9 +12,8 @@ from viewer.stream_window import StreamWindow
 from streamer.area import Area
 
 class Menu(QSystemTrayIcon):
-    def __init__(self, icon, parent, stream_app):
+    def __init__(self, icon, parent):
         QSystemTrayIcon.__init__(self, icon, parent)
-        self.stream_app = stream_app
         self.streamer = None
         self.stream_viewer = None
         self.is_stream_paused = False
@@ -48,8 +47,12 @@ class Menu(QSystemTrayIcon):
 
     def area(self):
         print("area")
-        self.stream_app.exec()
-        dimensions = self.stream_app.get_coords()
+        area_choser = Area()
+        area_choser.setWindowFlag(Qt.FramelessWindowHint)
+        area_choser.setAttribute(Qt.WA_NoSystemBackground, True)
+        area_choser.setAttribute(Qt.WA_TranslucentBackground, True)
+        area_choser.exec()
+        dimensions = area_choser.get_coords()
         Config.set_coords(dimensions)
         self.setup_stream()
 
@@ -99,20 +102,18 @@ class Menu(QSystemTrayIcon):
 
 
     def quit(self):
-        if not Config.IS_STREAMER:
+        print("end")
+        if Config.IS_STREAMER and self.streamer is not None:
+            self.streamer.close_stream()
+        elif (not Config.IS_STREAMER) and (self.stream_viewer is not None):
             self.stream_viewer.close()
         QtCore.QCoreApplication.exit()
 
 
 def main():
    app = QApplication(sys.argv)
-
-   stream_app = Area()
-   stream_app.setAttribute(Qt.WA_NoSystemBackground, True)
-   stream_app.setAttribute(Qt.WA_TranslucentBackground, True)
-
    w = QWidget()
-   trayIcon = Menu(QIcon("icon.png"), w, stream_app)
+   trayIcon = Menu(QIcon("icon.png"), w)
    trayIcon.show()
    sys.exit(app.exec_())
 

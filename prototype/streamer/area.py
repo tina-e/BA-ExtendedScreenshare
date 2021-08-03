@@ -13,6 +13,7 @@ class Area(QDialog):
         super().__init__()
         self.setGeometry(0, 0, Config.RESOLUTION_X, Config.RESOLUTION_Y)
 
+
         layout = QVBoxLayout()
         self.setLayout(layout)
 
@@ -30,6 +31,7 @@ class Area(QDialog):
         return self.start_x, self.start_y, self.end_x, self.end_y
 
     def paintEvent(self, event):
+        print("paint")
         painter = QPainter(self)
         painter.setOpacity(0.2)
         painter.drawPixmap(QPoint(), self.pix)
