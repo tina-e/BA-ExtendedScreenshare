@@ -34,9 +34,7 @@ EVENT_PORT = 8000
 
 # GUI
 RESOLUTION_X = pyautogui.size().width
-print(RESOLUTION_X)
 RESOLUTION_Y = pyautogui.size().height
-print(RESOLUTION_Y)
 
 START_X = 0
 START_Y = 0
@@ -56,6 +54,12 @@ def set_coords(dimensions):
 
 
 BORDER_WIDTH = 2
+
+STREAM_ACTIVE = False
+
+def toggle_stream_activity():
+    global STREAM_ACTIVE
+    STREAM_ACTIVE = not STREAM_ACTIVE
 
 # Input Devices
 KEYBOARD_DEVICE_STREAMER = InputDevice('/dev/input/event4') #keyboard

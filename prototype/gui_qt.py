@@ -16,7 +16,7 @@ class Menu(QSystemTrayIcon):
         QSystemTrayIcon.__init__(self, icon, parent)
         self.streamer = None
         self.stream_viewer = None
-        self.is_stream_paused = False
+        self.is_stream_active = False
 
         menu = QMenu(parent)
         self.setContextMenu(menu)
@@ -24,22 +24,22 @@ class Menu(QSystemTrayIcon):
         self.fullscreen_action = menu.addAction("Stream full screen")
         self.area_action = menu.addAction("Stream area")
         menu.addSeparator()
-        self.play_action = menu.addAction("Play")
-        self.pause_action = menu.addAction("Pause")
-        menu.addSeparator()
+        #self.play_action = menu.addAction("Play")
+        #self.pause_action = menu.addAction("Pause")
+        #menu.addSeparator()
         self.access_action = menu.addAction("Access Stream")
         menu.addSeparator()
         self.quit_action = menu.addAction("Quit")
         
         self.fullscreen_action.triggered.connect(self.setup_stream)
         self.area_action.triggered.connect(self.area)
-        self.play_action.triggered.connect(self.play)
-        self.pause_action.triggered.connect(self.pause)
+        #self.play_action.triggered.connect(self.play)
+        #self.pause_action.triggered.connect(self.pause)
         self.access_action.triggered.connect(self.access)
         self.quit_action.triggered.connect(self.quit)
 
-        self.play_action.setEnabled(False)
-        self.pause_action.setEnabled(False)
+        #self.play_action.setEnabled(False)
+        #self.pause_action.setEnabled(False)
 
     def setup_stream(self):
         print("setup stream")
@@ -59,7 +59,7 @@ class Menu(QSystemTrayIcon):
         Config.set_coords(dimensions)
         self.setup_stream()
 
-    def play(self):
+    '''def play(self):
         print("play")
         self.streamer.play_again_stream()
         self.pause_action.setEnabled(True)
@@ -69,7 +69,7 @@ class Menu(QSystemTrayIcon):
         print("pause")
         self.streamer.pause_stream()
         self.play_action.setEnabled(True)
-        self.pause_action.setEnabled(False)
+        self.pause_action.setEnabled(False)'''
 
     def access(self):
         print("access")
@@ -103,7 +103,6 @@ class Menu(QSystemTrayIcon):
                     print(f"stream coords: {x} {y} {end_x} {end_y}")
                     Config.set_coords((x, y, end_x, end_y))
                     waiting_for_stream = False
-                    self.pause_action.setEnabled(True)
             except UnicodeDecodeError:
                 continue
         sock.close()

@@ -7,12 +7,9 @@ import time
 
 import Config
 
-
-
 from streamer.stream import Stream
 from streamer.mouse_handler import EventHandlerEvdev
 
-#from streamer.mouse_handler_autogui import EventHandler
 from event_types import EventTypes, get_button_by_id
 import socket
 import threading
@@ -95,6 +92,7 @@ class Streamer:
             self.stream.close()
             self.event_handler.remove_device()
 
+
     def pause_stream(self):
         self.stream.pause()
 
@@ -104,16 +102,12 @@ class Streamer:
     def close_stream(self):
         if self.is_stream_running:
             self.is_stream_running = False
-            #self.stream.end()
             self.stream.close()
             self.event_handler.remove_device()
         else:
             self.stream.close()
-            #self.event_handler.remove_device()
+            self.event_handler.remove_device()
 
-
-    #def pause_stream(self):
-    #    self.pipeline.set_state(Gst.State.PAUSED)
 
 
 ##############################################################################################################################
@@ -121,7 +115,6 @@ class Streamer:
 # ! video/x-raw,width=750,height=500   legt größe des streams fest
 # use-damage=0 angeblich CPU fordernd
 # ximageslink creates window for output (glimagesink also possible, higher CPU required)
-# ! videoscale method=0, auch wieder CPU sache scheinbar
 # pipeline = Gst.parse_launch("ximagesrc startx=100 starty=10 endx=800 endy=800 ! video/x-raw,framerate=30/1 ! ximagesink")
 
 # pipeline = Gst.parse_launch("rtpmp4vpay ! decodebin ! videoconvert ! autovideosink")
