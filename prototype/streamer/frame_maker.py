@@ -45,7 +45,7 @@ class FrameMaker:
 
     def __draw(self):
         while True:
-            time.sleep(0.1)
+            time.sleep(0.01)
             if self.is_visible:
                 self.frame.draw(1, self.mouse_x, self.mouse_y)
             else:
