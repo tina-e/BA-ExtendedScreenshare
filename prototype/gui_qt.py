@@ -1,4 +1,6 @@
 import sys
+import socket
+from event_types import EventTypes
 from PyQt5.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QWidget, QAction
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
@@ -63,11 +65,42 @@ class Menu(QSystemTrayIcon):
         print("access")
         Config.IS_STREAMER = False
         Config.set_ips()
+        self.register_to_stream()
         if self.stream_viewer == None:
             self.stream_viewer = StreamWindow()
+            self.stream_viewer.show()
+
+    def register_to_stream(self):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        message = EventTypes.REGISTER.to_bytes(1, 'big')
+        print("REGISTER", message)
+        sock.sendto(message, (Config.STREAMER_ADDRESS, Config.EVENT_PORT))
+        sock.close()
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.bind((Config.RECEIVER_ADDRESS, Config.EVENT_PORT))
+        waiting_for_stream = True
+        while waiting_for_stream:
+            data, addr = sock.recvfrom(1024)
+            print(data, addr)
+            try:
+                event_type = EventTypes(data[0])
+                if event_type == EventTypes.STREAM_COORDS:
+                    x = int.from_bytes(data[1:3], 'big')
+                    y = int.from_bytes(data[3:5], 'big')
+                    end_x = int.from_bytes(data[5:7], 'big')
+                    end_y = int.from_bytes(data[7:9], 'big')
+                    print(f"stream coords: {x} {y} {end_x} {end_y}")
+                    Config.set_coords((x, y, end_x, end_y))
+                    waiting_for_stream = False
+            except UnicodeDecodeError:
+                continue
+        sock.close()
+
 
     def quit(self):
-        print("end")
+        if not Config.IS_STREAMER:
+            self.stream_viewer.close()
         QtCore.QCoreApplication.exit()
 
 

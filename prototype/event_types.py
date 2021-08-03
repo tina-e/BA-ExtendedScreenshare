@@ -3,16 +3,17 @@ from pynput.mouse import Button
 from evdev import ecodes
 
 class EventTypes(IntEnum):
-    VIEWING = 0
+    REGISTER = 0
     STREAM_COORDS = 1
-    MOUSE_MOVEMENT = 2
-    MOUSE_CLICK = 3
-    MOUSE_SCROLL = 4
-    KEYBOARD = 5
-    PASTE = 6
-    COPY = 7
-    CAPABILITY_MOUSE = 8
-    CAPABILITY_KEYBOARD = 9
+    VIEWING = 2
+    MOUSE_MOVEMENT = 3
+    MOUSE_CLICK = 4
+    MOUSE_SCROLL = 5
+    KEYBOARD = 6
+    PASTE = 7
+    COPY = 8
+    #CAPABILITY_MOUSE = 9
+    #CAPABILITY_KEYBOARD = 10
 
 def get_button_by_id(id):
     if id == 0: return Button.left

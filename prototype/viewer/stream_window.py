@@ -53,8 +53,6 @@ class StreamWindow(QMainWindow):
         self.event_sender = EventSender(self)
         self.setupGst()
         assert self.gstWindowId
-        print("show")
-        self.show()
         self.start_gstreamer()
 
     def moveEvent(self, event):
@@ -118,24 +116,3 @@ class StreamWindow(QMainWindow):
         print("end watching")
         self.event_sender.on_view(False)
 
-
-
-######################################################################################################################
-def excepthook(excType, excValue, tracebackobj):
-    print('%s: %s' % (excType, excValue))
-    traceback.print_tb(tracebackobj)
-    os._exit(1)
-
-if __name__ == '__main__':
-    if 1:
-        sys.excepthook = excepthook
-        # Exit on ^C instead of ignoring
-        signal.signal(signal.SIGINT, signal.SIG_DFL)
-
-    GObject.threads_init()
-
-    app = QApplication(sys.argv)
-    #qApp.connect(qApp, SIGNAL('lastWindowClosed()'), qApp, SLOT('quit()'))
-    _gui = StreamWindow()
-    _gui.get_stream_coords()
-    sys.exit(app.exec_())

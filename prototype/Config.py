@@ -4,8 +4,8 @@ import socket
 
 # IPs and Ports
 DEVICE_ADDRESS_LIST = [('tina', '192.168.178.23'), ('tinapc', '192.168.178.136')]
-STREAMER_ADDRESS = '192.168.178.23'
-RECEIVER_ADDRESS = '192.168.178.136'
+STREAMER_ADDRESS = ''
+RECEIVER_ADDRESS = ''
 IS_STREAMER = False
 
 
@@ -36,10 +36,13 @@ EVENT_PORT = 8000
 RESOLUTION_X = pyautogui.size().width
 RESOLUTION_Y = pyautogui.size().height
 
-START_X = 100
-START_Y = 100
-END_X = 500
-END_Y = 500
+START_X = 0
+START_Y = 0
+END_X = 0
+END_Y = 0
+WIDTH = 0
+HEIGHT = 0
+
 
 def set_coords(dimensions):
     global START_X, START_Y, END_X, END_Y
@@ -47,9 +50,14 @@ def set_coords(dimensions):
     START_Y = dimensions[1]
     END_X = dimensions[2]
     END_Y = dimensions[3]
+    calc_dimensions()
 
-WIDTH = END_X - START_X
-HEIGHT = END_Y - START_Y
+
+def calc_dimensions():
+    global START_X, START_Y, END_X, END_Y, WIDTH, HEIGHT
+    WIDTH = END_X - START_X
+    HEIGHT = END_Y - START_Y
+
 
 BORDER_WIDTH = 2
 
