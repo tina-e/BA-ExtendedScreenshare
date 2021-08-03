@@ -26,6 +26,7 @@ class Streamer:
         connection_thread.start()
         # stream
         self.stream = Stream()
+        self.start_stream()
         self.is_stream_running = False
 
     def send_stream_coords(self):
@@ -92,6 +93,8 @@ class Streamer:
             self.stream.close()
             self.event_handler.remove_device()
 
+    def start_stream(self):
+        self.stream.setup()
 
     def pause_stream(self):
         self.stream.pause()

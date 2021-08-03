@@ -43,21 +43,34 @@ class Menu(QSystemTrayIcon):
 
     def setup_stream(self):
         print("setup stream")
-        if self.stream_viewer is None:
+        if self.streamer is None:
             Config.IS_STREAMER = True
             Config.set_ips()
             self.streamer = Streamer()
 
+
     def area(self):
         print("area")
-        area_choser = Area()
-        area_choser.setWindowFlag(Qt.FramelessWindowHint)
-        area_choser.setAttribute(Qt.WA_NoSystemBackground, True)
-        area_choser.setAttribute(Qt.WA_TranslucentBackground, True)
-        area_choser.exec()
-        dimensions = area_choser.get_coords()
-        Config.set_coords(dimensions)
-        self.setup_stream()
+        if self.streamer is None:
+            area_choser = Area()
+            area_choser.setWindowFlag(Qt.FramelessWindowHint)
+            area_choser.setAttribute(Qt.WA_NoSystemBackground, True)
+            area_choser.setAttribute(Qt.WA_TranslucentBackground, True)
+            area_choser.exec()
+            dimensions = area_choser.get_coords()
+            Config.set_coords(dimensions)
+            self.setup_stream()
+        else:
+            self.streamer.close_stream()
+            area_choser = Area()
+            area_choser.setWindowFlag(Qt.FramelessWindowHint)
+            area_choser.setAttribute(Qt.WA_NoSystemBackground, True)
+            area_choser.setAttribute(Qt.WA_TranslucentBackground, True)
+            area_choser.exec()
+            dimensions = area_choser.get_coords()
+            Config.set_coords(dimensions)
+            self.streamer.start_stream()
+
 
     '''def play(self):
         print("play")
