@@ -7,8 +7,7 @@ import Config
 
 
 class FrameMaker:
-    def __init__(self, event_handler):
-        self.event_handler = event_handler
+    def __init__(self):
         self.frame = ctypes.CDLL("/home/martinaemmert/Documents/Bachelorarbeit/CrossDeviceCommunication/prototype/streamer/libframe.so")
         self.frame.setup_rect.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.frame.draw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int]
