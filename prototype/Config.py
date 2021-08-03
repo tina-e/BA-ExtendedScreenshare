@@ -40,10 +40,10 @@ print(RESOLUTION_Y)
 
 START_X = 0
 START_Y = 0
-END_X = 0
-END_Y = 0
-WIDTH = 0
-HEIGHT = 0
+END_X = RESOLUTION_X
+END_Y = RESOLUTION_Y
+WIDTH = END_X - START_X
+HEIGHT = END_Y - START_Y
 
 def set_coords(dimensions):
     global START_X, START_Y, END_X, END_Y, WIDTH, HEIGHT

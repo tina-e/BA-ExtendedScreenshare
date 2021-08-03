@@ -87,7 +87,6 @@ class Streamer:
             self.is_stream_running = True
             self.stream.start()
             self.event_handler.create_device()
-            #self.send_stream_coords()
         elif self.is_stream_running:
             self.is_stream_running = False
             self.stream.end()
@@ -95,6 +94,12 @@ class Streamer:
         else:
             self.stream.close()
             self.event_handler.remove_device()
+
+    def pause_stream(self):
+        self.stream.pause()
+
+    def play_again_stream(self):
+        self.stream.start()
 
     def close_stream(self):
         if self.is_stream_running:

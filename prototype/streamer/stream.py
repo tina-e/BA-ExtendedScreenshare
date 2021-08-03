@@ -30,6 +30,10 @@ class Stream:
         self.pipeline.set_state(Gst.State.PLAYING)
         self.frame_maker.toggle_visibility()
 
+    def pause(self):
+        self.pipeline.set_state(Gst.State.PAUSED)
+        self.frame_maker.toggle_visibility()
+
     def end(self):
         self.pipeline.set_state(Gst.State.NULL)
         self.frame_maker.toggle_visibility()

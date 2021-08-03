@@ -21,28 +21,31 @@ class Menu(QSystemTrayIcon):
         menu = QMenu(parent)
         self.setContextMenu(menu)
 
-        fullscreen_action = menu.addAction("Stream full screen")
-        area_action = menu.addAction("Stream area")
+        self.fullscreen_action = menu.addAction("Stream full screen")
+        self.area_action = menu.addAction("Stream area")
         menu.addSeparator()
-        play_action = menu.addAction("Play")
-        pause_action = menu.addAction("Pause")
+        self.play_action = menu.addAction("Play")
+        self.pause_action = menu.addAction("Pause")
         menu.addSeparator()
-        access_action = menu.addAction("Access Stream")
+        self.access_action = menu.addAction("Access Stream")
         menu.addSeparator()
-        quit_action = menu.addAction("Quit")
+        self.quit_action = menu.addAction("Quit")
         
-        fullscreen_action.triggered.connect(self.setup_stream)
-        area_action.triggered.connect(self.area)
-        play_action.triggered.connect(self.play)
-        pause_action.triggered.connect(self.pause)
-        access_action.triggered.connect(self.access)
-        quit_action.triggered.connect(self.quit)
+        self.fullscreen_action.triggered.connect(self.setup_stream)
+        self.area_action.triggered.connect(self.area)
+        self.play_action.triggered.connect(self.play)
+        self.pause_action.triggered.connect(self.pause)
+        self.access_action.triggered.connect(self.access)
+        self.quit_action.triggered.connect(self.quit)
+
+        self.play_action.setEnabled(False)
+        self.pause_action.setEnabled(False)
 
     def setup_stream(self):
         print("setup stream")
-        Config.IS_STREAMER = True
-        Config.set_ips()
-        if self.stream_viewer == None:
+        if self.stream_viewer is None:
+            Config.IS_STREAMER = True
+            Config.set_ips()
             self.streamer = Streamer()
 
     def area(self):
@@ -58,18 +61,22 @@ class Menu(QSystemTrayIcon):
 
     def play(self):
         print("play")
-        self.is_stream_paused = False
+        self.streamer.play_again_stream()
+        self.pause_action.setEnabled(True)
+        self.play_action.setEnabled(False)
 
     def pause(self):
         print("pause")
-        self.is_stream_paused = True
+        self.streamer.pause_stream()
+        self.play_action.setEnabled(True)
+        self.pause_action.setEnabled(False)
 
     def access(self):
         print("access")
         Config.IS_STREAMER = False
         Config.set_ips()
         self.register_to_stream()
-        if self.stream_viewer == None:
+        if self.stream_viewer is None:
             self.stream_viewer = StreamWindow()
             self.stream_viewer.show()
 
@@ -96,6 +103,7 @@ class Menu(QSystemTrayIcon):
                     print(f"stream coords: {x} {y} {end_x} {end_y}")
                     Config.set_coords((x, y, end_x, end_y))
                     waiting_for_stream = False
+                    self.pause_action.setEnabled(True)
             except UnicodeDecodeError:
                 continue
         sock.close()
