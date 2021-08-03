@@ -19,17 +19,17 @@ import threading
 
 class Streamer:
     def __init__(self):
+        # event communication
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.bind((Config.STREAMER_ADDRESS, Config.EVENT_PORT))
+        self.event_handler = EventHandlerEvdev()
+        # self.event_handler = EventHandler()
+        connection_thread = threading.Thread(target=self.receive, daemon=True)
+        connection_thread.start()
         # stream
         self.stream = Stream()
         self.is_stream_running = False
-        # event communication
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        #self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.bind((Config.STREAMER_ADDRESS, Config.EVENT_PORT))
-        self.event_handler = EventHandlerEvdev()
-        #self.event_handler = EventHandler()
-        connection_thread = threading.Thread(target=self.receive, daemon=True)
-        connection_thread.start()
 
     def send_stream_coords(self):
         #time.sleep(10)
@@ -60,6 +60,7 @@ class Streamer:
                         event_y = int.from_bytes(data[3:5], 'big')
                         # print(f"moved {event_x}, {event_y}")
                         self.event_handler.map_mouse_movement(event_x, event_y)
+                        self.stream.on_mouse_pos_message(event_x, event_y)
                     elif event_type == EventTypes.MOUSE_CLICK:
                         event_x = int.from_bytes(data[1:3], 'big')
                         event_y = int.from_bytes(data[3:5], 'big')
@@ -67,6 +68,7 @@ class Streamer:
                         event_was_pressed = data[6]
                         #print(f"clicked at {event_x}, {event_y} with button {event_button}; pressed: {event_was_pressed}")
                         self.event_handler.map_mouse_click(event_x, event_y, event_button, event_was_pressed)
+                        self.stream.on_mouse_pos_message(event_x, event_y)
                     elif event_type == EventTypes.MOUSE_SCROLL:
                         event_dx = int.from_bytes(data[5:7], 'big', signed=True)
                         event_dy = int.from_bytes(data[7:9], 'big', signed=True)

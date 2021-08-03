@@ -23,6 +23,9 @@ class Stream:
         print(self.pipeline, "opened")
         self.frame_maker = FrameMaker()
 
+    def on_mouse_pos_message(self, mouse_x, mouse_y):
+        self.frame_maker.set_mouse_pos(mouse_x, mouse_y)
+
     def start(self):
         self.pipeline.set_state(Gst.State.PLAYING)
         self.frame_maker.toggle_visibility()
