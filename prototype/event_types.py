@@ -12,6 +12,7 @@ class EventTypes(IntEnum):
     KEYBOARD = 6
     PASTE = 7
     COPY = 8
+    STREAM_CLOSED = 9
     #CAPABILITY_MOUSE = 9
     #CAPABILITY_KEYBOARD = 10
 
