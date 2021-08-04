@@ -11,6 +11,7 @@ class Stream:
         Gst.init(None)
         self.pipeline = None
         self.frame_maker = None
+        self.pipeline_open = False
 
     def setup(self):
         # https://gist.github.com/esrever10/7d39fe2d4163c5b2d7006495c3c911bb
@@ -25,6 +26,7 @@ class Stream:
             "! rtph264pay "
             f"! udpsink host={Config.RECEIVER_ADDRESS} port={Config.STREAM_PORT} ")
         print(self.pipeline, "opened")
+        self.pipeline_open = True
         self.frame_maker = FrameMaker()
 
     def on_mouse_pos_message(self, mouse_x, mouse_y):
@@ -40,9 +42,13 @@ class Stream:
 
     def end(self):
         self.pipeline.set_state(Gst.State.NULL)
+        self.pipeline_open = False
         self.frame_maker.toggle_visibility()
 
     def close(self):
         self.end()
         self.pipeline = None
         self.frame_maker.end()
+
+    def is_pipeline_playing(self):
+        return self.pipeline_open

@@ -21,12 +21,12 @@ class Menu(QSystemTrayIcon):
         menu = QMenu(parent)
         self.setContextMenu(menu)
 
-        self.fullscreen_action = menu.addAction("Stream full screen")
-        self.area_action = menu.addAction("Stream area")
+        self.fullscreen_action = menu.addAction("Stream Full Screen")
+        self.area_action = menu.addAction("Stream Area")
         menu.addSeparator()
         self.access_action = menu.addAction("Access Stream")
         menu.addSeparator()
-        self.end_action = menu.addAction("Stop")
+        self.end_action = menu.addAction("Stop Stream")
         menu.addSeparator()
         self.quit_action = menu.addAction("Quit")
         
@@ -48,32 +48,31 @@ class Menu(QSystemTrayIcon):
     def setup_stream(self):
         print("setup stream")
         if self.streamer is None:
+            self.end_action.setEnabled(True)
+            self.area_action.setEnabled(False)
+            self.fullscreen_action.setEnabled(False)
             Config.IS_STREAMER = True
             Config.set_ips()
             self.streamer = Streamer()
-        self.end_action.setEnabled(True)
 
     def area(self):
         print("area")
         if self.streamer is None:
-            area_choser = Area()
-            area_choser.setWindowFlag(Qt.FramelessWindowHint)
-            area_choser.setAttribute(Qt.WA_NoSystemBackground, True)
-            area_choser.setAttribute(Qt.WA_TranslucentBackground, True)
-            area_choser.exec()
-            dimensions = area_choser.get_coords()
-            Config.set_coords(dimensions)
+            self.open_area_choser()
             self.setup_stream()
-        else:
-            self.streamer.close_stream()
-            area_choser = Area()
-            area_choser.setWindowFlag(Qt.FramelessWindowHint)
-            area_choser.setAttribute(Qt.WA_NoSystemBackground, True)
-            area_choser.setAttribute(Qt.WA_TranslucentBackground, True)
-            area_choser.exec()
-            dimensions = area_choser.get_coords()
-            Config.set_coords(dimensions)
-            self.streamer.start_stream()
+        #else:
+        #    self.end()
+        #    self.open_area_choser()
+        #    self.streamer.start_stream()
+
+    def open_area_choser(self):
+        area_choser = Area()
+        area_choser.setWindowFlag(Qt.FramelessWindowHint)
+        area_choser.setAttribute(Qt.WA_NoSystemBackground, True)
+        area_choser.setAttribute(Qt.WA_TranslucentBackground, True)
+        area_choser.exec()
+        dimensions = area_choser.get_coords()
+        Config.set_coords(dimensions)
 
     def access(self):
         if self.stream_viewer is None or not self.stream_viewer.isVisible():
@@ -113,7 +112,10 @@ class Menu(QSystemTrayIcon):
         sock.close()
 
     def end(self):
-        print("end")
+        print("end") #todo: if streamer: causes SIGSEGV
+        self.end_action.setEnabled(False)
+        self.fullscreen_action.setEnabled(True)
+        self.area_action.setEnabled(True)
         if Config.IS_STREAMER and self.streamer is not None:
             self.streamer.close_stream()
         elif (not Config.IS_STREAMER) and (self.stream_viewer is not None):
@@ -121,9 +123,12 @@ class Menu(QSystemTrayIcon):
 
     def quit(self):
         print("quit")
-        if (Config.IS_STREAMER and self.streamer.is_stream_running) or ((not Config.IS_STREAMER) and self.stream_viewer.isVisible()):
-            print("perform end action")
-            self.end()
+        if Config.IS_STREAMER:
+            if self.streamer is None or self.streamer.is_stream_open():
+                self.end()
+        else:
+            if self.stream_viewer is None or self.stream_viewer.isVisible():
+                self.end()
         QtCore.QCoreApplication.exit()
 
     '''def play(self):

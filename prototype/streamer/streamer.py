@@ -27,7 +27,7 @@ class Streamer:
         # stream
         self.stream = Stream()
         self.start_stream()
-        self.is_stream_running = False
+        self.is_stream_active = False
 
     def send_stream_coords(self):
         #time.sleep(10)
@@ -37,6 +37,11 @@ class Streamer:
         message += Config.START_Y.to_bytes(2, 'big')
         message += Config.END_X.to_bytes(2, 'big')
         message += Config.END_Y.to_bytes(2, 'big')
+        self.sock.sendto(message, (Config.RECEIVER_ADDRESS, Config.EVENT_PORT))
+
+    def send_stream_closed(self):
+        print("stream closed")
+        message = EventTypes.STREAM_CLOSED.to_bytes(1, 'big')
         self.sock.sendto(message, (Config.RECEIVER_ADDRESS, Config.EVENT_PORT))
 
     def receive(self):
@@ -49,10 +54,10 @@ class Streamer:
                 if event_type == EventTypes.REGISTER:
                     self.send_stream_coords()
                 elif event_type == EventTypes.VIEWING:
-                    is_viewing = data[1]
-                    print(f"is someone watching stream? {is_viewing}")
-                    self.handle_view(is_viewing)
-                elif self.is_stream_running:
+                    queries_stream = data[1]
+                    print(f"is someone watching stream? {queries_stream}")
+                    self.handle_view(queries_stream)
+                elif self.is_stream_active:
                     if event_type == EventTypes.MOUSE_MOVEMENT:
                         event_x = int.from_bytes(data[1:3], 'big')
                         event_y = int.from_bytes(data[3:5], 'big')
@@ -80,17 +85,14 @@ class Streamer:
             except UnicodeDecodeError:
                 continue
 
-    def handle_view(self, is_viewing):
-        if is_viewing:
-            self.is_stream_running = True
+    def handle_view(self, queries_stream):
+        if queries_stream:
+            self.is_stream_active = True
             self.stream.start()
             self.event_handler.create_device()
-        elif self.is_stream_running:
-            self.is_stream_running = False
-            self.stream.end()
-            self.event_handler.remove_device()
         else:
-            self.stream.close()
+            self.is_stream_active = False
+            self.stream.end()
             self.event_handler.remove_device()
 
     def start_stream(self):
@@ -103,15 +105,18 @@ class Streamer:
         self.stream.start()
 
     def close_stream(self):
-        if self.is_stream_running:
-            self.is_stream_running = False
-            self.stream.close()
+        if self.is_stream_active:
+            self.is_stream_active = False
             self.event_handler.remove_device()
+            self.stream.close()
         else:
+            self.is_stream_active = False
+            self.stream.end()
             self.stream.close()
-            self.event_handler.remove_device()
+            #self.event_handler.remove_device()
 
-
+    def is_stream_open(self):
+        return self.stream.is_pipeline_playing()
 
 ##############################################################################################################################
 

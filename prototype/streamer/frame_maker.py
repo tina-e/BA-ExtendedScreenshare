@@ -8,7 +8,7 @@ import Config
 
 class FrameMaker:
     def __init__(self):
-        self.frame = ctypes.CDLL("/home/martinaemmert/Documents/Bachelorarbeit/CrossDeviceCommunication/prototype/streamer/libframe.so")
+        self.frame = ctypes.CDLL("/home/tina/PycharmProjects/BA-CrossDeviceCommunication/prototype/streamer/libframe.so")
         self.frame.setup_rect.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.frame.draw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int]
         #x, y, width, height = self.get_frame_position()
@@ -45,7 +45,7 @@ class FrameMaker:
 
     def __draw(self):
         while True:
-            time.sleep(0.01)
+            time.sleep(0.15)
             if self.is_visible:
                 self.frame.draw(1, self.mouse_x, self.mouse_y)
             else:

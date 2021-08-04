@@ -70,9 +70,11 @@ class EventHandlerEvdev():
 
     def map_mouse_click(self, x, y, button, was_pressed):
         self.mouse_ui.write(ecodes.EV_KEY, get_device_by_button(button), was_pressed)
+        self.key_ui.syn()
 
     def map_mouse_scroll(self, dx, dy):
         self.mouse_ui.write(ecodes.EV_REL, ecodes.REL_WHEEL, dy)
+        self.key_ui.syn()
 
     def map_keyboard(self, key, value):
         self.key_ui.write(ecodes.EV_KEY, key, value)
