@@ -76,14 +76,14 @@ class Menu(QSystemTrayIcon):
             self.streamer.start_stream()
 
     def access(self):
-        print("access")
-        Config.IS_STREAMER = False
-        Config.set_ips()
-        self.register_to_stream()
-        if self.stream_viewer is None:
+        if self.stream_viewer is None or not self.stream_viewer.isVisible():
+            print("access")
+            Config.IS_STREAMER = False
+            Config.set_ips()
+            self.register_to_stream()
             self.stream_viewer = StreamWindow()
             self.stream_viewer.show()
-        self.end_action.setEnabled(True)
+            self.end_action.setEnabled(True)
 
     def register_to_stream(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
