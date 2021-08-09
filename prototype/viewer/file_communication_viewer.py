@@ -10,18 +10,21 @@ from prototype import Config
 
 class FileClient:
     def __init__(self):
-        self.connection = client.HTTPConnection(Config.RECEIVER_ADDRESS_TEST, Config.FILE_PORT)
+        print("addr", Config.STREAMER_ADDRESS)
+        self.connection = client.HTTPConnection(Config.STREAMER_ADDRESS_TEST, Config.FILE_PORT)
 
     def connect(self):
         self.connection.connect()
-        self.connection.request('GET', f"http://{Config.RECEIVER_ADDRESS_TEST}:{Config.FILE_PORT}/connect")
+        self.connection.request('GET', f"http://{Config.STREAMER_ADDRESS_TEST}:{Config.FILE_PORT}/connect")
         response = self.connection.getresponse()
         print(response)
 
     def send_file(self, filename, mimetype, drop_x, drop_y):
-        url = f"http://{Config.RECEIVER_ADDRESS_TEST}:{Config.FILE_PORT}/{Config.FILE_EVENT}"
+        url = f"http://{Config.STREAMER_ADDRESS_TEST}:{Config.FILE_PORT}/{Config.FILE_EVENT}"
+        filename = filename.replace('\r', '')
+        filename = filename.replace('\n', '')
         files = {"files": open(filename, 'rb')}
-        data = {"filename": filename, "mimetype": mimetype, "x": drop_x, "y": drop_y}
+        data = {"filename": filename.split('/')[-1], "mimetype": mimetype, "x": drop_x, "y": drop_y}
         r = requests.post(url, files=files, data=data)
         print(r.status_code)
 

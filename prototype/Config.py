@@ -33,6 +33,8 @@ def set_ips():
 
 STREAM_PORT = 5000
 EVENT_PORT = 8000
+FILE_PORT = 9999
+FILE_EVENT = 'fileevent'
 
 # GUI
 RESOLUTION_X = pyautogui.size().width
@@ -71,5 +73,4 @@ MOUSE_DEVICE_STREAMER_CLICK = InputDevice('/dev/input/event6') #mouse keys (see 
 
 #MOUSE_EVENT = 'mouseevent'
 #CAP_EVENT = 'capevent'
-FILE_EVENT = 'fileevent'
-FILE_PORT = 9999
+

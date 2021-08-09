@@ -30,8 +30,8 @@ from gi.repository import Gst
 Gst.init(None)
 from gi.repository import GObject
 
-from event_sender import EventSender
-from file_communication_viewer import FileClient
+from viewer.event_sender import EventSender
+from viewer.file_communication_viewer import FileClient
 
 from PIL import Image
 
@@ -80,7 +80,7 @@ class StreamWindow(QMainWindow):
         print("hasText", event.mimeData().hasText())
         print("hasUrls", event.mimeData().hasUrls())
         if is_file:
-            self.file_communicator.send_file(event_content.lstrip('file://'), event.mimeData().formats()[0], event_pos_x, event_pos_y)
+            self.file_communicator.send_file(event_content.lstrip('file:'), event.mimeData().formats()[0], event_pos_x, event_pos_y)
         else:
             print("send text") #todo
         print(event_content)
@@ -147,9 +147,9 @@ class StreamWindow(QMainWindow):
         self.event_sender.on_view(False)
 
 
-app = QApplication(sys.argv)
-win = StreamWindow()
-win.show()
-sys.exit(app.exec_())
+#app = QApplication(sys.argv)
+#win = StreamWindow()
+#win.show()
+#sys.exit(app.exec_())
 
 
