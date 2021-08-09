@@ -23,14 +23,15 @@ import signal
 
 import gi
 
-import Config
+from prototype import Config
 
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst
 Gst.init(None)
 from gi.repository import GObject
 
-from viewer.event_sender import EventSender
+from event_sender import EventSender
+from file_communication_viewer import FileClient
 
 from PIL import Image
 
@@ -44,16 +45,45 @@ if 1:
 class StreamWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-        self.setFixedWidth(Config.WIDTH)
-        self.setFixedHeight(Config.HEIGHT)
+        #self.setFixedWidth(Config.WIDTH)
+        self.setFixedWidth(500)
+        #self.setFixedHeight(Config.HEIGHT)
+        self.setFixedHeight(500)
         self.setWindowTitle('Streaming')
         self.gstWindowId = None
         self.x_pos = None
         self.y_pos = None
+        self.setAcceptDrops(True)
         self.event_sender = EventSender(self)
+        self.file_communicator = FileClient()
+        self.file_communicator.connect()
         self.setupGst()
         assert self.gstWindowId
         self.start_gstreamer()
+
+    def dragEnterEvent(self, event):
+        event.accept()
+
+    def dragMoveEvent(self, event):
+        event.accept()
+
+    def dropEvent(self, event):
+        event_content = event.mimeData().text()
+        event_pos_x = event.pos().x()
+        event_pos_y = event.pos().y()
+        is_file = event.mimeData().hasFormat('COMPOUND_TEXT')
+
+        print("own is file?", is_file)
+        print("hasColor", event.mimeData().hasColor())
+        print("hasHtml", event.mimeData().hasHtml())
+        print("hasImage", event.mimeData().hasImage())
+        print("hasText", event.mimeData().hasText())
+        print("hasUrls", event.mimeData().hasUrls())
+        if is_file:
+            self.file_communicator.send_file(event_content.lstrip('file://'), event.mimeData().formats()[0], event_pos_x, event_pos_y)
+        else:
+            print("send text") #todo
+        print(event_content)
 
     def moveEvent(self, event):
         self.x_pos = self.pos().x()
@@ -109,10 +139,17 @@ class StreamWindow(QMainWindow):
         y_calculated = y - self.y_pos - depth
         if 0 <= x_calculated <= self.width() and 0 <= y_calculated <= self.height():
             return x_calculated, y_calculated
-        print("cursor out of stream")
+        #print("cursor out of stream")
         return None, None
 
     def closeEvent(self, event):
         print("end watching")
         self.event_sender.on_view(False)
+
+
+app = QApplication(sys.argv)
+win = StreamWindow()
+win.show()
+sys.exit(app.exec_())
+
 

@@ -112,13 +112,13 @@ class Menu(QSystemTrayIcon):
         sock.close()
 
     def end(self):
-        print("end") #todo: if streamer: causes SIGSEGV
+        print("end") #todo: if streamer: causes SIGSEGV/SIGABRT
         self.end_action.setEnabled(False)
         self.fullscreen_action.setEnabled(True)
         self.area_action.setEnabled(True)
         if Config.IS_STREAMER and self.streamer is not None:
             self.streamer.close_stream()
-        elif (not Config.IS_STREAMER) and (self.stream_viewer is not None):
+        elif (not Config.IS_STREAMER) and (self.stream_viewer is not None) and (self.stream_viewer.isVisible()):
             self.stream_viewer.close()
 
     def quit(self):
@@ -130,6 +130,7 @@ class Menu(QSystemTrayIcon):
             if self.stream_viewer is None or self.stream_viewer.isVisible():
                 self.end()
         QtCore.QCoreApplication.exit()
+
 
     '''def play(self):
         print("play")

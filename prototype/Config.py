@@ -8,6 +8,8 @@ STREAMER_ADDRESS = ''
 RECEIVER_ADDRESS = ''
 IS_STREAMER = False
 
+STREAMER_ADDRESS_TEST = '192.168.178.23'
+RECEIVER_ADDRESS_TEST = '192.168.178.136'
 
 def set_ips():
     global STREAMER_ADDRESS, RECEIVER_ADDRESS, IS_STREAMER
@@ -69,3 +71,5 @@ MOUSE_DEVICE_STREAMER_CLICK = InputDevice('/dev/input/event6') #mouse keys (see 
 
 #MOUSE_EVENT = 'mouseevent'
 #CAP_EVENT = 'capevent'
+FILE_EVENT = 'fileevent'
+FILE_PORT = 9999

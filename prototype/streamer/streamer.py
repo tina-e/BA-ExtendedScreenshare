@@ -9,18 +9,25 @@ import Config
 
 from streamer.stream import Stream
 from streamer.mouse_handler import EventHandlerEvdev
+from streamer.file_communication_streamer import FileServer
 
+import sys
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import QApplication
 from event_types import EventTypes, get_button_by_id
 import socket
 import threading
 
 class Streamer:
     def __init__(self):
+        self.superior_app = QApplication(sys.argv)
         # event communication
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((Config.STREAMER_ADDRESS, Config.EVENT_PORT))
         self.event_handler = EventHandlerEvdev()
+        # file communication
+        self.file_communicator = FileServer(self)
         # self.event_handler = EventHandler()
         connection_thread = threading.Thread(target=self.receive, daemon=True)
         connection_thread.start()
@@ -90,10 +97,12 @@ class Streamer:
             self.is_stream_active = True
             self.stream.start()
             self.event_handler.create_device()
+            self.file_communicator.start()
         else:
             self.is_stream_active = False
             self.stream.end()
             self.event_handler.remove_device()
+            self.file_communicator.close()
 
     def start_stream(self):
         self.stream.setup()
@@ -109,14 +118,25 @@ class Streamer:
             self.is_stream_active = False
             self.event_handler.remove_device()
             self.stream.close()
+            self.file_communicator.close()
         else:
             self.is_stream_active = False
             self.stream.end()
             self.stream.close()
+            self.file_communicator.close()
             #self.event_handler.remove_device()
 
     def is_stream_open(self):
         return self.stream.is_pipeline_playing()
+
+    def paste_file(self, file, mimetype, x_pos, y_pos):
+        data = QtCore.QMimeData()
+        data.setData(mimetype, file)
+        #url = QtCore.QUrl.fromLocalFile('c:\\foo.file')
+        #data.setUrls([url])
+        self.superior_app.clipboard().setMimeData(data)
+        #todo paste content at given position
+        self.superior_app.clipboard().clear()
 
 ##############################################################################################################################
 

@@ -13,10 +13,10 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 
 from pynput.keyboard import Key, Listener as KeyListener, Controller as KeyController
-from event_types import EventTypes, get_id_by_button
-import window_manager
+from prototype.event_types import EventTypes, get_id_by_button
+#import window_manager
 #from window_manager_test import WindowManager
-import Config
+from prototype import Config
 
 class EventSender:
     def __init__(self, stream_window):
