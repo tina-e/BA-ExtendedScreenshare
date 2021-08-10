@@ -5,22 +5,23 @@ import http.client as client
 
 import requests
 
-from prototype import Config
+#from prototype import Config
 
 
 class FileClient:
-    def __init__(self):
-        print("addr", Config.STREAMER_ADDRESS)
-        self.connection = client.HTTPConnection(Config.STREAMER_ADDRESS_TEST, Config.FILE_PORT)
+    def __init__(self, configurator):
+        self.config = configurator
+        print("addr", self.config.STREAMER_ADDRESS)
+        self.connection = client.HTTPConnection(self.config.STREAMER_ADDRESS_TEST, self.config.FILE_PORT)
 
     def connect(self):
         self.connection.connect()
-        self.connection.request('GET', f"http://{Config.STREAMER_ADDRESS_TEST}:{Config.FILE_PORT}/connect")
+        self.connection.request('GET', f"http://{self.config.STREAMER_ADDRESS_TEST}:{self.config.FILE_PORT}/connect")
         response = self.connection.getresponse()
         print(response)
 
     def send_file(self, filename, mimetype, drop_x, drop_y):
-        url = f"http://{Config.STREAMER_ADDRESS_TEST}:{Config.FILE_PORT}/{Config.FILE_EVENT}"
+        url = f"http://{self.config.STREAMER_ADDRESS_TEST}:{self.config.FILE_PORT}/{self.config.FILE_EVENT}"
         filename = filename.replace('\r', '')
         filename = filename.replace('\n', '')
         files = {"files": open(filename, 'rb')}

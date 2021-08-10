@@ -5,7 +5,7 @@ import time
 # sudo apt install python3-gst-1.0
 
 
-import Config
+#import Config
 
 from streamer.stream import Stream
 from streamer.mouse_handler import EventHandlerEvdev
@@ -19,20 +19,21 @@ import socket
 import threading
 
 class Streamer:
-    def __init__(self):
+    def __init__(self, configurator):
+        self.config = configurator
         self.superior_app = QApplication(sys.argv)
         # event communication
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.bind((Config.STREAMER_ADDRESS, Config.EVENT_PORT))
-        self.event_handler = EventHandlerEvdev()
+        self.sock.bind((self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
+        self.event_handler = EventHandlerEvdev(configurator)
         # file communication
-        self.file_communicator = FileServer(self)
+        self.file_communicator = FileServer(self, self.config.FILE_EVENT, self.config.STREAMER_ADDRESS, self.config.FILE_PORT)
         # self.event_handler = EventHandler()
         connection_thread = threading.Thread(target=self.receive, daemon=True)
         connection_thread.start()
         # stream
-        self.stream = Stream()
+        self.stream = Stream(configurator)
         self.start_stream()
         self.is_stream_active = False
 
@@ -40,16 +41,16 @@ class Streamer:
         #time.sleep(10)
         print("sending coords")
         message = EventTypes.STREAM_COORDS.to_bytes(1, 'big')
-        message += Config.START_X.to_bytes(2, 'big')
-        message += Config.START_Y.to_bytes(2, 'big')
-        message += Config.END_X.to_bytes(2, 'big')
-        message += Config.END_Y.to_bytes(2, 'big')
-        self.sock.sendto(message, (Config.RECEIVER_ADDRESS, Config.EVENT_PORT))
+        message += self.config.START_X.to_bytes(2, 'big')
+        message += self.config.START_Y.to_bytes(2, 'big')
+        message += self.config.END_X.to_bytes(2, 'big')
+        message += self.config.END_Y.to_bytes(2, 'big')
+        self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
 
     def send_stream_closed(self):
         print("stream closed")
         message = EventTypes.STREAM_CLOSED.to_bytes(1, 'big')
-        self.sock.sendto(message, (Config.RECEIVER_ADDRESS, Config.EVENT_PORT))
+        self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
 
     def receive(self):
         print("Waiting for viewer...")

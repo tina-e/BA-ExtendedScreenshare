@@ -3,10 +3,11 @@ import subprocess
 import time
 from event_types import get_device_by_button
 from evdev import UInput, ecodes, AbsInfo, InputDevice
-import Config
+#import Config
 
 class EventHandlerEvdev():
-    def __init__(self, ):
+    def __init__(self, configurator):
+        self.config = configurator
         self.cap_mouse = {
             #ecodes.EV_SYN: [ecodes.SYN_REPORT, ecodes.SYN_CONFIG, ecodes.SYN_MT_REPORT, ecodes.SYN_DROPPED, 21],
             ecodes.EV_KEY: [ecodes.KEY_POWER, ecodes.BTN_LEFT, ecodes.BTN_MOUSE, ecodes.BTN_RIGHT],
@@ -27,15 +28,15 @@ class EventHandlerEvdev():
             ecodes.EV_KEY: [ecodes.KEY_POWER, ecodes.BTN_LEFT, ecodes.BTN_MOUSE, ecodes.BTN_RIGHT, ecodes.BTN_MIDDLE],
             ecodes.EV_REL: [ecodes.REL_WHEEL],
             ecodes.EV_ABS: [
-                (ecodes.ABS_X, AbsInfo(value=0, min=0, max=Config.RESOLUTION_X, fuzz=0, flat=0, resolution=31)),
-                (ecodes.ABS_Y, AbsInfo(0, 0, Config.RESOLUTION_Y, 0, 0, 31)),
+                (ecodes.ABS_X, AbsInfo(value=0, min=0, max=self.config.RESOLUTION_X, fuzz=0, flat=0, resolution=31)),
+                (ecodes.ABS_Y, AbsInfo(0, 0, self.config.RESOLUTION_Y, 0, 0, 31)),
                 (ecodes.ABS_PRESSURE, AbsInfo(0, 0, 4000, 0, 0, 31))],
         }
 
     def create_device(self):
         #todo: set cursor color
         self.mouse_ui = UInput(self.cap_mouse, name='mouse', version=0x3)
-        self.key_ui = UInput.from_device(Config.KEYBOARD_DEVICE_STREAMER, Config.MOUSE_DEVICE_STREAMER_CLICK, name='key')
+        self.key_ui = UInput.from_device(self.config.KEYBOARD_DEVICE_STREAMER, self.config.MOUSE_DEVICE_STREAMER_CLICK, name='key')
         print(subprocess.check_output("xinput list", shell=True).decode('utf-8'))
 
         subprocess.check_output("xinput create-master master", shell=True)
@@ -60,8 +61,8 @@ class EventHandlerEvdev():
 
 
     def map_mouse_movement(self, x, y):
-        x = x + Config.START_X
-        y = y + Config.START_Y
+        x = x + self.config.START_X
+        y = y + self.config.START_Y
         #print(x, y)
         self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x)
         self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y)

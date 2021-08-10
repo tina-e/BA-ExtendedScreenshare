@@ -5,14 +5,11 @@ from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QDi
 from PyQt5.QtCore import Qt, QPoint, QRect
 from PyQt5.QtGui import QPixmap, QPainter, QPen
 
-import Config
-
 
 class Area(QDialog):
-    def __init__(self):
+    def __init__(self, screen_width, screen_height):
         super().__init__()
-        self.setGeometry(0, 0, Config.RESOLUTION_X, Config.RESOLUTION_Y)
-
+        self.setGeometry(0, 0, screen_width, screen_height)
 
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -31,7 +28,6 @@ class Area(QDialog):
         return self.start_x, self.start_y, self.end_x, self.end_y
 
     def paintEvent(self, event):
-        print("paint")
         painter = QPainter(self)
         painter.setOpacity(0.2)
         painter.drawPixmap(QPoint(), self.pix)

@@ -3,37 +3,44 @@ import os
 import threading
 import time
 
-import Config
+#import Config
 
 
 class FrameMaker:
-    def __init__(self):
+    def __init__(self, x, y, width, height, border_width, max_width, max_height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.border_width = border_width
+        self.max_width = max_width
+        self.max_height = max_height
         self.frame = ctypes.CDLL("/home/martinaemmert/Documents/Bachelorarbeit/CrossDeviceCommunication/prototype/streamer/libframe.so")
         self.frame.setup_rect.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.frame.draw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int]
         #x, y, width, height = self.get_frame_position()
         #self.frame.setup_rect(x, y, width, height, Config.BORDER_WIDTH)
-        self.frame.setup_rect(Config.START_X, Config.START_Y, Config.WIDTH, Config.HEIGHT, Config.BORDER_WIDTH)
+        self.frame.setup_rect(self.x, self.y, self.width, self.height, self.border_width)
         self.is_visible = False
-        self.mouse_x = Config.START_X
-        self.mouse_y = Config.START_Y
+        self.mouse_x = self.x
+        self.mouse_y = self.y
         self.drawing_thread = threading.Thread(target=self.__draw, daemon=True)
         self.drawing_thread.start()
 
     def get_frame_position(self):
         #todo: dragable area
-        frame_x = Config.START_X - Config.BORDER_WIDTH
-        frame_y = Config.START_Y - Config.BORDER_WIDTH
-        frame_width = Config.WIDTH + 2 * Config.BORDER_WIDTH
-        frame_height = Config.HEIGHT + 2 * Config.BORDER_WIDTH
+        frame_x = self.x - self.border_width
+        frame_y = self.y - self.border_width
+        frame_width = self.width + 2 * self.border_width
+        frame_height = self.height + 2 * self.border_width
         if frame_x <= 0:
             frame_x = 0
         if frame_y <= 0:
             frame_y = 0
-        if frame_width + frame_x > Config.RESOLUTION_X:
-            frame_width = Config.RESOLUTION_X - frame_x
-        if frame_height + frame_y > Config.RESOLUTION_Y:
-            frame_height = Config.RESOLUTION_Y - frame_y
+        if frame_width + frame_x > self.max_width:
+            frame_width = self.max_width- frame_x
+        if frame_height + frame_y > self.max_height:
+            frame_height = self.max_height - frame_y
         return frame_x, frame_y, frame_width, frame_height
 
     def set_mouse_pos(self, mouse_x, mouse_y):

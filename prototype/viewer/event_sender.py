@@ -16,10 +16,11 @@ from pynput.keyboard import Key, Listener as KeyListener, Controller as KeyContr
 from prototype.event_types import EventTypes, get_id_by_button
 #import window_manager
 #from window_manager_test import WindowManager
-from prototype import Config
+#from prototype import Config
 
 class EventSender:
-    def __init__(self, stream_window):
+    def __init__(self, stream_window, configurator):
+        self.config = configurator
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         #self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.mouse = MouseController()  # self.keyboard = KeyController()
@@ -42,7 +43,8 @@ class EventSender:
 
 
     def send(self, message):
-        self.sock.sendto(message, (Config.STREAMER_ADDRESS, Config.EVENT_PORT))
+        print(self.config.STREAMER_ADDRESS) #todo: rec addr empty
+        self.sock.sendto(message, (self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
 
     def on_view(self, is_viewing):
         message = EventTypes.VIEWING.to_bytes(1, 'big')

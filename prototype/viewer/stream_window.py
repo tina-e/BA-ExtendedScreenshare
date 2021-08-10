@@ -23,7 +23,8 @@ import signal
 
 import gi
 
-from prototype import Config
+#from prototype import Config
+#from prototype.Config2 import configurator
 
 gi.require_version('Gst', '1.0')
 from gi.repository import Gst
@@ -43,20 +44,19 @@ if 1:
     from gi.repository import GstVideo
 
 class StreamWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, configurator):
         QMainWindow.__init__(self)
-        #self.setFixedWidth(Config.WIDTH)
-        self.setFixedWidth(500)
-        #self.setFixedHeight(Config.HEIGHT)
-        self.setFixedHeight(500)
+        self.configurator = configurator
+        self.setFixedWidth(configurator.WIDTH)
+        self.setFixedHeight(configurator.HEIGHT)
         self.setWindowTitle('Streaming')
         self.gstWindowId = None
         self.x_pos = None
         self.y_pos = None
         self.setAcceptDrops(True)
-        self.event_sender = EventSender(self)
-        self.file_communicator = FileClient()
-        self.file_communicator.connect()
+        self.event_sender = EventSender(self, self.configurator)
+        #self.file_communicator = FileClient(configurator)
+        #self.file_communicator.connect()
         self.setupGst()
         assert self.gstWindowId
         self.start_gstreamer()
@@ -98,7 +98,7 @@ class StreamWindow(QMainWindow):
         self.gstWindowId = self.winId()
         print("Setting up gstreamer pipeline, win id %s" % (self.gstWindowId,))
 
-        self.player = Gst.parse_launch(f'udpsrc address={Config.RECEIVER_ADDRESS} port={Config.STREAM_PORT} caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! decodebin ! videoconvert ! ximagesink name=sinkx_overview')
+        self.player = Gst.parse_launch(f'udpsrc address={self.configurator.RECEIVER_ADDRESS} port={self.configurator.STREAM_PORT} caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! decodebin ! videoconvert ! ximagesink name=sinkx_overview')
         #self.player = Gst.parse_launch('videotestsrc ! videoconvert ! videoscale ! ximagesink name=sinkx_overview')
 
         bus = self.player.get_bus()
@@ -127,8 +127,8 @@ class StreamWindow(QMainWindow):
         return self.x_pos, self.y_pos
 
     def update_stream_dimensions(self):
-        self.setFixedWidth(Config.WIDTH)
-        self.setFixedHeight(Config.HEIGHT)
+        self.setFixedWidth(self.configurator.WIDTH)
+        self.setFixedHeight(self.configurator.HEIGHT)
 
     def is_active(self):
         return self.isActiveWindow()

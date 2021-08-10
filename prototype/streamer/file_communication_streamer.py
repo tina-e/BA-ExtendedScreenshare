@@ -2,21 +2,24 @@
 import requests
 from flask import Flask, request, Response, send_file, send_from_directory
 
-import Config
+#import Config
 
 
 class FileServer:
-    def __init__(self, streamer):
+    def __init__(self, streamer, event, address, port):
         self.streamer = streamer
+        self.event = event
+        self.address = address
+        self.port = port
         self.logs = []
         self.app = Flask(__name__)
         self.client_pointer = None
         self.app.add_url_rule('/connect', "connect", self.connect_route)
         self.app.add_url_rule('/shutdown', "shutdown", self.shutdown, methods=['GET'])
-        self.app.add_url_rule(f'/{Config.FILE_EVENT}', Config.FILE_EVENT, self.file_route, methods=['POST'])
+        self.app.add_url_rule(f'/{event}', event, self.file_route, methods=['POST'])
 
     def start(self):
-        self.app.run(host=Config.RECEIVER_ADDRESS_TEST, port=Config.FILE_PORT, threaded=True)
+        self.app.run(host=self.address, port=self.port, threaded=True)
 
     def shutdown(self):
         shutdown_func = request.environ.get('werkzeug.server.shutdown')
@@ -26,7 +29,7 @@ class FileServer:
         return "Shutting down..."
 
     def close(self):
-        r = requests.get(f"http://{Config.RECEIVER_ADDRESS_TEST}:{Config.FILE_PORT}/shutdown")
+        r = requests.get(f"http://{self.address}:{self.port}/shutdown")
 
     def connect_route(self):
         print("Client connected to server")

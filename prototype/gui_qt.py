@@ -6,7 +6,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
 
-import Config
+#import Config
+from Config2 import Config
 from streamer.streamer import Streamer
 from viewer.stream_window import StreamWindow
 from streamer.area import Area
@@ -14,6 +15,7 @@ from streamer.area import Area
 class Menu(QSystemTrayIcon):
     def __init__(self, icon, parent):
         QSystemTrayIcon.__init__(self, icon, parent)
+        self.config = Config()
         self.streamer = None
         self.stream_viewer = None
         self.is_stream_active = False
@@ -51,36 +53,38 @@ class Menu(QSystemTrayIcon):
             self.end_action.setEnabled(True)
             self.area_action.setEnabled(False)
             self.fullscreen_action.setEnabled(False)
-            Config.IS_STREAMER = True
-            Config.set_ips()
-            self.streamer = Streamer()
+            self.config.IS_STREAMER = True
+            self.config.set_ips()
+            self.streamer = Streamer(self.config)
 
     def area(self):
         print("area")
         if self.streamer is None:
-            self.open_area_choser()
+            self.open_area_chooser()
             self.setup_stream()
         #else:
         #    self.end()
         #    self.open_area_choser()
         #    self.streamer.start_stream()
 
-    def open_area_choser(self):
-        area_choser = Area()
-        area_choser.setWindowFlag(Qt.FramelessWindowHint)
-        area_choser.setAttribute(Qt.WA_NoSystemBackground, True)
-        area_choser.setAttribute(Qt.WA_TranslucentBackground, True)
-        area_choser.exec()
-        dimensions = area_choser.get_coords()
-        Config.set_coords(dimensions)
+    def open_area_chooser(self):
+        area_chooser = Area(self.config.RESOLUTION_X, self.config.RESOLUTION_Y)
+        area_chooser.setWindowFlag(Qt.FramelessWindowHint)
+        area_chooser.setAttribute(Qt.WA_NoSystemBackground, True)
+        area_chooser.setAttribute(Qt.WA_TranslucentBackground, True)
+        area_chooser.exec()
+        dimensions = area_chooser.get_coords()
+        self.config.set_coords(dimensions)
 
     def access(self):
         if self.stream_viewer is None or not self.stream_viewer.isVisible():
             print("access")
-            Config.IS_STREAMER = False
-            Config.set_ips()
+            self.config.IS_STREAMER = False
+            self.config.set_ips()
+            print("s", self.config.STREAMER_ADDRESS)
+            print("r", self.config.RECEIVER_ADDRESS)
             self.register_to_stream()
-            self.stream_viewer = StreamWindow()
+            self.stream_viewer = StreamWindow(self.config)
             self.stream_viewer.show()
             self.end_action.setEnabled(True)
 
@@ -88,11 +92,11 @@ class Menu(QSystemTrayIcon):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         message = EventTypes.REGISTER.to_bytes(1, 'big')
         print("REGISTER", message)
-        sock.sendto(message, (Config.STREAMER_ADDRESS, Config.EVENT_PORT))
+        sock.sendto(message, (self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
         sock.close()
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.bind((Config.RECEIVER_ADDRESS, Config.EVENT_PORT))
+        sock.bind((self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
         waiting_for_stream = True
         while waiting_for_stream:
             data, addr = sock.recvfrom(1024)
@@ -105,7 +109,7 @@ class Menu(QSystemTrayIcon):
                     end_x = int.from_bytes(data[5:7], 'big')
                     end_y = int.from_bytes(data[7:9], 'big')
                     print(f"stream coords: {x} {y} {end_x} {end_y}")
-                    Config.set_coords((x, y, end_x, end_y))
+                    self.config.set_coords((x, y, end_x, end_y))
                     waiting_for_stream = False
             except UnicodeDecodeError:
                 continue
@@ -116,14 +120,14 @@ class Menu(QSystemTrayIcon):
         self.end_action.setEnabled(False)
         self.fullscreen_action.setEnabled(True)
         self.area_action.setEnabled(True)
-        if Config.IS_STREAMER and self.streamer is not None:
+        if self.config.IS_STREAMER and self.streamer is not None:
             self.streamer.close_stream()
-        elif (not Config.IS_STREAMER) and (self.stream_viewer is not None) and (self.stream_viewer.isVisible()):
+        elif (not self.config.IS_STREAMER) and (self.stream_viewer is not None) and (self.stream_viewer.isVisible()):
             self.stream_viewer.close()
 
     def quit(self):
         print("quit")
-        if Config.IS_STREAMER:
+        if self.config.IS_STREAMER:
             if self.streamer is None or self.streamer.is_stream_open():
                 self.end()
         else:

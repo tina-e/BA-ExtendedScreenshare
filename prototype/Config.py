@@ -30,6 +30,14 @@ def set_ips():
     print("REC:", RECEIVER_ADDRESS)
     print("STR:", STREAMER_ADDRESS)
 
+def get_str_addr():
+    global STREAMER_ADDRESS
+    return STREAMER_ADDRESS
+
+def get_rec_addr():
+    global RECEIVER_ADDRESS
+    return RECEIVER_ADDRESS
+
 
 STREAM_PORT = 5000
 EVENT_PORT = 8000
@@ -55,6 +63,10 @@ def set_coords(dimensions):
     END_Y = dimensions[3]
     WIDTH = END_X - START_X
     HEIGHT = END_Y - START_Y
+
+def get_coords():
+    global START_X, START_Y, END_X, END_Y, WIDTH, HEIGHT
+    return START_X, START_Y, WIDTH, HEIGHT
 
 
 BORDER_WIDTH = 2
