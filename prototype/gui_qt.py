@@ -84,6 +84,7 @@ class Menu(QSystemTrayIcon):
             print("s", self.config.STREAMER_ADDRESS)
             print("r", self.config.RECEIVER_ADDRESS)
             self.register_to_stream()
+
             self.stream_viewer = StreamWindow(self.config)
             self.stream_viewer.show()
             self.end_action.setEnabled(True)

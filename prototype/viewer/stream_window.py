@@ -53,10 +53,12 @@ class StreamWindow(QMainWindow):
         self.gstWindowId = None
         self.x_pos = None
         self.y_pos = None
+
         self.setAcceptDrops(True)
         self.event_sender = EventSender(self, self.configurator)
-        #self.file_communicator = FileClient(configurator)
-        #self.file_communicator.connect()
+        self.file_communicator = FileClient(configurator)
+        self.file_communicator.connect()
+
         self.setupGst()
         assert self.gstWindowId
         self.start_gstreamer()

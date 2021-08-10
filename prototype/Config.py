@@ -65,7 +65,7 @@ def set_coords(dimensions):
     HEIGHT = END_Y - START_Y
 
 def get_coords():
-    global START_X, START_Y, END_X, END_Y, WIDTH, HEIGHT
+    #global START_X, START_Y, END_X, END_Y, WIDTH, HEIGHT
     return START_X, START_Y, WIDTH, HEIGHT
 
 
