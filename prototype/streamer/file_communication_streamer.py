@@ -36,15 +36,18 @@ class FileServer:
         return Response()
 
     def file_route(self):
-        filename = request.values.get('filename')
-        mimetype = request.values.get('mimetype')
-        drop_x = request.values.get('x')
-        drop_y = request.values.get('y')
-        print(filename, mimetype, drop_x, drop_y)
-        file = request.files["files"]
-        file.save(filename)
-        self.streamer.paste_file(file, mimetype, drop_x, drop_y)
+        if request.values.get('owner') == "viewer":
+            filename = request.values.get('filename')
+            mimetype = request.values.get('mimetype')
+            drop_x = request.values.get('x')
+            drop_y = request.values.get('y')
+            print(filename, mimetype, drop_x, drop_y)
+            file = request.files["files"]
+            file.save(filename)
+            self.streamer.paste_file(file, mimetype, drop_x, drop_y)
         return Response()
+
+
 
 
 #server = FileServer()

@@ -25,7 +25,7 @@ class FileClient:
         filename = filename.replace('\r', '')
         filename = filename.replace('\n', '')
         files = {"files": open(filename, 'rb')}
-        data = {"filename": filename.split('/')[-1], "mimetype": mimetype, "x": drop_x, "y": drop_y}
+        data = {"filename": filename.split('/')[-1], "owner": "viewer", "mimetype": mimetype, "x": drop_x, "y": drop_y}
         r = requests.post(url, files=files, data=data)
         print(r.status_code)
 
