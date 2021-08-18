@@ -1,5 +1,6 @@
 import selectors
 import socket
+import subprocess
 import threading
 import time
 
@@ -41,12 +42,23 @@ class EventSender:
         keyboard_thread = threading.Thread(target=self.listen_keyboard, daemon=True)
         keyboard_thread.start()
 
+        self.clip_process = None
+
 
     def send(self, message):
         print(self.config.STREAMER_ADDRESS) #todo: rec addr empty
         self.sock.sendto(message, (self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
 
     def on_view(self, is_viewing):
+        if is_viewing:
+            print(self.config.PROJECT_PATH_ABSOLUTE)
+            self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
+        else:
+            self.clip_process.terminate()
+            self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
+            time.sleep(0.5)
+            self.clip_process.terminate()
+
         message = EventTypes.VIEWING.to_bytes(1, 'big')
         message += is_viewing.to_bytes(1, 'big')
         print("VIEW", message)

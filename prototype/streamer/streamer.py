@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import QApplication
 from event_types import EventTypes, get_button_by_id
 import socket
 import threading
+import subprocess
 
 class Streamer:
     def __init__(self, configurator):
@@ -29,7 +30,9 @@ class Streamer:
         self.event_handler = EventHandlerEvdev(configurator)
         # file communication
         self.file_communicator = FileServer(self, self.config.FILE_EVENT, self.config.STREAMER_ADDRESS, self.config.FILE_PORT)
-        # self.event_handler = EventHandler()
+        # shared clipboard
+        self.clip_process = None
+        #
         connection_thread = threading.Thread(target=self.receive, daemon=True)
         connection_thread.start()
         # stream
@@ -61,6 +64,7 @@ class Streamer:
                 event_type = EventTypes(data[0])
                 if event_type == EventTypes.REGISTER:
                     self.send_stream_coords()
+                    self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
                 elif event_type == EventTypes.VIEWING:
                     queries_stream = data[1]
                     print(f"is someone watching stream? {queries_stream}")
@@ -125,6 +129,10 @@ class Streamer:
             self.stream.end()
             self.stream.close()
             self.file_communicator.close()
+            self.clip_process.terminate()
+            self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
+            time.sleep(0.5)
+            self.clip_process.terminate()
             #self.event_handler.remove_device()
 
     def is_stream_open(self):

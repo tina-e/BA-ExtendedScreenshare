@@ -1,6 +1,7 @@
 from evdev import InputDevice
 import pyautogui
 import socket
+import pathlib
 
 
 class Config:
@@ -15,9 +16,9 @@ class Config:
         self.STREAMER_ADDRESS_TEST = '192.168.178.23'
         self.RECEIVER_ADDRESS_TEST = '192.168.178.136'
 
-        self.STREAM_PORT = 5000
-        self.EVENT_PORT = 8000
-        self.FILE_PORT = 9999
+        self.STREAM_PORT = 9000
+        self.EVENT_PORT = 9900
+        self.FILE_PORT = 9990
         self.FILE_EVENT = 'fileevent'
 
         # GUI
@@ -36,6 +37,9 @@ class Config:
         self.KEYBOARD_DEVICE_STREAMER = InputDevice('/dev/input/event4')  # keyboard
         self.MOUSE_DEVICE_STREAMER_POINT = InputDevice('/dev/input/event9')  # mouse pointer (see xinput list: only listed at pointer)
         self.MOUSE_DEVICE_STREAMER_CLICK = InputDevice('/dev/input/event6')  # mouse keys (see xinput list: listed at pointer AND keyboard)
+
+        # Path
+        self.PROJECT_PATH_ABSOLUTE = pathlib.Path(__file__).parent.resolve()
 
     def set_ips(self):
         if self.IS_STREAMER:

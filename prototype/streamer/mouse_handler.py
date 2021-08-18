@@ -34,7 +34,6 @@ class EventHandlerEvdev():
         }
 
     def create_device(self):
-        #todo: set cursor color
         self.mouse_ui = UInput(self.cap_mouse, name='mouse', version=0x3)
         self.key_ui = UInput.from_device(self.config.KEYBOARD_DEVICE_STREAMER, self.config.MOUSE_DEVICE_STREAMER_CLICK, name='key')
         print(subprocess.check_output("xinput list", shell=True).decode('utf-8'))
@@ -55,10 +54,6 @@ class EventHandlerEvdev():
 
         print(subprocess.check_output("xinput list", shell=True).decode('utf-8'))
         self.map_mouse_movement(0, 0)
-        #self.create_cursor_highlighting()
-
-    #todo: def create_cursor_highlighting(self):
-
 
     def map_mouse_movement(self, x, y):
         x = x + self.config.START_X
@@ -71,7 +66,7 @@ class EventHandlerEvdev():
 
     def map_mouse_click(self, x, y, button, was_pressed):
         self.mouse_ui.write(ecodes.EV_KEY, get_device_by_button(button), was_pressed)
-        self.key_ui.syn()
+        if not was_pressed: self.key_ui.syn()
 
     def map_mouse_scroll(self, dx, dy):
         self.mouse_ui.write(ecodes.EV_REL, ecodes.REL_WHEEL, dy)
@@ -79,7 +74,7 @@ class EventHandlerEvdev():
 
     def map_keyboard(self, key, value):
         self.key_ui.write(ecodes.EV_KEY, key, value)
-        self.key_ui.syn()
+        if value == 0: self.key_ui.syn()
 
     def remove_device(self):
         print("back")

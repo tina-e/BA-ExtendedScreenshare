@@ -15,10 +15,11 @@ class StreamWindow(QWidget):
         QWidget.__init__(self)
         self.setGeometry(2500, 500, 500, 500)
         self.setWindowFlag(Qt.WindowTransparentForInput)
-        #self.setAttribute(Qt.WA_TransparentForMouseEvents)
-        #self.setFocusPolicy(Qt.NoFocus)
-        #self.setAttribute(Qt.WA_NoSystemBackground, True)
-        #self.setAttribute(Qt.WA_TranslucentBackground, True)
+        self.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.setAttribute(Qt.Transpa)
+        self.setFocusPolicy(Qt.NoFocus)
+        self.setAttribute(Qt.WA_NoSystemBackground, True)
+        self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.setWindowTitle('Streaming')
         self.gstWindowId = None
         self.x_pos = None
@@ -53,7 +54,6 @@ class StreamWindow(QWidget):
         self.y_pos = self.pos().y()
 
 
-
 app = QApplication(sys.argv)
 win = StreamWindow()
 
@@ -62,3 +62,4 @@ win.show()
 win.simualte_drop()
 
 sys.exit(app.exec_())
+
