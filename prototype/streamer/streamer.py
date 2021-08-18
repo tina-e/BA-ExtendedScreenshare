@@ -129,10 +129,10 @@ class Streamer:
             self.stream.end()
             self.stream.close()
             self.file_communicator.close()
-            self.clip_process.terminate()
+            #self.clip_process.terminate()
             self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
             time.sleep(0.5)
-            self.clip_process.terminate()
+            #self.clip_process.terminate()
             #self.event_handler.remove_device()
 
     def is_stream_open(self):

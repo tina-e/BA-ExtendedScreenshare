@@ -54,10 +54,10 @@ class EventSender:
             print(self.config.PROJECT_PATH_ABSOLUTE)
             self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
         else:
-            self.clip_process.terminate()
+            #self.clip_process.terminate()
             self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
-            time.sleep(0.5)
-            self.clip_process.terminate()
+            #time.sleep(0.5)
+            #self.clip_process.terminate()
 
         message = EventTypes.VIEWING.to_bytes(1, 'big')
         message += is_viewing.to_bytes(1, 'big')
@@ -106,29 +106,29 @@ class EventSender:
         for event in self.keyboard.read_loop():
             if self.stream_window.is_active():
                 if event.type == ecodes.EV_KEY:
-                  if event.code == 29:
-                      if event.value == 1:
-                          self.ctr_hold = True
-                      elif event.value == 0:
-                          self.ctr_hold = False
-
-                  if self.ctr_hold:
-                      if event.code == 47 and event.value == 1:
-                          print(self.ctr_hold)
-                          print("ctr-v pressed")
-                          self.on_paste()
-                          #continue
-                      elif event.code == 46 and event.value == 1:
-                          print("ctr-c pressed")
-                          self.on_copy()
-                          #continue
-                  else:
                     message = EventTypes.KEYBOARD.to_bytes(1, 'big')
                     message += event.code.to_bytes(2, 'big')  # key
                     message += event.value.to_bytes(1, 'big')  # down = 1, up = 0, hold = 2
                     print("KEY", message)
                     self.send(message)
 
+    '''if event.code == 29:
+      if event.value == 1:
+          self.ctr_hold = True
+      elif event.value == 0:
+          self.ctr_hold = False
+    
+    if self.ctr_hold:
+      if event.code == 47 and event.value == 1:
+          print(self.ctr_hold)
+          print("ctr-v pressed")
+          self.on_paste()
+          #continue
+      elif event.code == 46 and event.value == 1:
+          print("ctr-c pressed")
+          self.on_copy()
+          #continue
+    else:'''
 
     def on_paste(self):
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
