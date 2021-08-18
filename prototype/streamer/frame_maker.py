@@ -15,7 +15,7 @@ class FrameMaker:
         self.border_width = border_width
         self.max_width = max_width
         self.max_height = max_height
-        self.frame = ctypes.CDLL("/home/martinaemmert/Documents/Bachelorarbeit/CrossDeviceCommunication/prototype/streamer/libframe.so")
+        self.frame = ctypes.CDLL("/home/tina/PycharmProjects/BA-CrossDeviceCommunication/prototype/streamer/libframe.so")
         self.frame.setup_rect.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.frame.draw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int]
         #x, y, width, height = self.get_frame_position()

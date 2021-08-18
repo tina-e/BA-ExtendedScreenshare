@@ -9,17 +9,15 @@ from PyQt5.QtWidgets import *
 
 import sys
 
-
 class StreamWindow(QWidget):
     def __init__(self):
         QWidget.__init__(self)
-        self.setGeometry(2500, 500, 500, 500)
+        self.setGeometry(500, 300, 500, 300)
         self.setWindowFlag(Qt.WindowTransparentForInput)
-        self.setAttribute(Qt.WA_TransparentForMouseEvents)
-        self.setAttribute(Qt.Transpa)
-        self.setFocusPolicy(Qt.NoFocus)
-        self.setAttribute(Qt.WA_NoSystemBackground, True)
-        self.setAttribute(Qt.WA_TranslucentBackground, True)
+        #self.setAttribute(Qt.WA_TransparentForMouseEvents)
+        #self.setFocusPolicy(Qt.NoFocus)
+        #self.setAttribute(Qt.WA_NoSystemBackground, True)
+        #self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.setWindowTitle('Streaming')
         self.gstWindowId = None
         self.x_pos = None
@@ -27,7 +25,7 @@ class StreamWindow(QWidget):
         self.setAcceptDrops(True)
 
     def simualte_drop(self):
-        time.sleep(3)
+        time.sleep(20)
         data = QMimeData()
         data.setText("test string to drop")
         drop_event = QDropEvent(QPointF(10, 10), Qt.CopyAction, data, Qt.LeftButton, Qt.NoModifier)
@@ -54,12 +52,11 @@ class StreamWindow(QWidget):
         self.y_pos = self.pos().y()
 
 
-app = QApplication(sys.argv)
-win = StreamWindow()
+#app = QApplication(sys.argv)
+#win = StreamWindow()
 
-win.show()
+#win.show()
 
-win.simualte_drop()
+#win.simualte_drop()
 
-sys.exit(app.exec_())
-
+#sys.exit(app.exec_())

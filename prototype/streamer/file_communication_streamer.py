@@ -19,6 +19,7 @@ class FileServer:
         self.app.add_url_rule(f'/{event}', event, self.file_route, methods=['POST'])
 
     def start(self):
+        print(self.address, self.port)
         self.app.run(host=self.address, port=self.port, threaded=True)
 
     def shutdown(self):
@@ -44,10 +45,8 @@ class FileServer:
             print(filename, mimetype, drop_x, drop_y)
             file = request.files["files"]
             file.save(filename)
-            self.streamer.paste_file(file, mimetype, drop_x, drop_y)
+            #self.streamer.paste_file(file, mimetype, drop_x, drop_y)
         return Response()
-
-
 
 
 #server = FileServer()

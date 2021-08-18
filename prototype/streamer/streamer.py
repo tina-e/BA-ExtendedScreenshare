@@ -28,13 +28,15 @@ class Streamer:
         # self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
         self.event_handler = EventHandlerEvdev(configurator)
+        connection_thread_events = threading.Thread(target=self.receive, daemon=True)
+        connection_thread_events.start()
         # file communication
         self.file_communicator = FileServer(self, self.config.FILE_EVENT, self.config.STREAMER_ADDRESS, self.config.FILE_PORT)
         # shared clipboard
         self.clip_process = None
         #
-        connection_thread = threading.Thread(target=self.receive, daemon=True)
-        connection_thread.start()
+        connection_thread_files = threading.Thread(target=self.file_communicator.start, daemon=True)
+        connection_thread_files.start()
         # stream
         self.stream = Stream(configurator)
         self.start_stream()
@@ -102,7 +104,7 @@ class Streamer:
             self.is_stream_active = True
             self.stream.start()
             self.event_handler.create_device()
-            self.file_communicator.start()
+            #self.file_communicator.start()
         else:
             self.is_stream_active = False
             self.stream.end()

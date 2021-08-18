@@ -79,7 +79,7 @@ def toggle_stream_activity():
 
 # Input Devices
 KEYBOARD_DEVICE_STREAMER = InputDevice('/dev/input/event4') #keyboard
-MOUSE_DEVICE_STREAMER_POINT = InputDevice('/dev/input/event9') #mouse pointer (see xinput list: only listed at pointer)
+MOUSE_DEVICE_STREAMER_POINT = InputDevice('/dev/input/event5') #mouse pointer (see xinput list: only listed at pointer)
 MOUSE_DEVICE_STREAMER_CLICK = InputDevice('/dev/input/event6') #mouse keys (see xinput list: listed at pointer AND keyboard)
 
 
