@@ -1,7 +1,7 @@
 import sys
 import socket
 from event_types import EventTypes
-from PyQt5.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QWidget, QAction
+from PyQt5.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QWidget, QAction, QInputDialog, QLineEdit
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
@@ -15,12 +15,13 @@ from streamer.area import Area
 class Menu(QSystemTrayIcon):
     def __init__(self, icon, parent):
         QSystemTrayIcon.__init__(self, icon, parent)
+        self.parent = parent
         self.config = Config()
         self.streamer = None
         self.stream_viewer = None
         self.is_stream_active = False
 
-        menu = QMenu(parent)
+        menu = QMenu(self.parent)
         self.setContextMenu(menu)
 
         self.fullscreen_action = menu.addAction("Stream Full Screen")
@@ -54,7 +55,8 @@ class Menu(QSystemTrayIcon):
             self.area_action.setEnabled(False)
             self.fullscreen_action.setEnabled(False)
             self.config.IS_STREAMER = True
-            self.config.set_ips()
+            self.config.set_streamer_ip(None)
+            #self.config.set_ips()
             self.streamer = Streamer(self.config)
 
     def area(self):
@@ -77,17 +79,25 @@ class Menu(QSystemTrayIcon):
         self.config.set_coords(dimensions)
 
     def access(self):
-        if self.stream_viewer is None or not self.stream_viewer.isVisible():
+        given_streamer_ip = self.get_ip_from_dialog()
+        if given_streamer_ip and (self.stream_viewer is None or not self.stream_viewer.isVisible()):
             print("access")
-            self.config.IS_STREAMER = False
-            self.config.set_ips()
+            self.config.set_streamer_ip(self.get_ip_from_dialog())
+            self.config.set_receiver_ip(None)
+
             print("s", self.config.STREAMER_ADDRESS)
             print("r", self.config.RECEIVER_ADDRESS)
-            self.register_to_stream()
-
+            # self.register_to_stream()
             self.stream_viewer = StreamWindow(self.config)
             self.stream_viewer.show()
             self.end_action.setEnabled(True)
+
+    def get_ip_from_dialog(self):
+        input, accepted = QInputDialog.getText(self.parent, "IP Dialog", "Streamer IP:", QLineEdit.Normal, "")
+        if accepted and input != '':
+            self.config.IS_STREAMER = False
+            return input
+        return None
 
     def register_to_stream(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

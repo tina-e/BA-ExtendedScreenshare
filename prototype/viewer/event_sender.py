@@ -21,29 +21,55 @@ from prototype.event_types import EventTypes, get_id_by_button
 
 class EventSender:
     def __init__(self, stream_window, configurator):
-        self.config = configurator
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        #self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.mouse = MouseController()  # self.keyboard = KeyController()
-        #self.mouse = InputDevice('/dev/input/event12')
-        self.keyboard = InputDevice('/dev/input/event3')
         self.stream_window = stream_window
+        self.config = configurator
 
-        #self.tk = Tk()
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.mouse = MouseController()
+        self.keyboard = InputDevice('/dev/input/event3')
+
+        self.button_thread = MouseListener(on_click=self.on_click, on_scroll=self.on_scroll)
+        self.button_thread.daemon = True
+        self.movement_thread = threading.Thread(target=self.listen_mouse_pos, daemon=True)
+        self.keyboard_thread = threading.Thread(target=self.listen_keyboard, daemon=True)
+
         self.ctr_hold = False
-
-        button_thread = MouseListener(on_click=self.on_click, on_scroll=self.on_scroll)
-        button_thread.daemon = True
-        button_thread.start()
-
-        movement_thread = threading.Thread(target=self.listen_mouse_pos, daemon=True)
-        movement_thread.start()
-
-        keyboard_thread = threading.Thread(target=self.listen_keyboard, daemon=True)
-        keyboard_thread.start()
-
         self.clip_process = None
 
+    def start_event_listeners(self):
+        self.button_thread.start()
+        self.movement_thread.start()
+        self.keyboard_thread.start()
+
+    def end_event_listeners(self):
+        self.button_thread.join()
+        self.movement_thread.join()
+        self.keyboard_thread.join()
+
+    def register_and_request_coords(self):
+        message = EventTypes.REGISTER.to_bytes(1, 'big')
+        print("REGISTER", message)
+        self.sock.sendto(message, (self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
+
+        receiving_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        receiving_sock.bind((self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
+        waiting_for_stream = True
+        while waiting_for_stream: #todo: ggf zeitsperre einfügen für den Fall dass nichts gestreamt wird
+            data, addr = receiving_sock.recvfrom(1024)
+            print(data, addr)
+            try:
+                event_type = EventTypes(data[0])
+                if event_type == EventTypes.STREAM_COORDS:
+                    x = int.from_bytes(data[1:3], 'big')
+                    y = int.from_bytes(data[3:5], 'big')
+                    end_x = int.from_bytes(data[5:7], 'big')
+                    end_y = int.from_bytes(data[7:9], 'big')
+                    print(f"stream coords: {x} {y} {end_x} {end_y}")
+                    self.config.set_coords((x, y, end_x, end_y))
+                    waiting_for_stream = False
+            except UnicodeDecodeError:
+                continue
+        receiving_sock.close()
 
     def send(self, message):
         print(self.config.STREAMER_ADDRESS) #todo: rec addr empty
@@ -51,13 +77,14 @@ class EventSender:
 
     def on_view(self, is_viewing):
         if is_viewing:
+            self.start_event_listeners()
             print(self.config.PROJECT_PATH_ABSOLUTE)
             self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
         else:
-            #self.clip_process.terminate()
+            # self.end_event_listeners()
+            # self.clip_process.terminate()
             self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
-            #time.sleep(0.5)
-            #self.clip_process.terminate()
+            # self.clip_process.terminate()
 
         message = EventTypes.VIEWING.to_bytes(1, 'big')
         message += is_viewing.to_bytes(1, 'big')

@@ -25,9 +25,10 @@ class Streamer:
         self.superior_app = QApplication(sys.argv)
         # event communication
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
+
         self.event_handler = EventHandlerEvdev(configurator)
+
         connection_thread_events = threading.Thread(target=self.receive, daemon=True)
         connection_thread_events.start()
         # file communication
@@ -65,6 +66,7 @@ class Streamer:
             try:
                 event_type = EventTypes(data[0])
                 if event_type == EventTypes.REGISTER:
+                    self.config.set_receiver_ip(addr)
                     self.send_stream_coords()
                     self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
                 elif event_type == EventTypes.VIEWING:

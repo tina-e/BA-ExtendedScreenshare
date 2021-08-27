@@ -41,6 +41,18 @@ class Config:
         # Path
         self.PROJECT_PATH_ABSOLUTE = pathlib.Path(__file__).parent.resolve()
 
+    def set_streamer_ip(self, ip):
+        if ip is None:
+            self.STREAMER_ADDRESS = socket.gethostname()
+        else:
+            self.STREAMER_ADDRESS = ip
+
+    def set_receiver_ip(self, ip):
+        if ip is None:
+            self.RECEIVER_ADDRESS = socket.gethostname()
+        else:
+            self.RECEIVER_ADDRESS = ip
+
     def set_ips(self):
         if self.IS_STREAMER:
             if self.DEVICE_ADDRESS_LIST[0][0] == socket.gethostname():

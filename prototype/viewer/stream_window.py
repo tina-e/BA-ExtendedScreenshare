@@ -47,6 +47,9 @@ class StreamWindow(QMainWindow):
     def __init__(self, configurator):
         QMainWindow.__init__(self)
         self.configurator = configurator
+        self.event_sender = EventSender(self, self.configurator)
+        self.event_sender.register_and_request_coords()
+
         self.setFixedWidth(configurator.WIDTH)
         self.setFixedHeight(configurator.HEIGHT)
         self.setWindowTitle('Streaming')
@@ -55,7 +58,6 @@ class StreamWindow(QMainWindow):
         self.y_pos = None
 
         self.setAcceptDrops(True)
-        self.event_sender = EventSender(self, self.configurator)
         self.file_communicator = FileClient(configurator)
         self.file_communicator.connect()
 
