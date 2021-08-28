@@ -1,47 +1,19 @@
 #!/usr/bin/env python
 
 # source: https://gist.github.com/JohnDMcMaster/fdedc262feebc44d0ce8399ad7652b38
-
-'''
-gst-launch-1.0 videotestsrc ! videoscale ! videoconvert ! ximagesink
-'''
-
-
 # https://wiki.ubuntu.com/Novacut/GStreamer1.0#Python_Porting_Guide
-import time
-
-from PyQt5 import Qt
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-#from PyQt5.QtGui import QWidget, QLabel
-from PyQt5.QtWidgets import *
-
-import sys
-import traceback
-import os
-import signal
 
 import gi
-
-#from prototype import Config
-#from prototype.Config2 import configurator
-
 gi.require_version('Gst', '1.0')
+gi.require_version('GstVideo', '1.0')
 from gi.repository import Gst
+from gi.repository import GstVideo #eventually marked as unused but necessary
 Gst.init(None)
-from gi.repository import GObject
+from PyQt5.QtWidgets import *
 
 from viewer.event_sender import EventSender
 from viewer.file_communication_viewer import FileClient
 
-from PIL import Image
-
-if 1:
-    gi.require_version('GstVideo', '1.0')
-    # ??? why is this needed? does it do some magic under the hood?
-    # "Needed for window.get_xid(), xvimagesink.set_window_handle(), respectively:"
-    #from gi.repository import GdkX11, GstVideo
-    from gi.repository import GstVideo
 
 class StreamWindow(QMainWindow):
     def __init__(self, configurator):
@@ -50,8 +22,6 @@ class StreamWindow(QMainWindow):
         self.event_sender = EventSender(self, self.configurator)
         self.registration_successful = self.event_sender.register()
         if self.registration_successful:
-            #self.event_sender.start_event_listeners()
-
             self.setFixedWidth(configurator.WIDTH)
             self.setFixedHeight(configurator.HEIGHT)
             self.setWindowTitle('Streaming')
@@ -66,7 +36,6 @@ class StreamWindow(QMainWindow):
             self.setupGst()
             assert self.gstWindowId
             self.start_gstreamer()
-        #else: self.close()
 
     def get_registration_state(self):
         return self.registration_successful
@@ -107,9 +76,7 @@ class StreamWindow(QMainWindow):
     def setupGst(self):
         self.gstWindowId = self.winId()
         print("Setting up gstreamer pipeline, win id %s" % (self.gstWindowId,))
-
         self.player = Gst.parse_launch(f'udpsrc port={self.configurator.STREAM_PORT} caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! decodebin ! videoconvert ! ximagesink name=sinkx_overview')
-        #self.player = Gst.parse_launch('videotestsrc ! videoconvert ! videoscale ! ximagesink name=sinkx_overview')
 
         bus = self.player.get_bus()
         bus.add_signal_watch()
@@ -121,7 +88,6 @@ class StreamWindow(QMainWindow):
         t = message.type
         # print('\n'.join(dir(gst)))
         print('MSG: %s' % (t,))
-
 
     def on_sync_message(self, bus, message):
         print('sync, %s' % (message,))
@@ -137,7 +103,6 @@ class StreamWindow(QMainWindow):
             assert self.gstWindowId
             #print(dir(message.src))
             message.src.set_window_handle(self.gstWindowId)
-
 
     def get_stream_coords(self):
         return self.x_pos, self.y_pos
@@ -155,7 +120,7 @@ class StreamWindow(QMainWindow):
         y_calculated = y - self.y_pos - depth
         if 0 <= x_calculated <= self.width() and 0 <= y_calculated <= self.height():
             return x_calculated, y_calculated
-        #print("cursor out of stream")
+        # print("cursor out of stream")
         return None, None
 
     def closeEvent(self, event):
@@ -163,11 +128,3 @@ class StreamWindow(QMainWindow):
         if self.registration_successful:
             self.event_sender.on_view(False)
             self.file_communicator.close_connection()
-
-
-#app = QApplication(sys.argv)
-#win = StreamWindow()
-#win.show()
-#sys.exit(app.exec_())
-
-

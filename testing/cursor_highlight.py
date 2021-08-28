@@ -5,13 +5,13 @@ from PyQt5.QtWidgets import QApplication, QWidget, QDialog, QFrame
 from PyQt5.QtCore import Qt, QPoint, QRect
 from PyQt5.QtGui import QPixmap, QPainter, QPen
 
-import Config
+import Config_alt
 
 
 class Highlight(QDialog):
     def __init__(self):
         super().__init__()
-        self.setGeometry(Config.START_X+750, Config.START_Y+300, 22, 22)
+        self.setGeometry(Config_alt.START_X + 750, Config_alt.START_Y + 300, 22, 22)
         #self.setStyleSheet('border: 2px solid blue')
 
         self.frame = QFrame(self)

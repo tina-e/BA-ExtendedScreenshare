@@ -4,19 +4,14 @@ import socket
 import pathlib
 
 
-class Config:
+class Configurator:
     def __init__(self):
         self.STREAM_ACTIVE = False
+        self.IS_STREAMER = False
         # IPs and Ports
-        self.DEVICE_ADDRESS_LIST = [('tina-EasyNote-TH36', '192.168.178.23'), ('tinapc', '192.168.178.136')]
         self.DEVICE_ADDRESS_DICT = {'tina-EasyNote-TH36': '192.168.178.23', 'tinapc': '192.168.178.136'}
         self.STREAMER_ADDRESS = ''
         self.RECEIVER_ADDRESS = ''
-        self.IS_STREAMER = False
-
-        self.STREAMER_ADDRESS_TEST = '192.168.178.23'
-        self.RECEIVER_ADDRESS_TEST = '192.168.178.136'
-
         self.STREAM_PORT = 9000
         self.EVENT_PORT = 9900
         self.FILE_PORT = 9990
@@ -25,7 +20,6 @@ class Config:
         # GUI
         self.RESOLUTION_X = pyautogui.size().width
         self.RESOLUTION_Y = pyautogui.size().height
-
         self.START_X = 0
         self.START_Y = 0
         self.END_X = self.RESOLUTION_X
@@ -49,29 +43,10 @@ class Config:
             self.STREAMER_ADDRESS = ip
 
     def set_receiver_ip(self, ip):
-        print("set rec ip", ip)
         if ip is None:
             self.RECEIVER_ADDRESS = self.DEVICE_ADDRESS_DICT.get(socket.gethostname())
         else:
             self.RECEIVER_ADDRESS = ip
-
-    def set_ips(self):
-        if self.IS_STREAMER:
-            if self.DEVICE_ADDRESS_LIST[0][0] == socket.gethostname():
-                self.STREAMER_ADDRESS = self.DEVICE_ADDRESS_LIST[0][1]
-                self.RECEIVER_ADDRESS = self.DEVICE_ADDRESS_LIST[1][1]
-            else:
-                self.STREAMER_ADDRESS = self.DEVICE_ADDRESS_LIST[1][1]
-                self.RECEIVER_ADDRESS = self.DEVICE_ADDRESS_LIST[0][1]
-        else:
-            if self.DEVICE_ADDRESS_LIST[0][0] == socket.gethostname():
-                self.STREAMER_ADDRESS = self.DEVICE_ADDRESS_LIST[1][1]
-                self.RECEIVER_ADDRESS = self.DEVICE_ADDRESS_LIST[0][1]
-            else:
-                self.STREAMER_ADDRESS = self.DEVICE_ADDRESS_LIST[0][1]
-                self.RECEIVER_ADDRESS = self.DEVICE_ADDRESS_LIST[1][1]
-        print("REC:", self.RECEIVER_ADDRESS)
-        print("STR:", self.STREAMER_ADDRESS)
 
     def set_coords(self, dimensions):
         self.START_X = dimensions[0]
@@ -83,7 +58,3 @@ class Config:
 
     def toggle_stream_activity(self):
         self.STREAM_ACTIVE = not self.STREAM_ACTIVE
-
-
-#MOUSE_EVENT = 'mouseevent'
-#CAP_EVENT = 'capevent'

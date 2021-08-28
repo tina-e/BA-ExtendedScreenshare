@@ -1,8 +1,6 @@
 # https://github.com/PDA-UR/Screenshotmatcher-2.0/blob/master/python-server/src/server/server.py
 import requests
-from flask import Flask, request, Response, send_file, send_from_directory
-
-#import Config
+from flask import Flask, request, Response
 
 
 class FileServer:
@@ -19,7 +17,6 @@ class FileServer:
         self.app.add_url_rule(f'/{event}', event, self.file_route, methods=['POST'])
 
     def start(self):
-        print(self.address, self.port)
         self.app.run(host=self.address, port=self.port, threaded=True)
 
     def shutdown(self):
@@ -47,7 +44,3 @@ class FileServer:
             file.save(filename)
             #self.streamer.paste_file(file, mimetype, drop_x, drop_y)
         return Response()
-
-
-#server = FileServer()
-#server.start()

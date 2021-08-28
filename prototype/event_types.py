@@ -2,6 +2,7 @@ from enum import IntEnum
 from pynput.mouse import Button
 from evdev import ecodes
 
+
 class EventTypes(IntEnum):
     REGISTER = 0
     STREAM_COORDS = 1
@@ -13,8 +14,7 @@ class EventTypes(IntEnum):
     PASTE = 7
     COPY = 8
     STREAM_CLOSED = 9
-    #CAPABILITY_MOUSE = 9
-    #CAPABILITY_KEYBOARD = 10
+
 
 def get_button_by_id(id):
     if id == 0: return Button.left
@@ -22,11 +22,13 @@ def get_button_by_id(id):
     elif id == 2: return Button.middle
     return None
 
+
 def get_id_by_button(button):
     if button == Button.left: return 0
     elif button == Button.right: return 1
     elif button == Button.middle: return 2
     return None
+
 
 def get_device_by_button(button):
     if button == Button.left: return ecodes.BTN_LEFT

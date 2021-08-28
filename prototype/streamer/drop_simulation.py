@@ -1,4 +1,4 @@
-
+# unsused
 import time
 
 from PyQt5 import Qt
@@ -42,7 +42,6 @@ class StreamWindow(QWidget):
         event_pos_x = event.pos().x()
         event_pos_y = event.pos().y()
         is_file = event.mimeData().hasFormat('COMPOUND_TEXT')
-
         print(event_pos_x)
         print(event_pos_y)
         print(event_content)
@@ -50,13 +49,3 @@ class StreamWindow(QWidget):
     def moveEvent(self, event):
         self.x_pos = self.pos().x()
         self.y_pos = self.pos().y()
-
-
-#app = QApplication(sys.argv)
-#win = StreamWindow()
-
-#win.show()
-
-#win.simualte_drop()
-
-#sys.exit(app.exec_())

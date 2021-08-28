@@ -5,7 +5,7 @@ import json
 #import platform
 from flask import Flask, request, Response
 #import common.log
-import Config
+import Config_alt
 from mouse_handler import EventHandlerEvdev
 #from matching.matcher import Matcher
 #from common.utility import get_current_ms
@@ -17,12 +17,12 @@ class Server:
         self.app = Flask(__name__)
         self.client_pointer = None
         self.app.add_url_rule("/connect", "connect", self.connect_route)
-        self.app.add_url_rule(f'/{Config.CAP_EVENT}', Config.CAP_EVENT, self.cap_route_rel, methods=['POST'])
-        self.app.add_url_rule(f'/{Config.MOUSE_EVENT}', Config.MOUSE_EVENT, self.mouse_route, methods=['POST'])
+        self.app.add_url_rule(f'/{Config_alt.CAP_EVENT}', Config_alt.CAP_EVENT, self.cap_route_rel, methods=['POST'])
+        self.app.add_url_rule(f'/{Config_alt.MOUSE_EVENT}', Config_alt.MOUSE_EVENT, self.mouse_route, methods=['POST'])
         #self.app.add_url_rule(f'/{Config.MOUSE_EVENT}', Config.MOUSE_EVENT, self.mouse_route_abs, methods=['POST'])
 
     def start(self):
-        self.app.run(host=Config.STREAMER_ADDRESS, port=Config.EVENT_PORT, threaded=True)
+        self.app.run(host=Config_alt.STREAMER_ADDRESS, port=Config_alt.EVENT_PORT, threaded=True)
 
     def connect_route(self):
         self.client_pointer = EventHandlerEvdev()

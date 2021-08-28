@@ -1,6 +1,6 @@
 import time
 
-import Config
+import Config_alt
 import json
 import http.client as client
 from evdev import InputDevice, ecodes
@@ -10,13 +10,13 @@ import window_manager
 
 class Client:
     def __init__(self):
-        self.connection = client.HTTPConnection(Config.STREAMER_ADDRESS, Config.EVENT_PORT)
+        self.connection = client.HTTPConnection(Config_alt.STREAMER_ADDRESS, Config_alt.EVENT_PORT)
         self.mouse_device = InputDevice('/dev/input/event11')
         self.key_device = InputDevice('/dev/input/event3')
 
     def connect(self):
         self.connection.connect()
-        self.connection.request('GET', f"http://{Config.STREAMER_ADDRESS}:{Config.CAP_PORT}/connect")
+        self.connection.request('GET', f"http://{Config_alt.STREAMER_ADDRESS}:{Config_alt.CAP_PORT}/connect")
         response = self.connection.getresponse()
         #self.send_device_info()
 
@@ -41,7 +41,7 @@ class Client:
                 val = event.value
                 _data = json.dumps({"event": str(event), "timestamp": timestamp, "code": code, "type": type, "val": val})
                 headers = {'Content-type': 'application/json'}
-                self.connection.request('POST', f"http://{Config.STREAMER_ADDRESS}:{Config.EVENT_PORT}/{Config.MOUSE_EVENT}", _data, headers)
+                self.connection.request('POST', f"http://{Config_alt.STREAMER_ADDRESS}:{Config_alt.EVENT_PORT}/{Config_alt.MOUSE_EVENT}", _data, headers)
                 response = self.connection.getresponse()
 
 
@@ -49,7 +49,7 @@ class Client:
     def on_move(self, x, y):
         _data = json.dumps({"x": x, "y": y})
         headers = {'Content-type': 'application/json'}
-        self.connection.request('POST', f"http://{Config.STREAMER_ADDRESS}:{Config.EVENT_PORT}/{Config.MOUSE_EVENT}", _data, headers)
+        self.connection.request('POST', f"http://{Config_alt.STREAMER_ADDRESS}:{Config_alt.EVENT_PORT}/{Config_alt.MOUSE_EVENT}", _data, headers)
         response = self.connection.getresponse()
 
     def listen_on_device_abs(self):

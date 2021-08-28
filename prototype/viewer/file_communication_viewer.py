@@ -1,17 +1,10 @@
-import time
-
-import json
 import http.client as client
-
 import requests
-
-#from prototype import Config
 
 
 class FileClient:
     def __init__(self, configurator):
         self.config = configurator
-        print("addr", self.config.STREAMER_ADDRESS)
         self.connection = client.HTTPConnection(self.config.STREAMER_ADDRESS, self.config.FILE_PORT)
 
     def connect(self):
@@ -31,10 +24,3 @@ class FileClient:
 
     def close_connection(self):
         self.connection.close()
-
-    # def receive_file(self):
-    #    data = request.json
-
-#client = Client()
-#client.connect()
-#client.send_file("icon.png", 100, 100)

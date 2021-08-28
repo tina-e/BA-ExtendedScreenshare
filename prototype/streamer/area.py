@@ -1,7 +1,4 @@
-import sys
-import time
-
-from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QDialog
+from PyQt5.QtWidgets import QVBoxLayout, QDialog
 from PyQt5.QtCore import Qt, QPoint, QRect
 from PyQt5.QtGui import QPixmap, QPainter, QPen
 
@@ -13,7 +10,6 @@ class Area(QDialog):
 
         layout = QVBoxLayout()
         self.setLayout(layout)
-
         self.pix = QPixmap(self.rect().size())
         self.pix.fill(Qt.darkBlue)
 
@@ -70,7 +66,6 @@ class Area(QDialog):
 
     def keyReleaseEvent(self, event):
         if event.key == Qt.Key_Escape:
-            print("pressed")
             self.reject()
 
 # https://www.youtube.com/watch?v=3QRBk-FpWjE

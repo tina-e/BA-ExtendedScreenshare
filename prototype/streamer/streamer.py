@@ -26,25 +26,20 @@ class Streamer:
         # event communication
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
-
         self.event_handler = EventHandlerEvdev(configurator)
-
         connection_thread_events = threading.Thread(target=self.receive, daemon=True)
         connection_thread_events.start()
         # file communication
         self.file_communicator = FileServer(self, self.config.FILE_EVENT, self.config.STREAMER_ADDRESS, self.config.FILE_PORT)
-        # shared clipboard
-        self.clip_process = None
-        #
         connection_thread_files = threading.Thread(target=self.file_communicator.start, daemon=True)
         connection_thread_files.start()
+        # shared clipboard
+        self.clip_process = None
         # stream
         self.stream = Stream(configurator)
-        #self.start_stream()
         self.is_stream_active = False
 
     def send_stream_coords(self):
-        #time.sleep(10)
         print("sending coords")
         message = EventTypes.STREAM_COORDS.to_bytes(1, 'big')
         message += self.config.START_X.to_bytes(2, 'big')
@@ -119,26 +114,18 @@ class Streamer:
     def start_stream(self):
         self.stream.setup()
 
-    def pause_stream(self):
-        self.stream.pause()
-
-    def play_again_stream(self):
-        self.stream.start()
-
     def close_stream(self):
         if self.is_stream_active:
             self.is_stream_active = False
             self.event_handler.remove_device()
             self.stream.close()
             self.file_communicator.close()
-            self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard',
-                                                 shell=True)
+            self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
         else:
             self.is_stream_active = False
             self.stream.end()
             self.stream.close()
             self.file_communicator.close()
-            #self.event_handler.remove_device()
 
     def is_stream_open(self):
         return self.stream.is_pipeline_playing()

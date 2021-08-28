@@ -1,7 +1,7 @@
 from gi.repository import Gtk, Gdk
 import cairo
 
-import prototype.Config
+import prototype.Config_alt
 
 
 class Example(Gtk.Window):
@@ -14,8 +14,8 @@ class Example(Gtk.Window):
 
     def init_ui(self):
         self.connect("draw", self.on_draw)
-        self.resize(prototype.Config.END_X - prototype.Config.START_X, prototype.Config.END_Y - prototype.Config.START_Y)
-        self.move(prototype.Config.START_X, prototype.Config.START_Y)
+        self.resize(prototype.Config_alt.END_X - prototype.Config_alt.START_X, prototype.Config_alt.END_Y - prototype.Config_alt.START_Y)
+        self.move(prototype.Config_alt.START_X, prototype.Config_alt.START_Y)
 
         frame = Gtk.Frame(label=None)
         self.add(frame)

@@ -7,7 +7,7 @@ from pynput.mouse import Listener as MouseListener, Controller as MouseControlle
 from pynput.keyboard import Key, Listener as KeyListener, Controller as KeyController
 from prototype.event_types import EventTypes, get_id_by_button
 from prototype.window_manager_test import WindowManager
-import prototype.Config as Config
+import prototype.Config_alt as Config
 
 
 class Sender:

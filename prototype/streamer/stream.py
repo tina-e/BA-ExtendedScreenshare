@@ -1,9 +1,8 @@
-from streamer.frame_maker import FrameMaker
-#import Config
 import gi
 gi.require_version("Gst", "1.0")
 gi.require_version("GstApp", "1.0")
-from gi.repository import Gst, GLib, GstApp
+from gi.repository import Gst, GstApp
+from streamer.frame_maker import FrameMaker
 
 
 class Stream:
@@ -14,7 +13,7 @@ class Stream:
         self.frame_maker = None
         self.pipeline_open = False
         self.frame_maker = FrameMaker(self.config.START_X, self.config.START_Y, self.config.WIDTH, self.config.HEIGHT,
-                                      self.config.BORDER_WIDTH, self.config.RESOLUTION_X, self.config.RESOLUTION_Y)
+                                      self.config.BORDER_WIDTH, self.config.RESOLUTION_X, self.config.RESOLUTION_Y, self.config.PROJECT_PATH_ABSOLUTE)
 
     def setup(self):
         # https://gist.github.com/esrever10/7d39fe2d4163c5b2d7006495c3c911bb
@@ -31,16 +30,11 @@ class Stream:
         print(self.pipeline, "opened")
         self.pipeline_open = True
 
-
     def on_mouse_pos_message(self, mouse_x, mouse_y):
         self.frame_maker.set_mouse_pos(mouse_x, mouse_y)
 
     def start(self):
         self.pipeline.set_state(Gst.State.PLAYING)
-        self.frame_maker.toggle_visibility()
-
-    def pause(self):
-        self.pipeline.set_state(Gst.State.PAUSED)
         self.frame_maker.toggle_visibility()
 
     def end(self):

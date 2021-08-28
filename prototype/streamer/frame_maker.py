@@ -1,13 +1,10 @@
 import ctypes
-import os
 import threading
 import time
 
-#import Config
-
 
 class FrameMaker:
-    def __init__(self, x, y, width, height, border_width, max_width, max_height):
+    def __init__(self, x, y, width, height, border_width, max_width, max_height, project_path):
         self.x = x
         self.y = y
         self.width = width
@@ -15,20 +12,19 @@ class FrameMaker:
         self.border_width = border_width
         self.max_width = max_width
         self.max_height = max_height
-        self.frame = ctypes.CDLL("/home/tina/PycharmProjects/BA-CrossDeviceCommunication/prototype/streamer/libframe.so")
+
+        self.frame = ctypes.CDLL(f"{project_path}/prototype/streamer/libframe.so")
         self.frame.setup_rect.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.frame.draw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int]
-        #x, y, width, height = self.get_frame_position()
-        #self.frame.setup_rect(x, y, width, height, Config.BORDER_WIDTH)
         self.frame.setup_rect(self.x, self.y, self.width, self.height, self.border_width)
+
         self.is_visible = False
         self.mouse_x = self.x
         self.mouse_y = self.y
-        self.drawing_thread = threading.Thread(target=self.__draw, daemon=True)
+        self.drawing_thread = threading.Thread(target=self.draw, daemon=True)
         self.drawing_thread.start()
 
     def get_frame_position(self):
-        #todo: dragable area
         frame_x = self.x - self.border_width
         frame_y = self.y - self.border_width
         frame_width = self.width + 2 * self.border_width
@@ -50,7 +46,7 @@ class FrameMaker:
     def toggle_visibility(self):
         self.is_visible = not self.is_visible
 
-    def __draw(self):
+    def draw(self):
         while True:
             time.sleep(0.15)
             if self.is_visible:
@@ -61,9 +57,3 @@ class FrameMaker:
     def end(self):
         self.is_visible = False
         self.frame.end()
-
-#frame = Frame()
-#frame.setup()
-#frame.show()
-
-
