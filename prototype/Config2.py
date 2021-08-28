@@ -49,6 +49,7 @@ class Config:
             self.STREAMER_ADDRESS = ip
 
     def set_receiver_ip(self, ip):
+        print("set rec ip", ip)
         if ip is None:
             self.RECEIVER_ADDRESS = self.DEVICE_ADDRESS_DICT.get(socket.gethostname())
         else:

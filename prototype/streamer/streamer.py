@@ -40,7 +40,7 @@ class Streamer:
         connection_thread_files.start()
         # stream
         self.stream = Stream(configurator)
-        self.start_stream()
+        #self.start_stream()
         self.is_stream_active = False
 
     def send_stream_coords(self):
@@ -51,6 +51,7 @@ class Streamer:
         message += self.config.START_Y.to_bytes(2, 'big')
         message += self.config.END_X.to_bytes(2, 'big')
         message += self.config.END_Y.to_bytes(2, 'big')
+        print(self.config.RECEIVER_ADDRESS)
         self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
 
     def send_stream_closed(self):
@@ -66,9 +67,9 @@ class Streamer:
             try:
                 event_type = EventTypes(data[0])
                 if event_type == EventTypes.REGISTER:
-                    self.config.set_receiver_ip(addr)
+                    self.config.set_receiver_ip(addr[0])
                     self.send_stream_coords()
-                    self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
+                    self.start_stream()
                 elif event_type == EventTypes.VIEWING:
                     queries_stream = data[1]
                     print(f"is someone watching stream? {queries_stream}")
@@ -106,12 +107,14 @@ class Streamer:
             self.is_stream_active = True
             self.stream.start()
             self.event_handler.create_device()
-            #self.file_communicator.start()
+            self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard',
+                                                 shell=True)
         else:
             self.is_stream_active = False
             self.stream.end()
             self.event_handler.remove_device()
-            self.file_communicator.close()
+            self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard',
+                                                 shell=True)
 
     def start_stream(self):
         self.stream.setup()
@@ -128,15 +131,13 @@ class Streamer:
             self.event_handler.remove_device()
             self.stream.close()
             self.file_communicator.close()
+            self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard',
+                                                 shell=True)
         else:
             self.is_stream_active = False
             self.stream.end()
             self.stream.close()
             self.file_communicator.close()
-            #self.clip_process.terminate()
-            self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
-            time.sleep(0.5)
-            #self.clip_process.terminate()
             #self.event_handler.remove_device()
 
     def is_stream_open(self):

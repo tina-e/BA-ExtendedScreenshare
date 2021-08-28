@@ -13,6 +13,8 @@ class Stream:
         self.pipeline = None
         self.frame_maker = None
         self.pipeline_open = False
+        self.frame_maker = FrameMaker(self.config.START_X, self.config.START_Y, self.config.WIDTH, self.config.HEIGHT,
+                                      self.config.BORDER_WIDTH, self.config.RESOLUTION_X, self.config.RESOLUTION_Y)
 
     def setup(self):
         # https://gist.github.com/esrever10/7d39fe2d4163c5b2d7006495c3c911bb
@@ -28,8 +30,7 @@ class Stream:
             f"! udpsink host={self.config.RECEIVER_ADDRESS} port={self.config.STREAM_PORT} ")
         print(self.pipeline, "opened")
         self.pipeline_open = True
-        self.frame_maker = FrameMaker(self.config.START_X, self.config.START_Y, self.config.WIDTH, self.config.HEIGHT,
-                                      self.config.BORDER_WIDTH, self.config.RESOLUTION_X, self.config.RESOLUTION_Y)
+
 
     def on_mouse_pos_message(self, mouse_x, mouse_y):
         self.frame_maker.set_mouse_pos(mouse_x, mouse_y)
