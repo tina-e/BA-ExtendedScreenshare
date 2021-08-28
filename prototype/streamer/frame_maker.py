@@ -5,15 +5,12 @@ import time
 
 class FrameMaker:
     def __init__(self, x, y, width, height, border_width, max_width, max_height, project_path):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
         self.border_width = border_width
         self.max_width = max_width
         self.max_height = max_height
+        self.x, self.y, self.width, self.height = self.get_frame_position(x, y, width, height)
 
-        self.frame = ctypes.CDLL(f"{project_path}/prototype/streamer/libframe.so")
+        self.frame = ctypes.CDLL(f"{project_path}/streamer/libframe.so")
         self.frame.setup_rect.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.frame.draw.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int]
         self.frame.setup_rect(self.x, self.y, self.width, self.height, self.border_width)
@@ -24,11 +21,11 @@ class FrameMaker:
         self.drawing_thread = threading.Thread(target=self.draw, daemon=True)
         self.drawing_thread.start()
 
-    def get_frame_position(self):
-        frame_x = self.x - self.border_width
-        frame_y = self.y - self.border_width
-        frame_width = self.width + 2 * self.border_width
-        frame_height = self.height + 2 * self.border_width
+    def get_frame_position(self, x, y, width, height):
+        frame_x = x - self.border_width
+        frame_y = y - self.border_width
+        frame_width = width + 2 * self.border_width
+        frame_height = height + 2 * self.border_width
         if frame_x <= 0:
             frame_x = 0
         if frame_y <= 0:

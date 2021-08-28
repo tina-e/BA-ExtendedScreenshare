@@ -58,6 +58,7 @@ class Streamer:
         print("Waiting for viewer...")
         receiving = True
         while receiving:
+            print("receiving")
             data, addr = self.sock.recvfrom(1024)
             try:
                 event_type = EventTypes(data[0])
