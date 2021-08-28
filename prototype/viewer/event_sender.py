@@ -23,6 +23,7 @@ class EventSender:
     def __init__(self, stream_window, configurator):
         self.stream_window = stream_window
         self.config = configurator
+        self.active = False
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.mouse = MouseController()
@@ -41,35 +42,39 @@ class EventSender:
         self.movement_thread.start()
         self.keyboard_thread.start()
 
-    def end_event_listeners(self):
-        self.button_thread.join()
-        self.movement_thread.join()
-        self.keyboard_thread.join()
-
-    def register_and_request_coords(self):
+    def register(self):
         message = EventTypes.REGISTER.to_bytes(1, 'big')
-        print("REGISTER", message)
-        self.sock.sendto(message, (self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
+        attempts = 5
+        for attempt in range(0, attempts):
+            print("REGISTER", message)
+            self.sock.sendto(message, (self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
 
-        receiving_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        receiving_sock.bind((self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
-        waiting_for_stream = True
-        while waiting_for_stream: #todo: ggf zeitsperre einfügen für den Fall dass nichts gestreamt wird
-            data, addr = receiving_sock.recvfrom(1024)
-            print(data, addr)
+            receiving_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            receiving_sock.bind((self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
+            receiving_sock.settimeout(1)
             try:
-                event_type = EventTypes(data[0])
-                if event_type == EventTypes.STREAM_COORDS:
-                    x = int.from_bytes(data[1:3], 'big')
-                    y = int.from_bytes(data[3:5], 'big')
-                    end_x = int.from_bytes(data[5:7], 'big')
-                    end_y = int.from_bytes(data[7:9], 'big')
-                    print(f"stream coords: {x} {y} {end_x} {end_y}")
-                    self.config.set_coords((x, y, end_x, end_y))
-                    waiting_for_stream = False
-            except UnicodeDecodeError:
-                continue
-        receiving_sock.close()
+                data, addr = receiving_sock.recvfrom(1024)
+                print(data, addr)
+                try:
+                    event_type = EventTypes(data[0])
+                    if event_type == EventTypes.STREAM_COORDS:
+                        x = int.from_bytes(data[1:3], 'big')
+                        y = int.from_bytes(data[3:5], 'big')
+                        end_x = int.from_bytes(data[5:7], 'big')
+                        end_y = int.from_bytes(data[7:9], 'big')
+                        print(f"stream coords: {x} {y} {end_x} {end_y}")
+                        self.config.set_coords((x, y, end_x, end_y))
+                        receiving_sock.close()
+                        return True
+                except UnicodeDecodeError:
+                    continue
+            except socket.timeout:
+                receiving_sock.close()
+                print("Currently no stream available. Trying again in a second...")
+                time.sleep(1)
+        print("No stream available at the given IP")
+        return False
+
 
     def send(self, message):
         print(self.config.STREAMER_ADDRESS) #todo: rec addr empty
@@ -77,11 +82,12 @@ class EventSender:
 
     def on_view(self, is_viewing):
         if is_viewing:
+            self.active = True
             self.start_event_listeners()
             print(self.config.PROJECT_PATH_ABSOLUTE)
             self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
         else:
-            # self.end_event_listeners()
+            self.active = False
             # self.clip_process.terminate()
             self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
             # self.clip_process.terminate()
@@ -92,31 +98,36 @@ class EventSender:
         self.send(message)
 
     def on_click(self, x, y, button, was_pressed):
-        if self.stream_window.is_active():
-            x_in_stream, y_in_stream = self.stream_window.get_position_in_stream(x, y)
-            if x_in_stream:
-                message = EventTypes.MOUSE_CLICK.to_bytes(1, 'big')
-                message += x_in_stream.to_bytes(2, 'big')
-                message += y_in_stream.to_bytes(2, 'big')
-                message += get_id_by_button(button).to_bytes(1, 'big')
-                message += was_pressed.to_bytes(1, 'big')
-                print("CLICK", message)
-                self.send(message)
+        if self.active:
+            print("on click")
+            if self.stream_window.is_active():
+                x_in_stream, y_in_stream = self.stream_window.get_position_in_stream(x, y)
+                if x_in_stream:
+                    message = EventTypes.MOUSE_CLICK.to_bytes(1, 'big')
+                    message += x_in_stream.to_bytes(2, 'big')
+                    message += y_in_stream.to_bytes(2, 'big')
+                    message += get_id_by_button(button).to_bytes(1, 'big')
+                    message += was_pressed.to_bytes(1, 'big')
+                    print("CLICK", message)
+                    self.send(message)
 
     def on_scroll(self, x, y, dx, dy):
-        if self.stream_window.is_active():
-            x_in_stream, y_in_stream = self.stream_window.get_position_in_stream(x, y)
-            if x_in_stream:
-                message = EventTypes.MOUSE_SCROLL.to_bytes(1, 'big')
-                message += x_in_stream.to_bytes(2, 'big')
-                message += y_in_stream.to_bytes(2, 'big')
-                message += dx.to_bytes(2, 'big', signed=True)
-                message += dy.to_bytes(2, 'big', signed=True)
-                print("SCROLL", message)
-                self.send(message)
+        if self.active:
+            print("on scroll")
+            if self.stream_window.is_active():
+                x_in_stream, y_in_stream = self.stream_window.get_position_in_stream(x, y)
+                if x_in_stream:
+                    message = EventTypes.MOUSE_SCROLL.to_bytes(1, 'big')
+                    message += x_in_stream.to_bytes(2, 'big')
+                    message += y_in_stream.to_bytes(2, 'big')
+                    message += dx.to_bytes(2, 'big', signed=True)
+                    message += dy.to_bytes(2, 'big', signed=True)
+                    print("SCROLL", message)
+                    self.send(message)
 
     def listen_mouse_pos(self):
-        while True:
+        while self.active:
+            print("mouse pos")
             if self.stream_window.is_active():
                 mouse_x = self.mouse.position[0]
                 mouse_y = self.mouse.position[1]
@@ -130,14 +141,17 @@ class EventSender:
             time.sleep(0.1)
 
     def listen_keyboard(self):
+        print("keyboard")
         for event in self.keyboard.read_loop():
-            if self.stream_window.is_active():
-                if event.type == ecodes.EV_KEY:
-                    message = EventTypes.KEYBOARD.to_bytes(1, 'big')
-                    message += event.code.to_bytes(2, 'big')  # key
-                    message += event.value.to_bytes(1, 'big')  # down = 1, up = 0, hold = 2
-                    print("KEY", message)
-                    self.send(message)
+            if self.active:
+                print("keyboard for loop")
+                if self.stream_window.is_active():
+                    if event.type == ecodes.EV_KEY:
+                        message = EventTypes.KEYBOARD.to_bytes(1, 'big')
+                        message += event.code.to_bytes(2, 'big')  # key
+                        message += event.value.to_bytes(1, 'big')  # down = 1, up = 0, hold = 2
+                        print("KEY", message)
+                        self.send(message)
 
     '''if event.code == 29:
       if event.value == 1:

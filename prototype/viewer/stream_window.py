@@ -48,22 +48,28 @@ class StreamWindow(QMainWindow):
         QMainWindow.__init__(self)
         self.configurator = configurator
         self.event_sender = EventSender(self, self.configurator)
-        self.event_sender.register_and_request_coords()
+        self.registration_successful = self.event_sender.register()
+        if self.registration_successful:
+            #self.event_sender.start_event_listeners()
 
-        self.setFixedWidth(configurator.WIDTH)
-        self.setFixedHeight(configurator.HEIGHT)
-        self.setWindowTitle('Streaming')
-        self.gstWindowId = None
-        self.x_pos = None
-        self.y_pos = None
+            self.setFixedWidth(configurator.WIDTH)
+            self.setFixedHeight(configurator.HEIGHT)
+            self.setWindowTitle('Streaming')
+            self.gstWindowId = None
+            self.x_pos = None
+            self.y_pos = None
 
-        self.setAcceptDrops(True)
-        self.file_communicator = FileClient(configurator)
-        self.file_communicator.connect()
+            self.setAcceptDrops(True)
+            self.file_communicator = FileClient(configurator)
+            self.file_communicator.connect()
 
-        self.setupGst()
-        assert self.gstWindowId
-        self.start_gstreamer()
+            self.setupGst()
+            assert self.gstWindowId
+            self.start_gstreamer()
+        #else: self.close()
+
+    def get_registration_state(self):
+        return self.registration_successful
 
     def dragEnterEvent(self, event):
         event.accept()
@@ -102,14 +108,20 @@ class StreamWindow(QMainWindow):
         self.gstWindowId = self.winId()
         print("Setting up gstreamer pipeline, win id %s" % (self.gstWindowId,))
 
-        self.player = Gst.parse_launch(f'udpsrc address={self.configurator.RECEIVER_ADDRESS} port={self.configurator.STREAM_PORT} caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! decodebin ! videoconvert ! ximagesink name=sinkx_overview')
+        self.player = Gst.parse_launch(f'udpsrc port={self.configurator.STREAM_PORT} caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! decodebin ! videoconvert ! ximagesink name=sinkx_overview')
         #self.player = Gst.parse_launch('videotestsrc ! videoconvert ! videoscale ! ximagesink name=sinkx_overview')
 
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.enable_sync_message_emission()
-        #bus.connect("message", self.on_message)
+        bus.connect("message", self.on_message)
         bus.connect("sync-message::element", self.on_sync_message)
+
+    def on_message(self, bus, message):
+        t = message.type
+        # print('\n'.join(dir(gst)))
+        print('MSG: %s' % (t,))
+
 
     def on_sync_message(self, bus, message):
         print('sync, %s' % (message,))
@@ -147,8 +159,10 @@ class StreamWindow(QMainWindow):
         return None, None
 
     def closeEvent(self, event):
-        print("end watching")
-        self.event_sender.on_view(False)
+        print("close stream window")
+        if self.registration_successful:
+            self.event_sender.on_view(False)
+            self.file_communicator.close_connection()
 
 
 #app = QApplication(sys.argv)

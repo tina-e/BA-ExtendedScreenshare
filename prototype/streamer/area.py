@@ -66,10 +66,11 @@ class Area(QDialog):
 
             self.begin, self.destination = QPoint(), QPoint()
             self.update()
-            self.hide()
+            self.accept()
 
-
-    #todo: escape
-    # def onKey: (self.done(0))
+    def keyReleaseEvent(self, event):
+        if event.key == Qt.Key_Escape:
+            print("pressed")
+            self.reject()
 
 # https://www.youtube.com/watch?v=3QRBk-FpWjE

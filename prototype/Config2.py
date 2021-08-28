@@ -9,6 +9,7 @@ class Config:
         self.STREAM_ACTIVE = False
         # IPs and Ports
         self.DEVICE_ADDRESS_LIST = [('tina-EasyNote-TH36', '192.168.178.23'), ('tinapc', '192.168.178.136')]
+        self.DEVICE_ADDRESS_DICT = {'tina-EasyNote-TH36': '192.168.178.23', 'tinapc': '192.168.178.136'}
         self.STREAMER_ADDRESS = ''
         self.RECEIVER_ADDRESS = ''
         self.IS_STREAMER = False
@@ -43,13 +44,13 @@ class Config:
 
     def set_streamer_ip(self, ip):
         if ip is None:
-            self.STREAMER_ADDRESS = socket.gethostname()
+            self.STREAMER_ADDRESS = self.DEVICE_ADDRESS_DICT.get(socket.gethostname())
         else:
             self.STREAMER_ADDRESS = ip
 
     def set_receiver_ip(self, ip):
         if ip is None:
-            self.RECEIVER_ADDRESS = socket.gethostname()
+            self.RECEIVER_ADDRESS = self.DEVICE_ADDRESS_DICT.get(socket.gethostname())
         else:
             self.RECEIVER_ADDRESS = ip
 

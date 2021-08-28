@@ -63,7 +63,6 @@ class Menu(QSystemTrayIcon):
         print("area")
         if self.streamer is None:
             self.open_area_chooser()
-            self.setup_stream()
         #else:
         #    self.end()
         #    self.open_area_choser()
@@ -74,28 +73,30 @@ class Menu(QSystemTrayIcon):
         area_chooser.setWindowFlag(Qt.FramelessWindowHint)
         area_chooser.setAttribute(Qt.WA_NoSystemBackground, True)
         area_chooser.setAttribute(Qt.WA_TranslucentBackground, True)
-        area_chooser.exec()
-        dimensions = area_chooser.get_coords()
-        self.config.set_coords(dimensions)
+        result = area_chooser.exec()
+        if result == 1:
+            dimensions = area_chooser.get_coords()
+            self.config.set_coords(dimensions)
+            self.setup_stream()
+        elif result == 0:
+            self.end()
+
 
     def access(self):
-        given_streamer_ip = self.get_ip_from_dialog()
+        #given_streamer_ip = self.get_ip_from_dialog()
+        given_streamer_ip = '192.168.178.23'
         if given_streamer_ip and (self.stream_viewer is None or not self.stream_viewer.isVisible()):
-            print("access")
-            self.config.set_streamer_ip(self.get_ip_from_dialog())
+            self.config.IS_STREAMER = False
+            self.config.set_streamer_ip(given_streamer_ip)
             self.config.set_receiver_ip(None)
-
-            print("s", self.config.STREAMER_ADDRESS)
-            print("r", self.config.RECEIVER_ADDRESS)
-            # self.register_to_stream()
             self.stream_viewer = StreamWindow(self.config)
-            self.stream_viewer.show()
-            self.end_action.setEnabled(True)
+            if self.stream_viewer.get_registration_state():
+                self.stream_viewer.show()
+                self.end_action.setEnabled(True)
 
     def get_ip_from_dialog(self):
         input, accepted = QInputDialog.getText(self.parent, "IP Dialog", "Streamer IP:", QLineEdit.Normal, "")
         if accepted and input != '':
-            self.config.IS_STREAMER = False
             return input
         return None
 
@@ -145,6 +146,7 @@ class Menu(QSystemTrayIcon):
             if self.stream_viewer is None or self.stream_viewer.isVisible():
                 self.end()
         QtCore.QCoreApplication.exit()
+        # exit(0)
 
 
     '''def play(self):
