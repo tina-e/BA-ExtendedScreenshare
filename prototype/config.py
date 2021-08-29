@@ -1,4 +1,3 @@
-from evdev import InputDevice
 import pyautogui
 import socket
 import pathlib
@@ -8,15 +7,15 @@ class Configurator:
     def __init__(self):
         self.STREAM_ACTIVE = False
         self.IS_STREAMER = False
+        self.PROJECT_PATH_ABSOLUTE = pathlib.Path(__file__).parent.resolve()
         # IPs and Ports
-        self.DEVICE_ADDRESS_DICT = {'tina-EasyNote-TH36': '192.168.178.23', 'tinapc': '192.168.178.136'}
+        self.OWN_IP = self.get_own_ip()
         self.STREAMER_ADDRESS = ''
         self.RECEIVER_ADDRESS = ''
         self.STREAM_PORT = 9000
         self.EVENT_PORT = 9900
         self.FILE_PORT = 9990
         self.FILE_EVENT = 'fileevent'
-
         # GUI
         self.RESOLUTION_X = pyautogui.size().width
         self.RESOLUTION_Y = pyautogui.size().height
@@ -28,23 +27,22 @@ class Configurator:
         self.HEIGHT = self.END_Y - self.START_Y
         self.BORDER_WIDTH = 2
 
-        # Input Devices
-        self.KEYBOARD_DEVICE_STREAMER = InputDevice('/dev/input/event4')  # keyboard
-        self.MOUSE_DEVICE_STREAMER_POINT = InputDevice('/dev/input/event9')  # mouse pointer (see xinput list: only listed at pointer)
-        self.MOUSE_DEVICE_STREAMER_CLICK = InputDevice('/dev/input/event6')  # mouse keys (see xinput list: listed at pointer AND keyboard)
-
-        # Path
-        self.PROJECT_PATH_ABSOLUTE = pathlib.Path(__file__).parent.resolve()
+    def get_own_ip(self):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.connect(('10.255.255.255', 1))
+        ip = sock.getsockname()[0]
+        sock.close()
+        return ip
 
     def set_streamer_ip(self, ip):
         if ip is None:
-            self.STREAMER_ADDRESS = self.DEVICE_ADDRESS_DICT.get(socket.gethostname())
+            self.STREAMER_ADDRESS = self.OWN_IP
         else:
             self.STREAMER_ADDRESS = ip
 
     def set_receiver_ip(self, ip):
         if ip is None:
-            self.RECEIVER_ADDRESS = self.DEVICE_ADDRESS_DICT.get(socket.gethostname())
+            self.RECEIVER_ADDRESS = self.OWN_IP
         else:
             self.RECEIVER_ADDRESS = ip
 

@@ -1,0 +1,6 @@
+{
+  "keyboard": "/dev/input/event4",
+  "mouse_pointer": "/dev/input/event9",
+  "mouse_buttons": "/dev/input/event6",
+  "_comment": "keyboard: keyboard device listed as keyboard; mouse_pointer: mouse device listed as pointer only; mouse_buttons: mouse device listed as keyboard AND pointer"
+}

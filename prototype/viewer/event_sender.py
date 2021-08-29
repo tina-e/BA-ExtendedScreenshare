@@ -3,6 +3,7 @@ import socket
 import subprocess
 import threading
 import time
+import json
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -21,7 +22,11 @@ class EventSender:
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.mouse = MouseController()
-        self.keyboard = InputDevice('/dev/input/event3')
+
+        with open(f"{self.config.PROJECT_PATH_ABSOLUTE}/viewer/dev.json", mode="r") as json_data:
+            data = json.load(json_data)
+        print(data.get("keyboard"))
+        self.keyboard = InputDevice(data.get("keyboard"))
 
         self.button_thread = MouseListener(on_click=self.on_click, on_scroll=self.on_scroll)
         self.button_thread.daemon = True
