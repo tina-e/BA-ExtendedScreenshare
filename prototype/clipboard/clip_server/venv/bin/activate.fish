@@ -29,7 +29,7 @@ end
 # unset irrelevant variables
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/martinaemmert/Downloads/extensible-clipboard-develop/clip_server/venv"
+set -gx VIRTUAL_ENV "/home/martinaemmert/Documents/Bachelorarbeit/CrossDeviceCommunication/prototype/clipboard/clip_server/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

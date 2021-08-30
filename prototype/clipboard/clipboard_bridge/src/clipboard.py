@@ -107,7 +107,6 @@ class Clipboard(QObject):
         """
         # if change was triggerd by inserting data received from server
         if self.clipboard.ownsClipboard():
-            print("helloo triggered by server")
             return
         mime_data = self.clipboard.mimeData()
         data = []

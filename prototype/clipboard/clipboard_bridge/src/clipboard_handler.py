@@ -3,6 +3,7 @@ import sys
 from PyQt5.QtCore import QObject, pyqtSlot
 
 from clipboard import Clipboard
+# import html2text
 
 
 class ClipboardHandler(QObject):
@@ -20,6 +21,9 @@ class ClipboardHandler(QObject):
         Saves data to the local clipboard. Uses a QClipboard
         :param data: Data to be saved
         """
+        print("DATA:", data)
+        # TODO: siehe clip_test_ME.py
+        data['mimetype'] = 'text/plain' #plus: ist das nötig?
         self.clipboard.save(data)
 
     def put_into_storage(self, data):
