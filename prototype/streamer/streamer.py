@@ -10,14 +10,15 @@ import time
 from streamer.stream import Stream
 from streamer.mouse_handler import EventHandlerEvdev
 from streamer.file_communication_streamer import FileServer
+from event_types import EventTypes, get_button_by_id
 
 import sys
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication
-from event_types import EventTypes, get_button_by_id
 import socket
 import threading
 import subprocess
+import pyautogui
 
 class Streamer:
     def __init__(self, configurator):
@@ -131,6 +132,14 @@ class Streamer:
 
     def is_stream_open(self):
         return self.stream.is_pipeline_playing()
+
+    def simulate_drop(self, filename, x, y):
+        x_abs = self.config.START_X + x
+        y_abs = self.config.START_Y + y
+        current_x, current_y = pyautogui.position()
+        subprocess.Popen(f"xcopy -D {self.config.PROJECT_PATH_ABSOLUTE}/streamer/{filename}", shell=True)
+        pyautogui.click(x_abs, y_abs)
+        pyautogui.moveTo(current_x, current_y)
 
     def paste_file(self, file, mimetype, x_pos, y_pos):
         data = QtCore.QMimeData()
