@@ -137,7 +137,7 @@ class Streamer:
         x_abs = self.config.START_X + x
         y_abs = self.config.START_Y + y
         current_x, current_y = pyautogui.position()
-        subprocess.Popen(f"xcopy -D {self.config.PROJECT_PATH_ABSOLUTE}/streamer/{filename}", shell=True)
+        subprocess.Popen(f"xcopy -D {self.config.PROJECT_PATH_ABSOLUTE}/{filename}", shell=True)
         pyautogui.click(x_abs, y_abs)
         pyautogui.moveTo(current_x, current_y)
 

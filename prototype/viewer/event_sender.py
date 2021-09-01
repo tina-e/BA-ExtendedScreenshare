@@ -127,7 +127,7 @@ class EventSender:
     def listen_mouse_pos(self):
         while self.active:
             print("mouse pos")
-            if self.stream_window.is_active():
+            if self.stream_window.is_active(): #todo
                 mouse_x = self.mouse.position[0]
                 mouse_y = self.mouse.position[1]
                 x_in_stream, y_in_stream = self.stream_window.get_position_in_stream(mouse_x, mouse_y)

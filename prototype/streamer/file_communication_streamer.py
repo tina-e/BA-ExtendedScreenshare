@@ -41,7 +41,7 @@ class FileServer:
             drop_y = request.values.get('y')
             print(filename, mimetype, drop_x, drop_y)
             file = request.files["files"]
-            file.save(filename)
-            self.streamer.simulate_drop(filename, drop_x, drop_y)
+            if (file.save(filename)): #todo: erst wenn fertig gesaved continue
+                self.streamer.simulate_drop(filename, drop_x, drop_y)
             #self.streamer.paste_file(file, mimetype, drop_x, drop_y)
         return Response()
