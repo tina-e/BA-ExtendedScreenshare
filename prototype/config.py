@@ -56,7 +56,13 @@ class Configurator:
         with open(f"{self.PROJECT_PATH_ABSOLUTE}/clipboard/clipboard_bridge/config/config.ini", "a") as file:
             file.write(f"\nmain_server_address = http://{self.ODD_IP}:5000/")
             file.write(f"\ndomain = http://{self.OWN_IP}")
-            file.write("\nis_syncing = True")
+            file.close()
+
+    def clean_clipboard_config(self):
+        with open(f"{self.PROJECT_PATH_ABSOLUTE}/clipboard/clipboard_bridge/config/config.ini", "w") as file:
+            file.write("[networking]\n")
+            file.write("port = 5010\n")
+            file.write("is_syncing = True")
             file.close()
 
     def set_coords(self, dimensions):
