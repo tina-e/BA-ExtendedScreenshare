@@ -3,7 +3,7 @@ import sys
 from PyQt5.QtCore import QObject, pyqtSlot
 
 from clipboard import Clipboard
-# import html2text
+import html2text
 
 
 class ClipboardHandler(QObject):
@@ -22,7 +22,8 @@ class ClipboardHandler(QObject):
         :param data: Data to be saved
         """
         print("DATA:", data)
-        # TODO: siehe clip_test_ME.py
+        data['data'] = html2text.html2text(data['data'].decode('utf-8')) #todo: evtl wieder zu byte codieren
+        print("DATA:", data)
         data['mimetype'] = 'text/plain' #plus: ist das nötig?
         self.clipboard.save(data)
 

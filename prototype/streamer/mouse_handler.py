@@ -16,14 +16,12 @@ class EventHandlerEvdev():
                 (ecodes.ABS_Y, AbsInfo(0, 0, self.config.RESOLUTION_Y, 0, 0, 31)),
                 (ecodes.ABS_PRESSURE, AbsInfo(0, 0, 4000, 0, 0, 31))],
         }
-        with open("dev.json", mode="r") as json_data:
-            self.device_path_data = json.load(json_data)
         self.mouse_ui = None
         self.key_ui = None
 
     def create_device(self):
         self.mouse_ui = UInput(self.cap_mouse, name='mouse', version=0x3)
-        self.key_ui = UInput.from_device(InputDevice(self.device_path_data.get("keyboard")), InputDevice(self.device_path_data.get("mouse_buttons")), name='key')
+        self.key_ui = UInput.from_device(InputDevice(self.config.KEYBOARD_DEVICE_PATH), InputDevice(self.config.MOUSE_DEVICE_PATH), name='key')
 
         subprocess.check_output("xinput create-master master", shell=True)
         self.master_pointer_id = subprocess.check_output("xinput list --id-only 'master pointer'", shell=True).strip().decode()

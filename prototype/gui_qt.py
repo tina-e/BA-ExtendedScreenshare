@@ -11,10 +11,10 @@ from viewer.stream_window import StreamWindow
 
 
 class Menu(QSystemTrayIcon):
-    def __init__(self, icon, parent):
+    def __init__(self, icon, parent, configurator):
         QSystemTrayIcon.__init__(self, icon, parent)
         self.parent = parent
-        self.config = Configurator()
+        self.config = configurator
         self.streamer = None
         self.stream_viewer = None
         self.is_stream_active = False
@@ -68,6 +68,7 @@ class Menu(QSystemTrayIcon):
             self.config.IS_STREAMER = False
             self.config.set_streamer_ip(given_streamer_ip)
             self.config.set_receiver_ip(None)
+            self.config.write_clipboard_config()
             self.stream_viewer = StreamWindow(self.config)
             if self.stream_viewer.get_registration_state():
                 self.stream_viewer.show()
@@ -89,10 +90,12 @@ class Menu(QSystemTrayIcon):
 
 
 def main():
+    print(sys.argv)
+    config = Configurator(sys.argv)
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
     w = QWidget()
-    tray_icon = Menu(QIcon("icon.png"), w)
+    tray_icon = Menu(QIcon("icon.png"), w, config)
     tray_icon.show()
     sys.exit(app.exec_())
 

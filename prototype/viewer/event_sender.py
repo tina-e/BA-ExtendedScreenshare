@@ -11,7 +11,7 @@ from gi.repository import Gtk, Gdk
 from evdev import InputDevice, ecodes
 from pynput.mouse import Listener as MouseListener, Controller as MouseController
 
-from prototype.event_types import EventTypes, get_id_by_button
+from event_types import EventTypes, get_id_by_button
 
 
 class EventSender:
@@ -23,10 +23,12 @@ class EventSender:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.mouse = MouseController()
 
-        with open(f"{self.config.PROJECT_PATH_ABSOLUTE}/viewer/dev.json", mode="r") as json_data:
-            data = json.load(json_data)
-        print(data.get("keyboard"))
-        self.keyboard = InputDevice(data.get("keyboard"))
+        #with open(f"{self.config.PROJECT_PATH_ABSOLUTE}/viewer/dev.json", mode="r") as json_data:
+        #    data = json.load(json_data)
+        #print(data.get("keyboard"))
+        #self.keyboard = InputDevice(data.get("keyboard"))
+
+        self.keyboard = InputDevice(self.config.KEYBOARD_DEVICE_PATH)
 
         self.button_thread = MouseListener(on_click=self.on_click, on_scroll=self.on_scroll)
         self.button_thread.daemon = True
