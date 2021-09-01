@@ -59,7 +59,6 @@ class Streamer:
         print("Waiting for viewer...")
         receiving = True
         while receiving:
-            print("receiving")
             data, addr = self.sock.recvfrom(1024)
             try:
                 event_type = EventTypes(data[0])
@@ -134,11 +133,14 @@ class Streamer:
         return self.stream.is_pipeline_playing()
 
     def simulate_drop(self, filename, x, y):
-        x_abs = self.config.START_X + x
-        y_abs = self.config.START_Y + y
+        x_abs = self.config.START_X + int(x)
+        y_abs = self.config.START_Y + int(y)
         current_x, current_y = pyautogui.position()
         subprocess.Popen(f"xcopy -D {self.config.PROJECT_PATH_ABSOLUTE}/{filename}", shell=True)
-        pyautogui.click(x_abs, y_abs)
+        #time.sleep(1) #todo
+        pyautogui.moveTo(x_abs, y_abs)
+        pyautogui.mouseDown()
+        pyautogui.mouseUp()
         pyautogui.moveTo(current_x, current_y)
 
     def paste_file(self, file, mimetype, x_pos, y_pos):

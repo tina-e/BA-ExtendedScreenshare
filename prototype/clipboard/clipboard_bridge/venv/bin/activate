@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/martinaemmert/Documents/Bachelorarbeit/CrossDeviceCommunication/prototype/clipboard/clipboard_bridge/venv"
+VIRTUAL_ENV="/home/tina/PycharmProjects/BA-CrossDeviceCommunication/prototype/clipboard/clipboard_bridge/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
