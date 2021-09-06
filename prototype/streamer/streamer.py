@@ -118,16 +118,13 @@ class Streamer:
 
     def close_stream(self):
         if self.is_stream_active:
-            self.is_stream_active = False
             self.event_handler.remove_device()
-            self.stream.close()
-            self.file_communicator.close()
+            self.config.clean_clipboard_config()
             self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
-        else:
-            self.is_stream_active = False
-            self.stream.end()
-            self.stream.close()
-            self.file_communicator.close()
+        self.is_stream_active = False
+        self.stream.end()
+        self.stream.close()
+        self.file_communicator.close()
 
     def is_stream_open(self):
         return self.stream.is_pipeline_playing()

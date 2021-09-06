@@ -22,6 +22,8 @@ class StreamWindow(QMainWindow):
         self.event_sender = EventSender(self, self.configurator)
         self.registration_successful = self.event_sender.register()
         if self.registration_successful:
+            #self.setMinimumWidth(configurator.WIDTH)
+            #self.setMinimumHeight(configurator.HEIGHT)
             self.setFixedWidth(configurator.WIDTH)
             self.setFixedHeight(configurator.HEIGHT)
             self.setWindowTitle('Streaming')
@@ -127,4 +129,5 @@ class StreamWindow(QMainWindow):
         print("close stream window")
         if self.registration_successful:
             self.event_sender.on_view(False)
+            self.config.clean_clipboard_config()
             self.file_communicator.close_connection()

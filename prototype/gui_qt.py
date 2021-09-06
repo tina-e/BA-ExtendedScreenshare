@@ -39,6 +39,7 @@ class Menu(QSystemTrayIcon):
         if self.streamer is None:
             self.area_action.setEnabled(False)
             self.fullscreen_action.setEnabled(False)
+            self.access_action.setEnabled(False)
             self.config.IS_STREAMER = True
             self.config.set_streamer_ip(None)
             self.streamer = Streamer(self.config)
@@ -62,16 +63,25 @@ class Menu(QSystemTrayIcon):
             self.end()
 
     def access(self):
-        # given_streamer_ip = self.get_ip_from_dialog()
-        given_streamer_ip = '192.168.178.23'
-        if given_streamer_ip and (self.stream_viewer is None or not self.stream_viewer.isVisible()):
-            self.config.IS_STREAMER = False
-            self.config.set_streamer_ip(given_streamer_ip)
-            self.config.set_receiver_ip(None)
-            self.config.write_clipboard_config()
-            self.stream_viewer = StreamWindow(self.config)
-            if self.stream_viewer.get_registration_state():
-                self.stream_viewer.show()
+        if self.stream_viewer:
+            self.stream_viewer.close()
+            self.stream_viewer = None
+        given_streamer_ip = self.get_ip_from_dialog()
+        #given_streamer_ip = '192.168.178.23'
+        if given_streamer_ip:
+            self.init_receiving(given_streamer_ip)
+
+    def init_receiving(self, given_streamer_ip):
+        self.area_action.setEnabled(False)
+        self.fullscreen_action.setEnabled(False)
+        self.config.IS_STREAMER = False
+        self.config.set_streamer_ip(given_streamer_ip)
+        self.config.set_receiver_ip(None)
+        self.config.write_clipboard_config()
+        self.stream_viewer = StreamWindow(self.config)
+        if self.stream_viewer.get_registration_state():
+            self.stream_viewer.show()
+
 
     def get_ip_from_dialog(self):
         given_ip, accepted = QInputDialog.getText(self.parent, "IP Dialog", "Streamer IP:", QLineEdit.Normal, "")
