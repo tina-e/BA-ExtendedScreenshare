@@ -1,4 +1,7 @@
 # https://github.com/PDA-UR/Screenshotmatcher-2.0/blob/master/python-server/src/server/server.py
+import os, signal
+import signal
+
 import requests
 from flask import Flask, request, Response
 
