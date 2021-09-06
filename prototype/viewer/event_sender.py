@@ -88,9 +88,7 @@ class EventSender:
             self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
         else:
             self.active = False
-            # self.clip_process.terminate()
             self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
-            # self.clip_process.terminate()
         message = EventTypes.VIEWING.to_bytes(1, 'big')
         message += is_viewing.to_bytes(1, 'big')
         print("VIEW", message)

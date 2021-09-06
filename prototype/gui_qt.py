@@ -63,11 +63,12 @@ class Menu(QSystemTrayIcon):
             self.end()
 
     def access(self):
-        if self.stream_viewer and self.stream_viewer.isVisible():
-            self.stream_viewer.close()
-            self.stream_viewer = None
-        given_streamer_ip = self.get_ip_from_dialog()
-        #given_streamer_ip = '192.168.178.23'
+        if self.stream_viewer:
+            if self.stream_viewer.isVisible():
+                self.stream_viewer.close()
+            del self.stream_viewer # I dont get it, sometimes white screen
+        # given_streamer_ip = self.get_ip_from_dialog()
+        given_streamer_ip = '192.168.178.23'
         if given_streamer_ip:
             self.init_receiving(given_streamer_ip)
 
