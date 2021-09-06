@@ -25,11 +25,12 @@ class Streamer:
         self.config = configurator
         self.superior_app = QApplication(sys.argv)
         # event communication
+        self.receiving = True
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
         self.event_handler = EventHandlerEvdev(configurator)
-        connection_thread_events = threading.Thread(target=self.receive, daemon=True)
-        connection_thread_events.start()
+        self.connection_thread_events = threading.Thread(target=self.receive, daemon=True)
+        self.connection_thread_events.start()
         # file communication
         self.file_communicator = FileServer(self, self.config.FILE_EVENT, self.config.STREAMER_ADDRESS, self.config.FILE_PORT)
         connection_thread_files = threading.Thread(target=self.file_communicator.start, daemon=True)
@@ -57,9 +58,9 @@ class Streamer:
 
     def receive(self):
         print("Waiting for viewer...")
-        receiving = True
-        while receiving:
+        while True:
             data, addr = self.sock.recvfrom(1024)
+            if not self.receiving: return
             try:
                 event_type = EventTypes(data[0])
                 if event_type == EventTypes.REGISTER:
@@ -110,6 +111,7 @@ class Streamer:
             self.is_stream_active = False
             self.stream.end()
             self.event_handler.remove_device()
+            self.config.clean_clipboard_config()
             self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard',
                                                  shell=True)
 
@@ -117,8 +119,7 @@ class Streamer:
         self.stream.setup()
 
     def close_stream(self):
-        self.is_stream_active = False
-        self.sock.close()
+        self.receiving = False
         if self.is_stream_active:
             self.event_handler.remove_device()
             self.config.clean_clipboard_config()
@@ -126,6 +127,7 @@ class Streamer:
         self.stream.end()
         self.stream.close()
         self.file_communicator.close()
+        self.is_stream_active = False
 
     def is_stream_open(self):
         return self.stream.is_pipeline_playing()

@@ -22,7 +22,6 @@ class Stream:
         self.pipeline = Gst.parse_launch(
             f"ximagesrc startx={self.config.START_X} starty={self.config.START_Y} endx={self.config.END_X} endy={self.config.END_Y} "
             "! video/x-raw,framerate=20/1 "
-            "! videoscale "
             "! videoconvert "
             "! x264enc tune=zerolatency bitrate=500 speed-preset=superfast "
             "! rtph264pay "
@@ -38,6 +37,8 @@ class Stream:
         self.frame_maker.toggle_visibility()
 
     def end(self):
+        self.pipeline.set_state(Gst.State.PAUSED)
+        self.pipeline.set_state(Gst.State.READY)
         self.pipeline.set_state(Gst.State.NULL)
         self.pipeline_open = False
         self.frame_maker.toggle_visibility()

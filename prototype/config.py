@@ -59,6 +59,7 @@ class Configurator:
             file.close()
 
     def clean_clipboard_config(self):
+        print("CLEAN")
         with open(f"{self.PROJECT_PATH_ABSOLUTE}/clipboard/clipboard_bridge/config/config.ini", "w") as file:
             file.write("[networking]\n")
             file.write("port = 5010\n")
