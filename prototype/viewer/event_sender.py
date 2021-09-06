@@ -77,7 +77,7 @@ class EventSender:
         return False
 
     def send(self, message):
-        print(self.config.STREAMER_ADDRESS) #todo: rec addr empty...eh???
+        print(self.config.STREAMER_ADDRESS)
         self.sock.sendto(message, (self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
 
     def on_view(self, is_viewing):
@@ -88,7 +88,6 @@ class EventSender:
             self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
         else:
             self.active = False
-            self.sock.close()
             # self.clip_process.terminate()
             self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
             # self.clip_process.terminate()

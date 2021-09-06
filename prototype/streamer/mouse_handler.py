@@ -1,3 +1,4 @@
+import errno
 import subprocess
 import time
 import json
@@ -41,12 +42,16 @@ class EventHandlerEvdev():
         self.map_mouse_movement(0, 0)
 
     def map_mouse_movement(self, x, y):
-        x = x + self.config.START_X
-        y = y + self.config.START_Y
-        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x)
-        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y)
-        self.mouse_ui.syn()
-        time.sleep(0.006)
+        try:
+            x = x + self.config.START_X
+            y = y + self.config.START_Y
+            self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x)
+            self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y)
+            self.mouse_ui.syn()
+            time.sleep(0.006)
+        except OSError as err:
+            if err.errno == errno.EBADFD:
+                return
 
     def map_mouse_click(self, x, y, button, was_pressed):
         self.mouse_ui.write(ecodes.EV_KEY, get_device_by_button(button), was_pressed)
