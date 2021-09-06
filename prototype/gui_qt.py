@@ -63,7 +63,7 @@ class Menu(QSystemTrayIcon):
             self.end()
 
     def access(self):
-        if self.stream_viewer:
+        if self.stream_viewer and self.stream_viewer.isVisible():
             self.stream_viewer.close()
             self.stream_viewer = None
         given_streamer_ip = self.get_ip_from_dialog()
@@ -95,7 +95,7 @@ class Menu(QSystemTrayIcon):
             self.streamer.close_stream()
         elif (not self.config.IS_STREAMER) and (self.stream_viewer is not None) and (self.stream_viewer.isVisible()):
             self.stream_viewer.close()
-        self.config.clean_clipboard_config()
+        #self.config.clean_clipboard_config()
         QtCore.QCoreApplication.exit()
         exit(0)
 

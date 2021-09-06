@@ -117,11 +117,12 @@ class Streamer:
         self.stream.setup()
 
     def close_stream(self):
+        self.is_stream_active = False
+        self.sock.close()
         if self.is_stream_active:
             self.event_handler.remove_device()
             self.config.clean_clipboard_config()
             self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
-        self.is_stream_active = False
         self.stream.end()
         self.stream.close()
         self.file_communicator.close()

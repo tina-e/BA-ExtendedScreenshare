@@ -129,5 +129,5 @@ class StreamWindow(QMainWindow):
         print("close stream window")
         if self.registration_successful:
             self.event_sender.on_view(False)
-            self.config.clean_clipboard_config()
+            self.configurator.clean_clipboard_config()
             self.file_communicator.close_connection()
