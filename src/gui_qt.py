@@ -16,7 +16,7 @@ class Menu(QSystemTrayIcon):
         self.parent = parent
         self.config = configurator
         self.streamer = None
-        self.stream_viewer = None
+        self.stream_receiver = None
         self.is_stream_active = False
 
         menu = QMenu(self.parent)
@@ -34,18 +34,7 @@ class Menu(QSystemTrayIcon):
         self.access_action.triggered.connect(self.access)
         self.quit_action.triggered.connect(self.quit)
 
-    def setup_stream(self):
-        print("setup stream")
-        if self.streamer is None:
-            self.area_action.setEnabled(False)
-            self.fullscreen_action.setEnabled(False)
-            self.access_action.setEnabled(False)
-            self.config.IS_STREAMER = True
-            self.config.set_streamer_ip(None)
-            self.streamer = Streamer(self.config)
-
     def area(self):
-        print("area")
         if self.streamer is None:
             self.open_area_chooser()
 
@@ -62,49 +51,55 @@ class Menu(QSystemTrayIcon):
         elif result == 0:
             self.end()
 
+    def setup_stream(self):
+        if self.streamer is None:
+            self.area_action.setEnabled(False)
+            self.fullscreen_action.setEnabled(False)
+            self.access_action.setEnabled(False)
+            self.config.IS_STREAMER = True
+            self.config.set_streamer_ip(None)
+            self.streamer = Streamer(self.config)
+
     def access(self):
-        if self.stream_viewer:
-            if self.stream_viewer.isVisible():
-                self.stream_viewer.close()
-            del self.stream_viewer # nec?
+        if self.stream_receiver:
+            if self.stream_receiver.isVisible():
+                self.stream_receiver.close()
+            del self.stream_receiver # nec?
         # given_streamer_ip = self.get_ip_from_dialog()
         given_streamer_ip = '192.168.178.23'
         if given_streamer_ip:
-            self.init_receiving(given_streamer_ip)
+            self.setup_receiver(given_streamer_ip)
 
-    def init_receiving(self, given_streamer_ip):
+    def setup_receiver(self, given_streamer_ip):
         self.area_action.setEnabled(False)
         self.fullscreen_action.setEnabled(False)
         self.config.IS_STREAMER = False
         self.config.set_streamer_ip(given_streamer_ip)
         self.config.set_receiver_ip(None)
         self.config.write_clipboard_config()
-        self.stream_viewer = StreamWindow(self.config)
-        if self.stream_viewer.get_registration_state():
-            self.stream_viewer.show()
-
+        self.stream_receiver = StreamWindow(self.config)
+        if self.stream_receiver.get_registration_state():
+            self.stream_receiver.show()
 
     def get_ip_from_dialog(self):
-        given_ip, accepted = QInputDialog.getText(self.parent, "IP Dialog", "Streamer IP:", QLineEdit.Normal, "")
+        given_ip, accepted = QInputDialog.getText(self.parent, "Connecting...", "Streamer's IP-Address:", QLineEdit.Normal, "")
         if accepted and given_ip != '':
             return given_ip
         return None
 
     def quit(self):
-        print("quit")
         if self.config.IS_STREAMER and self.streamer is not None:
             self.streamer.close_stream()
-        elif (not self.config.IS_STREAMER) and (self.stream_viewer is not None) and (self.stream_viewer.isVisible()):
-            self.stream_viewer.close()
+        elif (not self.config.IS_STREAMER) and (self.stream_receiver is not None) and (self.stream_receiver.isVisible()):
+            self.stream_receiver.close()
         QtCore.QCoreApplication.exit()
         exit(0)
 
 
 def main():
-    print(sys.argv)
     config = Configurator(sys.argv)
     app = QApplication(sys.argv)
-    app.setQuitOnLastWindowClosed(False)
+    app.setQuitOnLastWindowClosed(False) #?
     w = QWidget()
     tray_icon = Menu(QIcon("img/icon.png"), w, config)
     tray_icon.show()
