@@ -1,4 +1,4 @@
-#!/home/martinaemmert/Downloads/extensible-clipboard-develop/clip_server/venv/bin/python3
+#!/home/martinaemmert/Documents/Bachelorarbeit/CrossDeviceCommunication/src/clipboard/clip_server/venv/bin/python3
 
 import datetime
 import sys

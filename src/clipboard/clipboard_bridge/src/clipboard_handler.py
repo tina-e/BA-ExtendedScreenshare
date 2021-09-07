@@ -21,10 +21,17 @@ class ClipboardHandler(QObject):
         Saves data to the local clipboard. Uses a QClipboard
         :param data: Data to be saved
         """
-        print("DATA:", data)
-        data['data'] = html2text.html2text(data['data'].decode('utf-8')) #todo: evtl wieder zu byte codieren
-        print("DATA:", data)
-        data['mimetype'] = 'text/plain' #plus: ist das nötig?
+
+        ''' the follwing part removes any formatting of the clipboard content
+        without this, only non-formatted content can be pasted remote - ME '''
+        plain = html2text.html2text(data['data'].decode('iso-8859-1'))
+        plain = plain.rstrip('\n')
+        if data['mimetype'] == 'application/x-gtk-text-buffer-rich-text' and plain.startswith('GTK'):
+            plain = plain.split(' ', 1)[1]
+        data['data'] = plain.encode('utf-8')
+        data['mimetype'] = 'text/plain'
+        '''end ME'''
+
         self.clipboard.save(data)
 
     def put_into_storage(self, data):

@@ -77,7 +77,6 @@ class EventSender:
         return False
 
     def send(self, message):
-        print(self.config.STREAMER_ADDRESS)
         self.sock.sendto(message, (self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
 
     def on_view(self, is_viewing):
@@ -96,7 +95,7 @@ class EventSender:
 
     def on_click(self, x, y, button, was_pressed):
         if self.active:
-            print("on click")
+            #print("on click")
             if self.stream_window.is_active():
                 x_in_stream, y_in_stream = self.stream_window.get_position_in_stream(x, y)
                 if x_in_stream:
@@ -105,12 +104,12 @@ class EventSender:
                     message += y_in_stream.to_bytes(2, 'big')
                     message += get_id_by_button(button).to_bytes(1, 'big')
                     message += was_pressed.to_bytes(1, 'big')
-                    print("CLICK", message)
+                    #print("CLICK", message)
                     self.send(message)
 
     def on_scroll(self, x, y, dx, dy):
         if self.active:
-            print("on scroll")
+            #print("on scroll")
             if self.stream_window.is_active():
                 x_in_stream, y_in_stream = self.stream_window.get_position_in_stream(x, y)
                 if x_in_stream:
@@ -119,12 +118,12 @@ class EventSender:
                     message += y_in_stream.to_bytes(2, 'big')
                     message += dx.to_bytes(2, 'big', signed=True)
                     message += dy.to_bytes(2, 'big', signed=True)
-                    print("SCROLL", message)
+                    #print("SCROLL", message)
                     self.send(message)
 
     def listen_mouse_pos(self):
         while self.active:
-            print("mouse pos")
+            #print("mouse pos")
             if self.stream_window.is_active(): #todo
                 mouse_x = self.mouse.position[0]
                 mouse_y = self.mouse.position[1]
@@ -133,21 +132,21 @@ class EventSender:
                     message = EventTypes.MOUSE_MOVEMENT.to_bytes(1, 'big')
                     message += x_in_stream.to_bytes(2, 'big')
                     message += y_in_stream.to_bytes(2, 'big')
-                    print("POINT", message)
+                    #print("POINT", message)
                     self.send(message)
             time.sleep(0.1)
 
     def listen_keyboard(self):
-        print("keyboard")
+        #print("keyboard")
         for event in self.keyboard.read_loop():
             if self.active:
-                print("keyboard for loop")
+                #print("keyboard for loop")
                 if self.stream_window.is_active():
                     if event.type == ecodes.EV_KEY:
                         message = EventTypes.KEYBOARD.to_bytes(1, 'big')
                         message += event.code.to_bytes(2, 'big')  # key
                         message += event.value.to_bytes(1, 'big')  # down = 1, up = 0, hold = 2
-                        print("KEY", message)
+                        #print("KEY", message)
                         self.send(message)
 
     '''if event.code == 29:
