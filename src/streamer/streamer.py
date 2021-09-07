@@ -13,6 +13,7 @@ import socket
 import threading
 import subprocess
 import pyautogui
+import time
 
 class Streamer:
     def __init__(self, configurator):
@@ -128,10 +129,13 @@ class Streamer:
         x_abs = self.config.START_X + int(x)
         y_abs = self.config.START_Y + int(y)
         current_x, current_y = pyautogui.position()
-        subprocess.Popen(f"xcopy -D {self.config.PROJECT_PATH_ABSOLUTE}/{filename}", shell=True)
-        #time.sleep(1) #todo?
+        path = str(self.config.PROJECT_PATH_ABSOLUTE).rsplit('/', 1)[0]
+        print(path)
+        subprocess.Popen(f"xcopy -D {path}/{filename}", shell=True) # todo: klappt wunderbar im FM aber außerhalb manchmal nicht?
+        time.sleep(0.5) # todo?
         pyautogui.moveTo(x_abs, y_abs)
         pyautogui.mouseDown()
+        time.sleep(0.5)  # todo?
         pyautogui.mouseUp()
         pyautogui.moveTo(current_x, current_y)
 

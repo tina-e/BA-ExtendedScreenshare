@@ -41,8 +41,8 @@ class FileServer:
             drop_x = request.values.get('x')
             drop_y = request.values.get('y')
             file = request.files["files"]
-            file.save(f"files/{filename}") #todo: erst wenn fertig gesaved continue
-            while not Path(f"files/{filename}").exists():
-                pass
+            file.save(filename) #todo: erst wenn fertig gesaved continue
+            #while not Path(filename).exists():
+            #    pass
             self.streamer.simulate_drop(filename, drop_x, drop_y)
         return Response()
