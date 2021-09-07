@@ -38,7 +38,6 @@ class EventHandlerEvdev():
         subprocess.check_output(f"xinput reattach {self.click_id} {self.master_keyboard_id}", shell=True)
         subprocess.check_output(f"xinput reattach {self.key_id} {self.master_keyboard_id}", shell=True)
 
-        print(subprocess.check_output("xinput list", shell=True).decode('utf-8'))
         self.map_mouse_movement(0, 0)
 
     def map_mouse_movement(self, x, y):

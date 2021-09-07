@@ -2,7 +2,7 @@
 
 import requests
 from flask import Flask, request, Response
-
+from pathlib import Path
 
 class FileServer:
     def __init__(self, streamer, event, address, port):
@@ -40,9 +40,9 @@ class FileServer:
             mimetype = request.values.get('mimetype')
             drop_x = request.values.get('x')
             drop_y = request.values.get('y')
-            print(filename, mimetype, drop_x, drop_y)
             file = request.files["files"]
-            if (file.save(filename)): #todo: erst wenn fertig gesaved continue
-                self.streamer.simulate_drop(filename, drop_x, drop_y)
-            #self.streamer.paste_file(file, mimetype, drop_x, drop_y)
+            file.save(f"files/{filename}") #todo: erst wenn fertig gesaved continue
+            while not Path(f"files/{filename}").exists():
+                pass
+            self.streamer.simulate_drop(filename, drop_x, drop_y)
         return Response()

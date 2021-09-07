@@ -3,14 +3,12 @@ import socket
 import subprocess
 import threading
 import time
-import json
 
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
+# import gi
+# gi.require_version('Gtk', '3.0')
+# from gi.repository import Gtk, Gdk
 from evdev import InputDevice, ecodes
 from pynput.mouse import Listener as MouseListener, Controller as MouseController
-
 from event_types import EventTypes, get_id_by_button
 
 
@@ -22,12 +20,6 @@ class EventSender:
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.mouse = MouseController()
-
-        #with open(f"{self.config.PROJECT_PATH_ABSOLUTE}/viewer/dev.json", mode="r") as json_data:
-        #    data = json.load(json_data)
-        #print(data.get("keyboard"))
-        #self.keyboard = InputDevice(data.get("keyboard"))
-
         self.keyboard = InputDevice(self.config.KEYBOARD_DEVICE_PATH)
 
         self.button_thread = MouseListener(on_click=self.on_click, on_scroll=self.on_scroll)
@@ -35,8 +27,8 @@ class EventSender:
         self.movement_thread = threading.Thread(target=self.listen_mouse_pos, daemon=True)
         self.keyboard_thread = threading.Thread(target=self.listen_keyboard, daemon=True)
 
-        self.ctr_hold = False
         self.clip_process = None
+        #self.ctr_hold = False
 
     def start_event_listeners(self):
         self.button_thread.start()
@@ -47,7 +39,7 @@ class EventSender:
         message = EventTypes.REGISTER.to_bytes(1, 'big')
         attempts = 5
         for attempt in range(0, attempts):
-            print("REGISTER", message)
+            # print("REGISTER", message)
             self.sock.sendto(message, (self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
 
             receiving_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -55,7 +47,6 @@ class EventSender:
             receiving_sock.settimeout(1)
             try:
                 data, addr = receiving_sock.recvfrom(1024)
-                print(data, addr)
                 try:
                     event_type = EventTypes(data[0])
                     if event_type == EventTypes.STREAM_COORDS:
@@ -63,7 +54,6 @@ class EventSender:
                         y = int.from_bytes(data[3:5], 'big')
                         end_x = int.from_bytes(data[5:7], 'big')
                         end_y = int.from_bytes(data[7:9], 'big')
-                        print(f"stream coords: {x} {y} {end_x} {end_y}")
                         self.config.set_coords((x, y, end_x, end_y))
                         receiving_sock.close()
                         return True
@@ -83,19 +73,17 @@ class EventSender:
         if is_viewing:
             self.active = True
             self.start_event_listeners()
-            print(self.config.PROJECT_PATH_ABSOLUTE)
             self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
         else:
             self.active = False
             self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
         message = EventTypes.VIEWING.to_bytes(1, 'big')
         message += is_viewing.to_bytes(1, 'big')
-        print("VIEW", message)
+        # print("VIEW", message)
         self.send(message)
 
     def on_click(self, x, y, button, was_pressed):
         if self.active:
-            #print("on click")
             if self.stream_window.is_active():
                 x_in_stream, y_in_stream = self.stream_window.get_position_in_stream(x, y)
                 if x_in_stream:
@@ -109,7 +97,6 @@ class EventSender:
 
     def on_scroll(self, x, y, dx, dy):
         if self.active:
-            #print("on scroll")
             if self.stream_window.is_active():
                 x_in_stream, y_in_stream = self.stream_window.get_position_in_stream(x, y)
                 if x_in_stream:
@@ -123,7 +110,6 @@ class EventSender:
 
     def listen_mouse_pos(self):
         while self.active:
-            #print("mouse pos")
             if self.stream_window.is_active(): #todo
                 mouse_x = self.mouse.position[0]
                 mouse_y = self.mouse.position[1]
@@ -137,10 +123,8 @@ class EventSender:
             time.sleep(0.1)
 
     def listen_keyboard(self):
-        #print("keyboard")
         for event in self.keyboard.read_loop():
             if self.active:
-                #print("keyboard for loop")
                 if self.stream_window.is_active():
                     if event.type == ecodes.EV_KEY:
                         message = EventTypes.KEYBOARD.to_bytes(1, 'big')
@@ -167,7 +151,7 @@ class EventSender:
           #continue
     else:'''
 
-    def on_paste(self):
+    '''def on_paste(self):
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         content = clipboard.wait_for_text()
         print(content)
@@ -180,7 +164,7 @@ class EventSender:
         #todo:
         # aktuelle auswahl (von richtigem eingabegerät) anfordern ODER remote ctrl+c abfangen und zwei zwischenablagen bauen
         # received content in zwischenablage lokal speichern
-        return
+        return'''
 
 
 ###################################################################################################################

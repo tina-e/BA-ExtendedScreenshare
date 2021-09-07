@@ -65,8 +65,8 @@ class Menu(QSystemTrayIcon):
             if self.stream_receiver.isVisible():
                 self.stream_receiver.close()
             del self.stream_receiver # nec?
-        # given_streamer_ip = self.get_ip_from_dialog()
-        given_streamer_ip = '192.168.178.23'
+        given_streamer_ip = self.get_ip_from_dialog()
+        # given_streamer_ip = '192.168.178.23'
         if given_streamer_ip:
             self.setup_receiver(given_streamer_ip)
 
@@ -99,7 +99,7 @@ class Menu(QSystemTrayIcon):
 def main():
     config = Configurator(sys.argv)
     app = QApplication(sys.argv)
-    app.setQuitOnLastWindowClosed(False) #?
+    app.setQuitOnLastWindowClosed(False)
     w = QWidget()
     tray_icon = Menu(QIcon("img/icon.png"), w, config)
     tray_icon.show()

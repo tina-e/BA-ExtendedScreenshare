@@ -1,11 +1,5 @@
-from threading import Thread
-import time
-
 # https://www.youtube.com/watch?v=HDY8pf-b1nA
 # sudo apt install python3-gst-1.0
-
-
-#import Config
 
 from streamer.stream import Stream
 from streamer.mouse_handler import EventHandlerEvdev
@@ -42,7 +36,6 @@ class Streamer:
         self.is_stream_active = False
 
     def send_stream_coords(self):
-        print("sending coords")
         message = EventTypes.STREAM_COORDS.to_bytes(1, 'big')
         message += self.config.START_X.to_bytes(2, 'big')
         message += self.config.START_Y.to_bytes(2, 'big')
@@ -52,7 +45,6 @@ class Streamer:
         self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
 
     def send_stream_closed(self):
-        print("stream closed")
         message = EventTypes.STREAM_CLOSED.to_bytes(1, 'big')
         self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
 
@@ -70,7 +62,7 @@ class Streamer:
                     self.start_stream()
                 elif event_type == EventTypes.VIEWING:
                     queries_stream = data[1]
-                    print(f"is someone watching stream? {queries_stream}")
+                    # print(f"is someone watching stream? {queries_stream}")
                     self.handle_view(queries_stream)
                 elif self.is_stream_active:
                     if event_type == EventTypes.MOUSE_MOVEMENT:
@@ -84,18 +76,18 @@ class Streamer:
                         event_y = int.from_bytes(data[3:5], 'big')
                         event_button = get_button_by_id(data[5])
                         event_was_pressed = data[6]
-                        #print(f"clicked at {event_x}, {event_y} with button {event_button}; pressed: {event_was_pressed}")
+                        # print(f"clicked at {event_x}, {event_y} with button {event_button}; pressed: {event_was_pressed}")
                         self.event_handler.map_mouse_click(event_x, event_y, event_button, event_was_pressed)
                         self.stream.on_mouse_pos_message(event_x, event_y)
                     elif event_type == EventTypes.MOUSE_SCROLL:
                         event_dx = int.from_bytes(data[5:7], 'big', signed=True)
                         event_dy = int.from_bytes(data[7:9], 'big', signed=True)
-                        #print(f"scrolled {event_dx}, {event_dy}")
+                        # print(f"scrolled {event_dx}, {event_dy}")
                         self.event_handler.map_mouse_scroll(event_dx, event_dy)
                     elif event_type == EventTypes.KEYBOARD:
                         event_key = int.from_bytes(data[1:3], 'big')
                         event_value = data[3]
-                        #print(f"key {event_key}: {event_value} (down=1, up=0, hold=2)")
+                        # print(f"key {event_key}: {event_value} (down=1, up=0, hold=2)")
                         self.event_handler.map_keyboard(event_key, event_value)
             except UnicodeDecodeError:
                 continue
@@ -137,20 +129,11 @@ class Streamer:
         y_abs = self.config.START_Y + int(y)
         current_x, current_y = pyautogui.position()
         subprocess.Popen(f"xcopy -D {self.config.PROJECT_PATH_ABSOLUTE}/{filename}", shell=True)
-        #time.sleep(1) #todo
+        #time.sleep(1) #todo?
         pyautogui.moveTo(x_abs, y_abs)
         pyautogui.mouseDown()
         pyautogui.mouseUp()
         pyautogui.moveTo(current_x, current_y)
-
-    def paste_file(self, file, mimetype, x_pos, y_pos):
-        data = QtCore.QMimeData()
-        data.setData(mimetype, file)
-        #url = QtCore.QUrl.fromLocalFile('c:\\foo.file')
-        #data.setUrls([url])
-        self.superior_app.clipboard().setMimeData(data)
-        #todo paste content at given position
-        self.superior_app.clipboard().clear()
 
 ##############################################################################################################################
 

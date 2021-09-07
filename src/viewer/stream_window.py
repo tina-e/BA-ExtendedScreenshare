@@ -51,18 +51,8 @@ class StreamWindow(QMainWindow):
         event_pos_x = event.pos().x()
         event_pos_y = event.pos().y()
         is_file = event.mimeData().hasFormat('COMPOUND_TEXT')
-
-        print("own is file?", is_file)
-        print("hasColor", event.mimeData().hasColor())
-        print("hasHtml", event.mimeData().hasHtml())
-        print("hasImage", event.mimeData().hasImage())
-        print("hasText", event.mimeData().hasText())
-        print("hasUrls", event.mimeData().hasUrls())
         if is_file:
             self.file_communicator.send_file(event_content.lstrip('file:'), event.mimeData().formats()[0], event_pos_x, event_pos_y)
-        else:
-            print("send text") #todo
-        print(event_content)
 
     def moveEvent(self, event):
         self.x_pos = self.pos().x()
