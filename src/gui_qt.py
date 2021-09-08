@@ -64,9 +64,9 @@ class Menu(QSystemTrayIcon):
         if self.stream_receiver:
             if self.stream_receiver.isVisible():
                 self.stream_receiver.close()
-            del self.stream_receiver # nec?
-        given_streamer_ip = self.get_ip_from_dialog()
-        # given_streamer_ip = '192.168.178.23'
+            del self.stream_receiver
+        #given_streamer_ip = self.get_ip_from_dialog()
+        given_streamer_ip = '192.168.178.23'
         if given_streamer_ip:
             self.setup_receiver(given_streamer_ip)
 
