@@ -1,7 +1,7 @@
 import errno
 import subprocess
 import time
-import json
+from wmctrl import Window
 from event_types import get_device_by_button
 from evdev import UInput, ecodes, AbsInfo, InputDevice
 
@@ -62,7 +62,28 @@ class EventHandlerEvdev():
 
     def map_keyboard(self, key, value):
         self.key_ui.write(ecodes.EV_KEY, key, value)
-        if value == 0: self.key_ui.syn()
+        if value != 1: self.key_ui.syn()
+
+    def simulate_drop(self, x_drop, y_drop):
+        dragon_win = Window.by_name('dragon')[0]
+        x_drag = dragon_win.x + (dragon_win.w / 2)
+        y_drag = dragon_win.y + (dragon_win.h / 2)
+
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x_drag)
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y_drag)
+        self.mouse_ui.syn()
+        time.sleep(0.006)
+
+        self.mouse_ui.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 1)
+        self.mouse_ui.syn()
+
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x_drop)
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y_drop)
+        self.mouse_ui.syn()
+        time.sleep(0.006)
+
+        self.mouse_ui.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 0)
+        self.mouse_ui.syn()
 
     def remove_device(self):
         self.mouse_ui.close()

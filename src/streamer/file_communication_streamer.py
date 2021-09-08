@@ -44,5 +44,6 @@ class FileServer:
             file.save(filename) #todo: erst wenn fertig gesaved continue
             #while not Path(filename).exists():
             #    pass
-            self.streamer.simulate_drop(filename, drop_x, drop_y)
+            #self.streamer.simulate_drop(filename, drop_x, drop_y)
+            self.streamer.dragon_drop(filename, drop_x, drop_y)
         return Response()

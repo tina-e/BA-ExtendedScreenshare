@@ -139,6 +139,10 @@ class Streamer:
         pyautogui.mouseUp()
         pyautogui.moveTo(current_x, current_y)
 
+    def dragon_drop(self, filename, x, y):
+        path = str(self.config.PROJECT_PATH_ABSOLUTE).rsplit('/', 1)[0]
+        subprocess.Popen(f"dragon -x {path}/{filename}", shell=True)
+        self.event_handler.simualte_drop(x, y)
 ##############################################################################################################################
 
 # ! video/x-raw,width=750,height=500   legt größe des streams fest
