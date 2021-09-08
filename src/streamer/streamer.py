@@ -142,6 +142,8 @@ class Streamer:
     def dragon_drop(self, filename, x, y):
         path = str(self.config.PROJECT_PATH_ABSOLUTE).rsplit('/', 1)[0]
         subprocess.Popen(f"dragon -x {path}/{filename}", shell=True)
+        while not subprocess.check_output("xdotool search --onlyvisible --class dragon", shell=True):
+            pass
         self.event_handler.simualte_drop(x, y)
 ##############################################################################################################################
 
