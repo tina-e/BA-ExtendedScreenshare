@@ -42,8 +42,8 @@ class FileServer:
             drop_y = request.values.get('y')
             file = request.files["files"]
             file.save(filename)
-            #while not Path(filename).exists():
-            #    pass
-            #self.streamer.simulate_drop(filename, drop_x, drop_y)
-            self.streamer.dragon_drop(filename, drop_x, drop_y)
+            while not Path(filename).exists():
+                pass
+            self.streamer.simulate_drop(filename, drop_x, drop_y)
+            #self.streamer.dragon_drop(filename, drop_x, drop_y)
         return Response()
