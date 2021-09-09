@@ -142,15 +142,12 @@ class Streamer:
     def dragon_drop(self, filename, x, y):
         path = str(self.config.PROJECT_PATH_ABSOLUTE).rsplit('/', 1)[0]
         subprocess.Popen(f"dragon -x {path}/{filename}", shell=True)
-        open = False
-        while not open:
+        while not out:
             try:
                 out = subprocess.check_output("xdotool search --onlyvisible --class dragon", shell=True)
             except subprocess.CalledProcessError as err:
                 pass
-            if out:
-                open = True
-        self.event_handler.simualte_drop(x, y)
+        self.event_handler.simulate_drop(x, y)
 ##############################################################################################################################
 
 # ! video/x-raw,width=750,height=500   legt größe des streams fest
