@@ -136,5 +136,7 @@ class Clipboard(QObject):
                 + '/'
                 + '([a-zA-Z1-9][a-zA-Z1-9!#$&-^.+]{0,126})$')
         if sync_clipboard:
-            self.clipboard.dataChanged.connect(self.onDataChanged)
-imeData: Cannot set X11 s
+            try:
+                self.clipboard.dataChanged.connect(self.onDataChanged)
+            except:
+                print("ERROR")
