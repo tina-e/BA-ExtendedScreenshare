@@ -47,12 +47,17 @@ class StreamWindow(QMainWindow):
         event.accept()
 
     def dropEvent(self, event):
-        event_content = event.mimeData().text()
-        event_pos_x = event.pos().x()
-        event_pos_y = event.pos().y()
-        is_file = event.mimeData().hasFormat('COMPOUND_TEXT')
-        if is_file:
-            self.file_communicator.send_file(event_content.lstrip('file:'), event.mimeData().formats()[0], event_pos_x, event_pos_y)
+        files = event.mimeData().text().split('\n')
+        if len(files) > 1:
+            for listed_file in files:
+                event_pos_x = event.pos().x()
+                event_pos_y = event.pos().y()
+                is_file = event.mimeData().hasFormat('COMPOUND_TEXT')
+                if is_file:
+                    filename = listed_file.lstrip('file:')
+                    filename = filename.replace('%20', ' ')
+                    self.file_communicator.send_file(filename, event.mimeData().formats()[0], event_pos_x, event_pos_y)
+                    #time.sleep(0.1)
 
     def moveEvent(self, event):
         self.x_pos = self.pos().x()

@@ -131,11 +131,11 @@ class Streamer:
         current_x, current_y = pyautogui.position()
         path = str(self.config.PROJECT_PATH_ABSOLUTE).rsplit('/', 1)[0]
         print(path)
-        subprocess.Popen(f"xcopy -D {path}/{filename}", shell=True) # todo: klappt wunderbar im FM aber außerhalb manchmal nicht?
-        time.sleep(0.5) # todo?
+        subprocess.Popen(f"xcopy -D {path}/{filename}", shell=True) # unterstuetzt nur text we guess
+        time.sleep(0.05) # todo?
         pyautogui.moveTo(x_abs, y_abs)
         pyautogui.mouseDown()
-        time.sleep(0.5)  # todo?
+        time.sleep(0.05)  # todo?
         pyautogui.mouseUp()
         pyautogui.moveTo(current_x, current_y)
 

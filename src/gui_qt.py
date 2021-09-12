@@ -97,8 +97,10 @@ class Menu(QSystemTrayIcon):
 
 
 def main():
+    # todo ctrl c beendet anwendung
     config = Configurator(sys.argv)
     app = QApplication(sys.argv)
+    app.setAttribute(Qt.AA_X11InitThreads)
     app.setQuitOnLastWindowClosed(False)
     w = QWidget()
     tray_icon = Menu(QIcon("img/icon.png"), w, config)
