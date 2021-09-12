@@ -73,6 +73,8 @@ class Clipboard(QObject):
 
         self.clipboard.clear()
         self.clipboard.setMimeData(self.mime_data)
+        while not self.clipboard.text():
+            self.clipboard.setMimeData(self.mime_data)
 
         if data['parent'] is not None:  # If child gotten first, should not happen
             self.current_id = data['parent']
@@ -89,7 +91,6 @@ class Clipboard(QObject):
         the data, it will be sent back to THIS clipboard and one needs to
         insert it (which needs ownership of the cb)
         """
-        print("hello data", data)
         if not self.clipboard.ownsClipboard():
             mime_data = self._get_data_in_clipboard()
         else:
@@ -136,7 +137,4 @@ class Clipboard(QObject):
                 + '/'
                 + '([a-zA-Z1-9][a-zA-Z1-9!#$&-^.+]{0,126})$')
         if sync_clipboard:
-            try:
-                self.clipboard.dataChanged.connect(self.onDataChanged)
-            except:
-                print("ERROR")
+            self.clipboard.dataChanged.connect(self.onDataChanged)
