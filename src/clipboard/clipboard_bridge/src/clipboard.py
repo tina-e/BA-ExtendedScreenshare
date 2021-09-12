@@ -73,13 +73,16 @@ class Clipboard(QObject):
 
         self.clipboard.clear()
         self.clipboard.setMimeData(self.mime_data)
-        while not self.clipboard.text():
-            self.clipboard.setMimeData(self.mime_data)
 
         if data['parent'] is not None:  # If child gotten first, should not happen
             self.current_id = data['parent']
         else:
             self.current_id = data['_id']
+
+        if not self.clipboard.text():
+            return -1
+        else:
+            return 1
 
     def update(self, data):
         """

@@ -32,8 +32,10 @@ class ClipboardHandler(QObject):
         data['mimetype'] = 'text/plain'
         '''end ME'''
 
-        out = self.clipboard.save(data)
-        print("OUT:", out)
+        out = -1
+        while out == -1:
+            out = self.clipboard.save(data)
+
 
     def put_into_storage(self, data):
         """
