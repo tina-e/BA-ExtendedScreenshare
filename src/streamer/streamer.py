@@ -7,7 +7,7 @@ from streamer.file_communication_streamer import FileServer
 from event_types import EventTypes, get_button_by_id
 
 import sys
-from PyQt5 import QtCore
+from PyQt5.QtCore import QMimeData, QUrl
 from PyQt5.QtWidgets import QApplication
 import socket
 import threading
@@ -134,13 +134,22 @@ class Streamer:
         return self.stream.is_pipeline_playing()
 
     def simulate_copy(self):
+        was_file_in_cb = False
+        if self.superior_app.clipboard().mimeData().hasUrls():
+            was_file_in_cb = True
         current_local_cb_content = pyclip.paste()
         self.event_handler.simulate_copy()
         cb_content_for_remote = pyclip.paste()
         message = EventTypes.COPY.to_bytes(1, 'big')
         message += cb_content_for_remote.encode('utf-8')
         self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
-        pyclip.copy(current_local_cb_content)
+        if was_file_in_cb:
+            data = QMimeData()
+            url = QUrl.fromLocalFile(current_local_cb_content)
+            data.setUrls([url])
+            self.superior_app.clipboard().setMimeData(data)
+        else:
+            pyclip.copy(current_local_cb_content)
 
     def simulate_paste(self, text_to_paste):
         current_local_cb_content = pyclip.paste()

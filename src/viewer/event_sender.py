@@ -154,19 +154,29 @@ class EventSender:
 
     # ctrl c && im Stream-Fenster
     def on_remote_copy(self):
+        clipboard_content_thread = threading.Thread(target=self.receive_clip_content)
+        clipboard_content_thread.start()
         message = EventTypes.COPY.to_bytes(1, 'big')
-        waiting_for_answer = True
         self.send(message)
+
+    def receive_clip_content(self):
+        clip_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        clip_sock.bind((self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
+        waiting_for_answer = True
         while waiting_for_answer:
-            data, addr = self.sock.recvfrom(1024)
+            print("receiving clip")
+            data, addr = clip_sock.recvfrom(1024)
+            print(data)
             try:
                 event_type = EventTypes(data[0])
                 if event_type == EventTypes.COPY:
                     received_clipboard_content = data[1:].decode('utf-8')
+                    print(received_clipboard_content)
                     pyclip.copy(received_clipboard_content)
                     waiting_for_answer = False
             except UnicodeDecodeError:
                 continue
+        clip_sock.close()
 
     # ctrl v && im Stream-Fenster
     def on_remote_paste(self):
