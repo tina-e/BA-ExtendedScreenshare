@@ -11,11 +11,16 @@ from gi.repository import GstVideo # eventually marked as unused but necessary
 Gst.init(None)
 from PyQt5.QtWidgets import *
 
-from viewer.event_sender import EventSender
-from viewer.file_communication_viewer import FileClient
+from receiver.event_sender import EventSender
+from receiver.file_communication_viewer import FileClient
 
 
 class StreamWindow(QMainWindow):
+    '''
+    In this window, the stream is displayed.
+    It's size corresponds to the size of the streamed region.
+    The window allows drag-and-drop, so dropped files can be sent to the streamer.
+    '''
     def __init__(self, configurator):
         QMainWindow.__init__(self)
         self.configurator = configurator
@@ -47,12 +52,16 @@ class StreamWindow(QMainWindow):
         event.accept()
 
     def dropEvent(self, event):
+        '''
+        If a file was dropped into the stream,
+        the file, the filename and the drop-position is sent to the server
+        !! If there are spaces in the filename, QT represents them with '%20'.
+        '''
         files = event.mimeData().text().rstrip('\n').split('\n')
         for listed_file in files:
             event_pos_x = event.pos().x()
             event_pos_y = event.pos().y()
-            is_file = event.mimeData().hasFormat('COMPOUND_TEXT')
-            if is_file:
+            if event.mimeData().hasUrl():
                 filename = listed_file.lstrip('file:')
                 filename = filename.replace('%20', ' ')
                 self.file_communicator.send_file(filename, event.mimeData().formats()[0], event_pos_x, event_pos_y)
@@ -66,6 +75,10 @@ class StreamWindow(QMainWindow):
         self.event_sender.on_view(True)
 
     def setupGst(self):
+        '''
+        The Gstreamer-pipeline is launches inside the QWidget.
+        If there is movement within the stream, the view gets updated
+        '''
         self.gstWindowId = self.winId()
         # print("Setting up gstreamer pipeline, win id %s" % (self.gstWindowId,))
         self.player = Gst.parse_launch(f'udpsrc port={self.configurator.STREAM_PORT} caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! decodebin ! videoconvert ! ximagesink name=sinkx_overview')
@@ -97,9 +110,10 @@ class StreamWindow(QMainWindow):
     def get_stream_coords(self):
         return self.x_pos, self.y_pos
 
-    def update_stream_dimensions(self):
+    # todo: remove if unused
+    '''def update_stream_dimensions(self):
         self.setFixedWidth(self.configurator.WIDTH)
-        self.setFixedHeight(self.configurator.HEIGHT)
+        self.setFixedHeight(self.configurator.HEIGHT)'''
 
     def is_active(self):
         return self.isActiveWindow()
@@ -113,6 +127,11 @@ class StreamWindow(QMainWindow):
         return None, None
 
     def closeEvent(self, event):
+        '''
+        when an active stream-window is closed,
+        all related components are closed.
+        Also the streamer is informed.
+        '''
         if self.registration_successful:
             self.player.set_state(Gst.State.NULL)
             self.event_sender.on_view(False)

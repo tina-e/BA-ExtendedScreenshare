@@ -28,8 +28,8 @@ class Configurator:
         self.HEIGHT = self.END_Y - self.START_Y
         self.BORDER_WIDTH = 2
         # Input Devices
-        self.KEYBOARD_DEVICE_PATH = args[1]
-        self.MOUSE_DEVICE_PATH = args[2]
+        self.KEYBOARD_DEVICE_PATH = f"/dev/input/event{args[1]}"
+        self.MOUSE_DEVICE_PATH = f"/dev/input/event{args[2]}"
 
     def get_own_ip(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -39,6 +39,10 @@ class Configurator:
         return ip
 
     def set_streamer_ip(self, ip):
+        '''
+        Defines the streamer's IP.
+        If param ip is None, the own IP will be the streamer's IP.
+        '''
         if ip is None:
             self.STREAMER_ADDRESS = self.OWN_IP
         else:
@@ -46,27 +50,15 @@ class Configurator:
             self.ODD_IP = ip
 
     def set_receiver_ip(self, ip):
+        '''
+        Defines the receiver's IP.
+        If param ip is None, the own IP will be the receiver's IP.
+        '''
         if ip is None:
             self.RECEIVER_ADDRESS = self.OWN_IP
         else:
             self.RECEIVER_ADDRESS = ip
             self.ODD_IP = ip
-
-    def write_clipboard_config(self):
-        '''with open(f"{self.PROJECT_PATH_ABSOLUTE}/clipboard/clipboard_bridge/config/config.ini", "a") as file:
-            file.write(f"\nmain_server_address = http://{self.ODD_IP}:5000/")
-            file.write(f"\ndomain = http://{self.OWN_IP}")
-            file.close()'''
-        return
-
-    def clean_clipboard_config(self):
-        '''print("CLEAN")
-        with open(f"{self.PROJECT_PATH_ABSOLUTE}/clipboard/clipboard_bridge/config/config.ini", "w") as file:
-            file.write("[networking]\n")
-            file.write("port = 5010\n")
-            file.write("is_syncing = True")
-            file.close()'''
-        return
 
     def set_coords(self, dimensions):
         self.START_X = dimensions[0]

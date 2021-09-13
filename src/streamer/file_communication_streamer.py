@@ -1,10 +1,11 @@
-# https://github.com/PDA-UR/Screenshotmatcher-2.0/blob/master/python-server/src/server/server.py
-
 import requests
 from flask import Flask, request, Response
 from pathlib import Path
 
 class FileServer:
+    '''
+    This class receives files that were dropped into the stream by the receiver.
+    '''
     def __init__(self, streamer, event, address, port):
         self.streamer = streamer
         self.event = event
@@ -35,7 +36,12 @@ class FileServer:
         return Response()
 
     def file_route(self):
-        if request.values.get('owner') == "viewer":
+        '''
+        Called when receiver does a POST-Request containing the file(s) that were dropped.
+        Receiver sends file, filename and position of the drop. The file is saved.
+        The streamer will now handle the drop.
+        '''
+        if request.values.get('owner') == "receiver":
             filename = request.values.get('filename')
             mimetype = request.values.get('mimetype')
             drop_x = request.values.get('x')
@@ -44,6 +50,6 @@ class FileServer:
             file.save(filename)
             while not Path(filename).exists():
                 pass
-            self.streamer.simulate_drop(filename, drop_x, drop_y)
+            self.streamer.handle_drop(filename, drop_x, drop_y)
             #self.streamer.dragon_drop(filename, drop_x, drop_y)
         return Response()

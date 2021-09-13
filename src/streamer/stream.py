@@ -6,6 +6,10 @@ from streamer.frame_maker import FrameMaker
 
 
 class Stream:
+    '''
+    This class inits, opens and closes the GStreamer-Pipeline.
+    Will inform the frame_maker if the stream is active and someone is watching.
+    '''
     def __init__(self, configurator):
         self.config = configurator
         Gst.init(None)
@@ -30,6 +34,9 @@ class Stream:
         self.pipeline_open = True
 
     def on_mouse_pos_message(self, mouse_x, mouse_y):
+        '''
+        Forwards the change of the receiver's mouse position to the frame_maker
+        '''
         self.frame_maker.set_mouse_pos(mouse_x, mouse_y)
 
     def start(self):

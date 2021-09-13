@@ -4,6 +4,12 @@ from PyQt5.QtGui import QPixmap, QPainter, QPen
 
 
 class Area(QDialog):
+    '''
+    This class allows the user who wants to stream his/her screen, to drag up an area.
+    This area will be the shared region.
+    With choosing a region, the QDialog is accepted. With escaping, the QDialog is rejected.
+    Drawing scalable rect implemented on instructions found at: https://www.youtube.com/watch?v=3QRBk-FpWjE
+    '''
     def __init__(self, screen_width, screen_height):
         super().__init__()
         self.setGeometry(0, 0, screen_width, screen_height)
@@ -24,6 +30,11 @@ class Area(QDialog):
         return self.start_x, self.start_y, self.end_x, self.end_y
 
     def paintEvent(self, event):
+        '''
+        event called whenever the window is updated
+        -> called when mouse is pressed, moved and released
+        (re)draws the area marking rect according to the mouse inputs
+        '''
         painter = QPainter(self)
         painter.setOpacity(0.2)
         painter.drawPixmap(QPoint(), self.pix)
@@ -65,7 +76,8 @@ class Area(QDialog):
             self.accept()
 
     def keyReleaseEvent(self, event):
+        '''
+        allows the user to exit the action of area dragging via esc-key
+        '''
         if event.key == Qt.Key_Escape:
             self.reject()
-
-# https://www.youtube.com/watch?v=3QRBk-FpWjE

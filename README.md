@@ -16,7 +16,7 @@ Content which is pasted in the clipboard is accessible for both parts.
 1. As the streaming part, make sure you have reading and writing permission for `/dev/uinput`.
 To do this: `sudo chmod a+rw /dev/uinput`
 2. Use `evtest` and `xinput` list to find out the event number of you keyboard and mouse device.
-Make sure to use the mouse device which is listed as pointer and keyboard device.
-3. Run `./extended_screenshare.sh` with `-k /dev/input/event{your keyboard event number}` and `-m /dev/input/event{your mouse event number}`
+Make sure to use the mouse device which is listed as pointer **and** keyboard device.
+3. Run `./extended_screenshare.sh` with `-k {your keyboard event number}` and `-m {your mouse event number}`
 
 A tray icon appears. Use the option `Quit` to exit the application.

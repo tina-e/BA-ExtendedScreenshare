@@ -16,10 +16,15 @@ import pyautogui
 import time
 import pyclip
 
-from src.streamer.clipboard_handler import ClipboardHandler
+from streamer.clipboard_handler import ClipboardHandler
 
 
 class Streamer:
+    '''
+    The Streamer activates or closes the stream and
+    coordinates the event-communication between the receiver and streamer.
+    Knows all streamer-components.
+    '''
     def __init__(self, configurator):
         self.config = configurator
         # event communication
@@ -34,13 +39,15 @@ class Streamer:
         connection_thread_files = threading.Thread(target=self.file_communicator.start, daemon=True)
         connection_thread_files.start()
         # shared clipboard
-        self.clip_process = None
         self.clip_handler = ClipboardHandler(self.event_handler)
         # stream
         self.stream = Stream(configurator)
         self.is_stream_active = False
 
     def send_stream_coords(self):
+        '''
+        Sends the dimensions of the stream to the receiver.
+        '''
         message = EventTypes.STREAM_COORDS.to_bytes(1, 'big')
         message += self.config.START_X.to_bytes(2, 'big')
         message += self.config.START_Y.to_bytes(2, 'big')
@@ -49,14 +56,26 @@ class Streamer:
         print(self.config.RECEIVER_ADDRESS)
         self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
 
-    def send_stream_closed(self):
+    # todo: not used?
+    '''def send_stream_closed(self):
         message = EventTypes.STREAM_CLOSED.to_bytes(1, 'big')
-        self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
+        self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))'''
 
     def receive(self):
-        print("Waiting for viewer...")
+        '''
+        Listens on and forwards events sent by the receiver.
+        - Receiver registers to stream
+        - Receiver is now/not any more watching the stream
+        - Receiver moves his/her mouse
+        - Receiver clicks
+        - Receiver scrolls
+        - Receiver types
+        - Receiver wants to copy
+        - Receiver wants to paste
+        '''
+        print("Waiting for receiver...")
         while True:
-            data, addr = self.sock.recvfrom(1024)
+            data, addr = self.sock.recvfrom(4096)
             if not self.receiving: return
             try:
                 event_type = EventTypes(data[0])
@@ -104,7 +123,15 @@ class Streamer:
             except UnicodeDecodeError:
                 continue
 
+    def start_stream(self):
+        self.stream.setup()
+
     def handle_view(self, queries_stream):
+        '''
+        Opens/ends the stream...
+        Creates/removes input devices...
+        ...depending on receiver is watching or not
+        '''
         if queries_stream:
             self.is_stream_active = True
             self.stream.start()
@@ -113,9 +140,6 @@ class Streamer:
             self.is_stream_active = False
             self.stream.end()
             self.event_handler.remove_device()
-
-    def start_stream(self):
-        self.stream.setup()
 
     def close_stream(self):
         self.receiving = False
@@ -126,8 +150,9 @@ class Streamer:
         self.file_communicator.close()
         self.is_stream_active = False
 
-    def is_stream_open(self):
-        return self.stream.is_pipeline_playing()
+    #todo: remove if not used
+    '''def is_stream_open(self):
+        return self.stream.is_pipeline_playing()'''
 
     def handle_copy(self):
         self.clip_handler.on_copy(self.sock, self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT)
@@ -135,18 +160,12 @@ class Streamer:
     def handle_paste(self, content_to_paste):
         self.clip_handler.on_paste(content_to_paste)
 
-    def simulate_drop(self, filename, x, y):
-        x_abs = self.config.START_X + int(x)
-        y_abs = self.config.START_Y + int(y)
-        current_x, current_y = pyautogui.position()
+    def handle_drop(self, filename, x, y):
+        # re-calculates position on screen from position in stream
+        drop_x = self.config.START_X + int(x)
+        drop_y = self.config.START_Y + int(y)
         path = str(self.config.PROJECT_PATH_ABSOLUTE).rsplit('/', 1)[0]
-        subprocess.Popen(f"xcopy -D {path}/{filename}", shell=True) # unterstuetzt nur text we guess
-        time.sleep(0.05) # todo?
-        pyautogui.moveTo(x_abs, y_abs)
-        pyautogui.mouseDown()
-        time.sleep(0.05)  # todo?
-        pyautogui.mouseUp()
-        pyautogui.moveTo(current_x, current_y)
+        self.clip_handler.on_drop(f"{path}/{filename}", drop_x, drop_y)
 
     '''def dragon_drop(self, filename, x, y):
         path = str(self.config.PROJECT_PATH_ABSOLUTE).rsplit('/', 1)[0]

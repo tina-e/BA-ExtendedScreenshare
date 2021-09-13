@@ -8,12 +8,17 @@ from PyQt5.QtCore import Qt, QTimer
 from config import Configurator
 from streamer.area import Area
 from streamer.streamer import Streamer
-from viewer.stream_window import StreamWindow
+from receiver.stream_window import StreamWindow
 
 app = None
 tray_icon = None
 
 class Menu(QSystemTrayIcon):
+    '''
+    This is the Main-Menu of the application.
+    From here, you can start streaming or access a stream.
+    You can also quit the application.
+    '''
     def __init__(self, icon, parent, configurator):
         QSystemTrayIcon.__init__(self, icon, parent)
         self.parent = parent
@@ -42,6 +47,10 @@ class Menu(QSystemTrayIcon):
             self.open_area_chooser()
 
     def open_area_chooser(self):
+        '''
+        A semi-trasparent interface shows up. There you can choose the shared region.
+        If the QDialog (AreaChooser) is accepted, the stream will be set up.
+        '''
         area_chooser = Area(self.config.RESOLUTION_X, self.config.RESOLUTION_Y)
         area_chooser.setWindowFlag(Qt.FramelessWindowHint)
         area_chooser.setAttribute(Qt.WA_NoSystemBackground, True)
@@ -55,6 +64,10 @@ class Menu(QSystemTrayIcon):
             self.end()
 
     def setup_stream(self):
+        '''
+        During an active stream, all other menu-options will be disabled (prototypically).
+        Startes the stream.
+        '''
         if self.streamer is None:
             self.area_action.setEnabled(False)
             self.fullscreen_action.setEnabled(False)
@@ -64,6 +77,10 @@ class Menu(QSystemTrayIcon):
             self.streamer = Streamer(self.config)
 
     def access(self):
+        '''
+        If already watching a stream: close the existing stream.
+        Set up new stream-window for stream at given IP.
+        '''
         if self.stream_receiver:
             if self.stream_receiver.isVisible():
                 self.stream_receiver.close()
@@ -74,24 +91,32 @@ class Menu(QSystemTrayIcon):
             self.setup_receiver(given_streamer_ip)
 
     def setup_receiver(self, given_streamer_ip):
+        '''
+        During watching a stream, the option to stream will be disables (prototypically)
+        The stream-window is set up and shown if a stream could be accessed.
+        '''
         self.area_action.setEnabled(False)
         self.fullscreen_action.setEnabled(False)
         self.config.IS_STREAMER = False
         self.config.set_streamer_ip(given_streamer_ip)
         self.config.set_receiver_ip(None)
-        self.config.write_clipboard_config()
         self.stream_receiver = StreamWindow(self.config)
         if self.stream_receiver.get_registration_state():
             self.stream_receiver.show()
 
     def get_ip_from_dialog(self):
+        '''
+        A QDialog for typing the streamer's IP is shown.
+        '''
         given_ip, accepted = QInputDialog.getText(self.parent, "Connecting...", "Streamer's IP-Address:", QLineEdit.Normal, "")
         if accepted and given_ip != '':
             return given_ip
         return None
 
     def quit(self):
-        print("quit")
+        '''
+        If there is an active stream, it will be closed before the exit of the application.
+        '''
         if self.config.IS_STREAMER and self.streamer is not None:
             self.streamer.close_stream()
         elif (not self.config.IS_STREAMER) and (self.stream_receiver is not None) and (self.stream_receiver.isVisible()):
@@ -100,19 +125,22 @@ class Menu(QSystemTrayIcon):
         exit(0)
 
 
-def handle_sigint(a, b):
+def handle_sigint(*args):
+    '''
+    Allows the user to quit the application with KeyboardInterrupt.
+    '''
     global app, tray_icon
     tray_icon.quit()
     app.quit()
 
 
 def main():
-    # todo ctrl c beendet anwendung
     global app, tray_icon
     signal.signal(signal.SIGINT, handle_sigint)
     config = Configurator(sys.argv)
     app = QApplication(sys.argv)
 
+    # for quitting with KeyboardInterrupt
     timer = QTimer()
     timer.start(100)
     timer.timeout.connect(lambda: None)

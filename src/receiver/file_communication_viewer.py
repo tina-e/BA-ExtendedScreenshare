@@ -3,6 +3,9 @@ import requests
 
 
 class FileClient:
+    '''
+    This class allows to post files that were dropped into the stream to the server(streamer).
+    '''
     def __init__(self, configurator):
         self.config = configurator
         self.connection = client.HTTPConnection(self.config.STREAMER_ADDRESS, self.config.FILE_PORT)
@@ -17,7 +20,7 @@ class FileClient:
         filename = filename.replace('\r', '')
         filename = filename.replace('\n', '')
         files = {"files": open(filename, 'rb')}
-        data = {"filename": filename.split('/')[-1], "owner": "viewer", "mimetype": mimetype, "x": drop_x, "y": drop_y}
+        data = {"filename": filename.split('/')[-1], "owner": "receiver", "mimetype": mimetype, "x": drop_x, "y": drop_y}
         r = requests.post(url, files=files, data=data)
 
     def close_connection(self):
