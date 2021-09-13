@@ -3,7 +3,7 @@ import socket
 import subprocess
 import threading
 import time
-import clipboard
+import pyclip
 
 # import gi
 # gi.require_version('Gtk', '3.0')
@@ -163,16 +163,17 @@ class EventSender:
                 event_type = EventTypes(data[0])
                 if event_type == EventTypes.COPY:
                     received_clipboard_content = data[1:].decode('utf-8')
-                    clipboard.copy(received_clipboard_content)
+                    pyclip.copy(received_clipboard_content)
                     waiting_for_answer = False
             except UnicodeDecodeError:
                 continue
 
     # ctrl v && im Stream-Fenster
     def on_remote_paste(self):
-        current_local_cb_content = clipboard.paste()
+        current_local_cb_content = pyclip.paste()
+        print(current_local_cb_content)
         message = EventTypes.PASTE.to_bytes(1, 'big')
-        message += current_local_cb_content.encode('utf-8')
+        message += current_local_cb_content
         self.send(message)
 
 

@@ -14,7 +14,7 @@ import threading
 import subprocess
 import pyautogui
 import time
-import clipboard
+import pyclip
 
 class Streamer:
     def __init__(self, configurator):
@@ -134,19 +134,19 @@ class Streamer:
         return self.stream.is_pipeline_playing()
 
     def simulate_copy(self):
-        current_local_cb_content = clipboard.paste()
+        current_local_cb_content = pyclip.paste()
         self.event_handler.simulate_copy()
-        cb_content_for_remote = clipboard.paste()
+        cb_content_for_remote = pyclip.paste()
         message = EventTypes.COPY.to_bytes(1, 'big')
         message += cb_content_for_remote.encode('utf-8')
         self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
-        clipboard.copy(current_local_cb_content)
+        pyclip.copy(current_local_cb_content)
 
     def simulate_paste(self, text_to_paste):
-        current_local_cb_content = clipboard.paste()
-        clipboard.copy(text_to_paste)
+        current_local_cb_content = pyclip.paste()
+        pyclip.copy(text_to_paste)
         self.event_handler.simulate_paste()
-        clipboard.copy(current_local_cb_content) #todo: vllt anderes keyboward nutzen, da nur text wieder abgelegt werden kann
+        pyclip.copy(current_local_cb_content) #todo: vllt anderes keyboward nutzen, da nur text wieder abgelegt werden kann
 
     def simulate_drop(self, filename, x, y):
         x_abs = self.config.START_X + int(x)
