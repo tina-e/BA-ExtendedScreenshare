@@ -14,6 +14,7 @@ import threading
 import subprocess
 import pyautogui
 import time
+import clipboard
 
 class Streamer:
     def __init__(self, configurator):
@@ -90,6 +91,13 @@ class Streamer:
                         event_value = data[3]
                         # print(f"key {event_key}: {event_value} (down=1, up=0, hold=2)")
                         self.event_handler.map_keyboard(event_key, event_value)
+                    elif event_type == EventTypes.COPY:
+                        print("copy")
+                        self.simulate_copy()
+                    elif event_type == EventTypes.PASTE:
+                        text_to_paste = data[1:].decode('utf-8')
+                        print(text_to_paste)
+                        self.simulate_paste(text_to_paste)
             except UnicodeDecodeError:
                 continue
 
@@ -124,6 +132,21 @@ class Streamer:
 
     def is_stream_open(self):
         return self.stream.is_pipeline_playing()
+
+    def simulate_copy(self):
+        current_local_cb_content = clipboard.paste()
+        self.event_handler.simulate_copy()
+        cb_content_for_remote = clipboard.paste()
+        message = EventTypes.COPY.to_bytes(1, 'big')
+        message += cb_content_for_remote.encode('utf-8')
+        self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
+        clipboard.copy(current_local_cb_content)
+
+    def simulate_paste(self, text_to_paste):
+        current_local_cb_content = clipboard.paste()
+        clipboard.copy(text_to_paste)
+        self.event_handler.simulate_paste()
+        clipboard.copy(current_local_cb_content) #todo: vllt anderes keyboward nutzen, da nur text wieder abgelegt werden kann
 
     def simulate_drop(self, filename, x, y):
         x_abs = self.config.START_X + int(x)

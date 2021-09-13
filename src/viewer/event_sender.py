@@ -3,6 +3,7 @@ import socket
 import subprocess
 import threading
 import time
+import clipboard
 
 # import gi
 # gi.require_version('Gtk', '3.0')
@@ -127,11 +128,54 @@ class EventSender:
             if self.active:
                 if self.stream_window.is_active():
                     if event.type == ecodes.EV_KEY:
-                        message = EventTypes.KEYBOARD.to_bytes(1, 'big')
-                        message += event.code.to_bytes(2, 'big')  # key
-                        message += event.value.to_bytes(1, 'big')  # down = 1, up = 0, hold = 2
-                        #print("KEY", message)
-                        self.send(message)
+
+                        if event.code == 29:
+                            if event.value == 1:
+                                self.ctr_hold = True
+                            elif event.value == 0:
+                                self.ctr_hold = False
+
+                        if self.ctr_hold:
+                            if event.code == 47 and event.value == 1:
+                                print(self.ctr_hold)
+                                print("ctr-v pressed")
+                                self.on_remote_paste()
+                                # continue
+                            elif event.code == 46 and event.value == 1:
+                                print("ctr-c pressed")
+                                self.on_remote_copy()
+                                # continue
+                        else:
+                            message = EventTypes.KEYBOARD.to_bytes(1, 'big')
+                            message += event.code.to_bytes(2, 'big')  # key
+                            message += event.value.to_bytes(1, 'big')  # down = 1, up = 0, hold = 2
+                            #print("KEY", message)
+                            self.send(message)
+
+    # ctrl c && im Stream-Fenster
+    def on_remote_copy(self):
+        message = EventTypes.COPY.to_bytes(1, 'big')
+        waiting_for_answer = True
+        self.send(message)
+        while waiting_for_answer:
+            data, addr = self.sock.recvfrom(1024)
+            try:
+                event_type = EventTypes(data[0])
+                if event_type == EventTypes.COPY:
+                    received_clipboard_content = data[1:].decode('utf-8')
+                    clipboard.copy(received_clipboard_content)
+                    waiting_for_answer = False
+            except UnicodeDecodeError:
+                continue
+
+    # ctrl v && im Stream-Fenster
+    def on_remote_paste(self):
+        current_local_cb_content = clipboard.paste()
+        message = EventTypes.PASTE.to_bytes(1, 'big')
+        message += current_local_cb_content.encode('utf-8')
+        self.send(message)
+
+
 
     '''if event.code == 29:
       if event.value == 1:
