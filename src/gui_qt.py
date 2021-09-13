@@ -117,7 +117,6 @@ def main():
     timer.start(100)
     timer.timeout.connect(lambda: None)
 
-    app.setAttribute(Qt.AA_X11InitThreads)
     app.setQuitOnLastWindowClosed(False)
     w = QWidget()
     tray_icon = Menu(QIcon("img/icon.png"), w, config)

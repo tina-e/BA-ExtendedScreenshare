@@ -19,6 +19,7 @@ class EventHandlerEvdev():
         }
         self.mouse_ui = None
         self.key_ui = None
+        self.dropping = False
 
     def create_device(self):
         self.mouse_ui = UInput(self.cap_mouse, name='mouse', version=0x3)
@@ -65,25 +66,34 @@ class EventHandlerEvdev():
         if value != 1: self.key_ui.syn()
 
     def simulate_drop(self, x_drop, y_drop):
-        dragon_win = Window.by_name('dragon')[0]
-        x_drag = dragon_win.x + (dragon_win.w / 2)
-        y_drag = dragon_win.y + (dragon_win.h / 2)
+        self.dropping = True
+        time.sleep(1)
+        dragon_wins = Window.by_name('dragon')
+        print(dragon_wins)
+        dragon_win = dragon_wins[0]
+        x_drag = int(dragon_win.x + (dragon_win.w / 2))
+        y_drag = int(dragon_win.y + (dragon_win.h / 2))
 
         self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x_drag)
         self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y_drag)
         self.mouse_ui.syn()
-        time.sleep(0.006)
+        time.sleep(1)
 
         self.mouse_ui.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 1)
+        self.mouse_ui.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 2)
+        self.mouse_ui.syn()
+        time.sleep(1)
+
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.REL_X, (x_drop + self.config.START_X) - x_drag)
+        self.mouse_ui.write(ecodes.EV_ABS, ecodes.REL_Y, (y_drop + self.config.START_Y) - y_drag)
+        self.mouse_ui.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 2)
         self.mouse_ui.syn()
 
-        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_X, x_drop)
-        self.mouse_ui.write(ecodes.EV_ABS, ecodes.ABS_Y, y_drop)
-        self.mouse_ui.syn()
-        time.sleep(0.006)
-
+        self.mouse_ui.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 2)
         self.mouse_ui.write(ecodes.EV_KEY, ecodes.BTN_LEFT, 0)
         self.mouse_ui.syn()
+        time.sleep(0.006)
+        self.dropping = False
 
     def remove_device(self):
         self.mouse_ui.close()

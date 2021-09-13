@@ -38,8 +38,8 @@ class FileServer:
         if request.values.get('owner') == "viewer":
             filename = request.values.get('filename')
             mimetype = request.values.get('mimetype')
-            drop_x = request.values.get('x')
-            drop_y = request.values.get('y')
+            drop_x = int(request.values.get('x'))
+            drop_y = int(request.values.get('y'))
             file = request.files["files"]
             file.save(filename)
             while not Path(filename).exists():
