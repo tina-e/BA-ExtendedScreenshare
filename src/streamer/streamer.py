@@ -48,11 +48,6 @@ class Streamer:
         print(self.config.RECEIVER_ADDRESS)
         self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
 
-    # todo: not used?
-    '''def send_stream_closed(self):
-        message = EventTypes.STREAM_CLOSED.to_bytes(1, 'big')
-        self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))'''
-
     def receive(self):
         '''
         Listens on and forwards events sent by the receiver.
@@ -141,10 +136,6 @@ class Streamer:
         self.stream.close()
         self.file_communicator.close()
         self.is_stream_active = False
-
-    #todo: remove if not used
-    '''def is_stream_open(self):
-        return self.stream.is_pipeline_playing()'''
 
     def handle_copy(self):
         self.clip_handler.on_copy(self.sock, self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT)

@@ -86,9 +86,9 @@ class ClipboardHandler:
         '''
         current_x, current_y = pyautogui.position()
         subprocess.Popen(f"xcopy -D {path_to_file}", shell=True)  # unterstuetzt nur text we guess
-        time.sleep(0.05)  # todo?
+        time.sleep(0.1)  # required, else: no drop happens
         pyautogui.moveTo(drop_x, drop_y)
         pyautogui.mouseDown()
-        time.sleep(0.05)  # todo?
+        time.sleep(0.1)  # required, else: no drop happens
         pyautogui.mouseUp()
         pyautogui.moveTo(current_x, current_y)

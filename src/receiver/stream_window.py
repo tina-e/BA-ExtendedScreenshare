@@ -61,7 +61,7 @@ class StreamWindow(QMainWindow):
         for listed_file in files:
             event_pos_x = event.pos().x()
             event_pos_y = event.pos().y()
-            if event.mimeData().hasUrl():
+            if event.mimeData().hasUrls():
                 filename = listed_file.lstrip('file:')
                 filename = filename.replace('%20', ' ')
                 self.file_communicator.send_file(filename, event.mimeData().formats()[0], event_pos_x, event_pos_y)
@@ -110,11 +110,6 @@ class StreamWindow(QMainWindow):
     def get_stream_coords(self):
         return self.x_pos, self.y_pos
 
-    # todo: remove if unused
-    '''def update_stream_dimensions(self):
-        self.setFixedWidth(self.configurator.WIDTH)
-        self.setFixedHeight(self.configurator.HEIGHT)'''
-
     def is_active(self):
         return self.isActiveWindow()
 
@@ -135,5 +130,4 @@ class StreamWindow(QMainWindow):
         if self.registration_successful:
             self.player.set_state(Gst.State.NULL)
             self.event_sender.on_view(False)
-            self.configurator.clean_clipboard_config()
             self.file_communicator.close_connection()
