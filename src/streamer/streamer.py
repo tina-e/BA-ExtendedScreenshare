@@ -106,15 +106,15 @@ class Streamer:
             self.is_stream_active = True
             self.stream.start()
             self.event_handler.create_device()
-            self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard',
-                                                 shell=True)
+            #self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard',
+                                                 #shell=True)
         else:
             self.is_stream_active = False
             self.stream.end()
             self.event_handler.remove_device()
-            self.config.clean_clipboard_config()
-            self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard',
-                                                 shell=True)
+            #self.config.clean_clipboard_config()
+            #self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard',
+                                                 #shell=True)
 
     def start_stream(self):
         self.stream.setup()
@@ -123,8 +123,8 @@ class Streamer:
         self.receiving = False
         if self.is_stream_active:
             self.event_handler.remove_device()
-            self.config.clean_clipboard_config()
-            self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
+            #self.config.clean_clipboard_config()
+            #self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
         self.stream.end()
         self.stream.close()
         self.file_communicator.close()
