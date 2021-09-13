@@ -1,14 +1,17 @@
 import sys
+import signal
 from PyQt5.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QWidget, QInputDialog, QLineEdit
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 
 from config import Configurator
 from streamer.area import Area
 from streamer.streamer import Streamer
 from viewer.stream_window import StreamWindow
 
+app = None
+tray_icon = None
 
 class Menu(QSystemTrayIcon):
     def __init__(self, icon, parent, configurator):
@@ -88,6 +91,7 @@ class Menu(QSystemTrayIcon):
         return None
 
     def quit(self):
+        print("quit")
         if self.config.IS_STREAMER and self.streamer is not None:
             self.streamer.close_stream()
         elif (not self.config.IS_STREAMER) and (self.stream_receiver is not None) and (self.stream_receiver.isVisible()):
@@ -96,10 +100,23 @@ class Menu(QSystemTrayIcon):
         exit(0)
 
 
+def handle_sigint(a, b):
+    global app, tray_icon
+    tray_icon.quit()
+    app.quit()
+
+
 def main():
     # todo ctrl c beendet anwendung
+    global app, tray_icon
+    signal.signal(signal.SIGINT, handle_sigint)
     config = Configurator(sys.argv)
     app = QApplication(sys.argv)
+
+    timer = QTimer()
+    timer.start(100)
+    timer.timeout.connect(lambda: None)
+
     app.setAttribute(Qt.AA_X11InitThreads)
     app.setQuitOnLastWindowClosed(False)
     w = QWidget()
