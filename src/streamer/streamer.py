@@ -2,21 +2,13 @@
 # sudo apt install python3-gst-1.0
 
 from streamer.stream import Stream
-from streamer.mouse_handler import EventHandlerEvdev
+from streamer.input_handler import InputHandler
+from streamer.clipboard_handler import ClipboardHandler
 from streamer.file_communication_streamer import FileServer
 from event_types import EventTypes, get_button_by_id
 
-import sys
-from PyQt5.QtCore import QMimeData, QUrl
-from PyQt5.QtWidgets import QApplication
 import socket
 import threading
-import subprocess
-import pyautogui
-import time
-import pyclip
-
-from streamer.clipboard_handler import ClipboardHandler
 
 
 class Streamer:
@@ -31,7 +23,7 @@ class Streamer:
         self.receiving = True
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((self.config.STREAMER_ADDRESS, self.config.EVENT_PORT))
-        self.event_handler = EventHandlerEvdev(configurator)
+        self.input_handler = InputHandler(configurator)
         self.connection_thread_events = threading.Thread(target=self.receive, daemon=True)
         self.connection_thread_events.start()
         # file communication
@@ -39,7 +31,7 @@ class Streamer:
         connection_thread_files = threading.Thread(target=self.file_communicator.start, daemon=True)
         connection_thread_files.start()
         # shared clipboard
-        self.clip_handler = ClipboardHandler(self.event_handler)
+        self.clip_handler = ClipboardHandler(self.input_handler)
         # stream
         self.stream = Stream(configurator)
         self.is_stream_active = False
@@ -93,7 +85,7 @@ class Streamer:
                         event_x = int.from_bytes(data[1:3], 'big')
                         event_y = int.from_bytes(data[3:5], 'big')
                         # print(f"moved {event_x}, {event_y}")
-                        self.event_handler.map_mouse_movement(event_x, event_y)
+                        self.input_handler.map_mouse_movement(event_x, event_y)
                         self.stream.on_mouse_pos_message(event_x, event_y)
                     elif event_type == EventTypes.MOUSE_CLICK:
                         event_x = int.from_bytes(data[1:3], 'big')
@@ -101,18 +93,18 @@ class Streamer:
                         event_button = get_button_by_id(data[5])
                         event_was_pressed = data[6]
                         # print(f"clicked at {event_x}, {event_y} with button {event_button}; pressed: {event_was_pressed}")
-                        self.event_handler.map_mouse_click(event_x, event_y, event_button, event_was_pressed)
+                        self.input_handler.map_mouse_click(event_x, event_y, event_button, event_was_pressed)
                         self.stream.on_mouse_pos_message(event_x, event_y)
                     elif event_type == EventTypes.MOUSE_SCROLL:
                         event_dx = int.from_bytes(data[5:7], 'big', signed=True)
                         event_dy = int.from_bytes(data[7:9], 'big', signed=True)
                         # print(f"scrolled {event_dx}, {event_dy}")
-                        self.event_handler.map_mouse_scroll(event_dx, event_dy)
+                        self.input_handler.map_mouse_scroll(event_dx, event_dy)
                     elif event_type == EventTypes.KEYBOARD:
                         event_key = int.from_bytes(data[1:3], 'big')
                         event_value = data[3]
                         # print(f"key {event_key}: {event_value} (down=1, up=0, hold=2)")
-                        self.event_handler.map_keyboard(event_key, event_value)
+                        self.input_handler.map_keyboard(event_key, event_value)
                     elif event_type == EventTypes.COPY:
                         print(f"receiver wants to copy")
                         self.handle_copy()
@@ -135,16 +127,16 @@ class Streamer:
         if queries_stream:
             self.is_stream_active = True
             self.stream.start()
-            self.event_handler.create_device()
+            self.input_handler.create_device()
         else:
             self.is_stream_active = False
             self.stream.end()
-            self.event_handler.remove_device()
+            self.input_handler.remove_device()
 
     def close_stream(self):
         self.receiving = False
         if self.is_stream_active:
-            self.event_handler.remove_device()
+            self.input_handler.remove_device()
         self.stream.end()
         self.stream.close()
         self.file_communicator.close()
