@@ -68,7 +68,6 @@ class Streamer:
                 event_type = EventTypes(data[0])
                 if event_type == EventTypes.REGISTER:
                     self.config.set_receiver_ip(addr[0])
-                    self.config.write_clipboard_config()
                     self.send_stream_coords()
                     self.start_stream()
                 elif event_type == EventTypes.VIEWING:
