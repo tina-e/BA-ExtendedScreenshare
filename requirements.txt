@@ -1,1 +1,8 @@
-# todo
+evdev==1.4.0
+Flask==1.1.1
+gst==0.1.0
+PyAutoGUI==0.9.53
+pyclip==0.5.4
+pynput==1.7.3
+PyQt5==5.14.1
+Werkzeug==2.0.1
