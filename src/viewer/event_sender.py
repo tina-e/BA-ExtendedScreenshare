@@ -152,6 +152,14 @@ class EventSender:
                             #print("KEY", message)
                             self.send(message)
 
+    # ctrl v && im Stream-Fenster
+    def on_remote_paste(self):
+        current_local_cb_content = pyclip.paste()
+        print(current_local_cb_content)
+        message = EventTypes.PASTE.to_bytes(1, 'big')
+        message += current_local_cb_content
+        self.send(message)
+
     # ctrl c && im Stream-Fenster
     def on_remote_copy(self):
         clipboard_content_thread = threading.Thread(target=self.receive_clip_content)
@@ -177,70 +185,3 @@ class EventSender:
             except UnicodeDecodeError:
                 continue
         clip_sock.close()
-
-    # ctrl v && im Stream-Fenster
-    def on_remote_paste(self):
-        current_local_cb_content = pyclip.paste()
-        print(current_local_cb_content)
-        message = EventTypes.PASTE.to_bytes(1, 'big')
-        message += current_local_cb_content
-        self.send(message)
-
-
-
-    '''if event.code == 29:
-      if event.value == 1:
-          self.ctr_hold = True
-      elif event.value == 0:
-          self.ctr_hold = False
-    
-    if self.ctr_hold:
-      if event.code == 47 and event.value == 1:
-          print(self.ctr_hold)
-          print("ctr-v pressed")
-          self.on_paste()
-          #continue
-      elif event.code == 46 and event.value == 1:
-          print("ctr-c pressed")
-          self.on_copy()
-          #continue
-    else:'''
-
-    '''def on_paste(self):
-        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-        content = clipboard.wait_for_text()
-        print(content)
-        message = EventTypes.PASTE.to_bytes(1, 'big')
-        message += bytes(content, 'utf-8')
-        print("PASTE", message)
-        self.send(message)
-
-    def on_copy(self):
-        #todo:
-        # aktuelle auswahl (von richtigem eingabegerät) anfordern ODER remote ctrl+c abfangen und zwei zwischenablagen bauen
-        # received content in zwischenablage lokal speichern
-        return'''
-
-
-###################################################################################################################
-
-def listen_device(self):
-    # cannot read absolute postitons with evdev??
-    selector = selectors.DefaultSelector()
-    selector.register(self.mouse, selectors.EVENT_READ)
-    selector.register(self.keyboard, selectors.EVENT_READ)
-    while True:
-        for k, m in selector.select():
-            device = k.fileobj
-            for event in device.read():
-                print(event)
-
-# too much delay
-def on_mouse_moved(self, x, y):
-    if window_manager.is_in_focus():
-        rel_x, rel_y = window_manager.get_pos_in_stream(x, y)
-        if rel_x:
-            message = EventTypes.MOUSE_MOVEMENT.to_bytes(1, 'big')
-            message += rel_x.to_bytes(2, 'big')
-            message += rel_y.to_bytes(2, 'big')
-            self.send(message)

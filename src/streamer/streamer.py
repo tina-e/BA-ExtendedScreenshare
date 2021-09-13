@@ -16,10 +16,12 @@ import pyautogui
 import time
 import pyclip
 
+from src.streamer.clipboard_handler import ClipboardHandler
+
+
 class Streamer:
     def __init__(self, configurator):
         self.config = configurator
-        self.superior_app = QApplication(sys.argv)
         # event communication
         self.receiving = True
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -33,6 +35,7 @@ class Streamer:
         connection_thread_files.start()
         # shared clipboard
         self.clip_process = None
+        self.clip_handler = ClipboardHandler(self.event_handler)
         # stream
         self.stream = Stream(configurator)
         self.is_stream_active = False
@@ -92,12 +95,12 @@ class Streamer:
                         # print(f"key {event_key}: {event_value} (down=1, up=0, hold=2)")
                         self.event_handler.map_keyboard(event_key, event_value)
                     elif event_type == EventTypes.COPY:
-                        print("copy")
-                        self.simulate_copy()
+                        print(f"receiver wants to copy")
+                        self.handle_copy()
                     elif event_type == EventTypes.PASTE:
-                        text_to_paste = data[1:].decode('utf-8')
-                        print(text_to_paste)
-                        self.simulate_paste(text_to_paste)
+                        content_to_paste = data[1:].decode('utf-8')
+                        print(f"receiver wants to paste \"{content_to_paste}\"")
+                        self.handle_paste(content_to_paste)
             except UnicodeDecodeError:
                 continue
 
@@ -106,15 +109,10 @@ class Streamer:
             self.is_stream_active = True
             self.stream.start()
             self.event_handler.create_device()
-            #self.clip_process = subprocess.Popen("make run", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard',
-                                                 #shell=True)
         else:
             self.is_stream_active = False
             self.stream.end()
             self.event_handler.remove_device()
-            #self.config.clean_clipboard_config()
-            #self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard',
-                                                 #shell=True)
 
     def start_stream(self):
         self.stream.setup()
@@ -123,8 +121,6 @@ class Streamer:
         self.receiving = False
         if self.is_stream_active:
             self.event_handler.remove_device()
-            #self.config.clean_clipboard_config()
-            #self.clip_process = subprocess.Popen("make stop", cwd=f'{self.config.PROJECT_PATH_ABSOLUTE}/clipboard', shell=True)
         self.stream.end()
         self.stream.close()
         self.file_communicator.close()
@@ -133,36 +129,17 @@ class Streamer:
     def is_stream_open(self):
         return self.stream.is_pipeline_playing()
 
-    def simulate_copy(self):
-        was_file_in_cb = False
-        if self.superior_app.clipboard().mimeData().hasUrls():
-            was_file_in_cb = True
-        current_local_cb_content = pyclip.paste()
-        self.event_handler.simulate_copy()
-        cb_content_for_remote = pyclip.paste()
-        message = EventTypes.COPY.to_bytes(1, 'big')
-        message += cb_content_for_remote.encode('utf-8')
-        self.sock.sendto(message, (self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT))
-        if was_file_in_cb:
-            data = QMimeData()
-            url = QUrl.fromLocalFile(current_local_cb_content)
-            data.setUrls([url])
-            self.superior_app.clipboard().setMimeData(data)
-        else:
-            pyclip.copy(current_local_cb_content)
+    def handle_copy(self):
+        self.clip_handler.on_copy(self.sock, self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT)
 
-    def simulate_paste(self, text_to_paste):
-        current_local_cb_content = pyclip.paste()
-        pyclip.copy(text_to_paste)
-        self.event_handler.simulate_paste()
-        pyclip.copy(current_local_cb_content) #todo: vllt anderes keyboward nutzen, da nur text wieder abgelegt werden kann
+    def handle_paste(self, content_to_paste):
+        self.clip_handler.on_paste(content_to_paste)
 
     def simulate_drop(self, filename, x, y):
         x_abs = self.config.START_X + int(x)
         y_abs = self.config.START_Y + int(y)
         current_x, current_y = pyautogui.position()
         path = str(self.config.PROJECT_PATH_ABSOLUTE).rsplit('/', 1)[0]
-        print(path)
         subprocess.Popen(f"xcopy -D {path}/{filename}", shell=True) # unterstuetzt nur text we guess
         time.sleep(0.05) # todo?
         pyautogui.moveTo(x_abs, y_abs)
@@ -171,7 +148,7 @@ class Streamer:
         pyautogui.mouseUp()
         pyautogui.moveTo(current_x, current_y)
 
-    def dragon_drop(self, filename, x, y):
+    '''def dragon_drop(self, filename, x, y):
         path = str(self.config.PROJECT_PATH_ABSOLUTE).rsplit('/', 1)[0]
         subprocess.Popen(f"dragon -x {path}/{filename}", shell=True)
         while not out:
@@ -179,7 +156,7 @@ class Streamer:
                 out = subprocess.check_output("xdotool search --onlyvisible --class dragon", shell=True)
             except subprocess.CalledProcessError as err:
                 pass
-        self.event_handler.simulate_drop(x, y)
+        self.event_handler.simulate_drop(x, y)'''
 ##############################################################################################################################
 
 # ! video/x-raw,width=750,height=500   legt größe des streams fest
