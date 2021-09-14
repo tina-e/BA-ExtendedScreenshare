@@ -69,8 +69,8 @@ class ClipboardHandler:
         :param incoming_content: received content that needs to be pasted
         '''
         stored_is_file, stored_content = self.read_clipboard()
-        pyclip.clear()
         pyclip.copy(incoming_content)
+        time.sleep(3)
         self.mouse_handler.simulate_paste()
         self.write_clipboard(stored_is_file, stored_content)
 
