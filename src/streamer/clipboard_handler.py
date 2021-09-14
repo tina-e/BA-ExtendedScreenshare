@@ -41,12 +41,13 @@ class ClipboardHandler:
         '''
         :return: contains the clipboard a file currently?, current content of the clipboard
         '''
-        is_file = False
-        content = pyclip.paste()
-        if self.app.clipboard().mimeData().hasUrls():
-            is_file = True
-            content = content.decode('utf-8').split('file://', 1)[1]
-        return is_file, content
+        with self.lock:
+            is_file = False
+            content = pyclip.paste()
+            if self.app.clipboard().mimeData().hasUrls():
+                is_file = True
+                content = content.decode('utf-8').split('file://', 1)[1]
+            return is_file, content
     
     def write_clipboard(self, is_file, content):
         '''
@@ -70,14 +71,10 @@ class ClipboardHandler:
         Streamer's clipboard content is copied again to the clipboard.
         :param incoming_content: received content that needs to be pasted
         '''
-        with self.lock:
-            print("test1")
-            stored_is_file, stored_content = self.read_clipboard()
-            print("test2")
-            pyclip.copy(incoming_content)
-            #time.sleep(3)
-            self.mouse_handler.simulate_paste()
-            self.write_clipboard(stored_is_file, stored_content)
+        stored_is_file, stored_content = self.read_clipboard()
+        pyclip.copy(incoming_content)
+        self.mouse_handler.simulate_paste()
+        self.write_clipboard(stored_is_file, stored_content)
 
     def on_drop(self, path_to_file, drop_x, drop_y):
         '''

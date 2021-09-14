@@ -82,14 +82,12 @@ class InputHandler():
         self.key_ui.syn()
 
     def simulate_paste(self):
-        print("test sim1")
         self.key_ui.write(ecodes.EV_KEY, ecodes.KEY_LEFTCTRL, 1)
         self.key_ui.write(ecodes.EV_KEY, ecodes.KEY_LEFTCTRL, 2)
         self.key_ui.write(ecodes.EV_KEY, ecodes.KEY_V, 1)
         self.key_ui.write(ecodes.EV_KEY, ecodes.KEY_V, 0)
         self.key_ui.write(ecodes.EV_KEY, ecodes.KEY_LEFTCTRL, 0)
         self.key_ui.syn()
-        print("test sim2")
 
     '''def simulate_drop(self, x_drop, y_drop):
         dragon_win = Window.by_name('dragon')[0]
