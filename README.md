@@ -1,5 +1,5 @@
 # Extended Screenshare
-<img width="200" alt="icon" src="img/icon.png">
+<img width="50%" alt="icon" src="img/icon.png">
 
 Extended Screenshare is a Screensharing-Tool to improve collaborative work.
 This tool allows you to choose the shared region freely by your self
