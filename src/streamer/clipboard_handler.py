@@ -68,10 +68,14 @@ class ClipboardHandler:
         Streamer's clipboard content is copied again to the clipboard.
         :param incoming_content: received content that needs to be pasted
         '''
+        print("test1")
         stored_is_file, stored_content = self.read_clipboard()
+        print("test2")
         pyclip.copy(incoming_content)
-        time.sleep(3)
+        print("test3")
+        #time.sleep(3)
         self.mouse_handler.simulate_paste()
+        print("test4")
         self.write_clipboard(stored_is_file, stored_content)
 
     def on_drop(self, path_to_file, drop_x, drop_y):
