@@ -62,7 +62,7 @@ class Streamer:
         '''
         print("Waiting for receiver...")
         while True:
-            data, addr = self.sock.recvfrom(4096)
+            data, addr = self.sock.recvfrom(1024)
             if not self.receiving: return
             try:
                 event_type = EventTypes(data[0])

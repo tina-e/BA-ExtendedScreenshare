@@ -199,7 +199,7 @@ class EventSender:
         waiting_for_answer = True
         while waiting_for_answer:
             print("receiving clip")
-            data, addr = clip_sock.recvfrom(4096)
+            data, addr = clip_sock.recvfrom(1024)
             print(data)
             try:
                 event_type = EventTypes(data[0])
