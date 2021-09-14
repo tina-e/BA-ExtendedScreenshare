@@ -1,4 +1,6 @@
 # Extended Screenshare
+![icon](img/icon.png){ width=50% }
+
 Extended Screenshare is a Screensharing-Tool to improve collaborative work.
 This tool allows you to choose the shared region freely by your self
 instead of sharing the entire screen or a single application.
