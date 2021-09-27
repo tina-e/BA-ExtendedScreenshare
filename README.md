@@ -8,16 +8,16 @@ As the receiving part, you can interact with the stream and even drag-and-drop f
 Content which is pasted in the clipboard is accessible for both parts.
 
 ## Install the application
-1. Install the following programs via `sudo apt install`:
-   - sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
-   - xcopy #todo
-   - KDE einstellungen #todo
+1. Install GStreamer via `sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio`
+2. Install xcopy as described here: https://www.chiark.greenend.org.uk/~sgtatham/utils/
 2. Use `pip install -r requirements.txt` (or maybe `pip3`) to install the necessary packages.
 
 ## Run the application
-1. If you are working with KDE, make sure to set the right window behaviour:
-   - Force windows to be opened at top left corner to avoid inconsistent placement of transparent stream border:
-   - Avoid window movement by dragging the window to allow area choosing via drag gesture:
+1. If you are working with KDE, make sure to set the right window behaviour in system settings:
+   - Force windows to be opened at top left corner to avoid inconsistent placement of transparent stream border:  
+   Window Management -> Window Behavior -> Advanced -> Window placement: In Top-Left Corner
+   - Avoid window movement by dragging the window to allow area choosing via drag gesture:  
+   Application Style -> Configure style of your theme -> General -> Windows' drag mode: Drag windows from titlebar only
 3. As the streaming part, make sure you have reading and writing permission for `/dev/uinput`.
 To do this: `sudo chmod a+rw /dev/uinput`
 3. Use `evtest` and `xinput` list to find out the event number of you keyboard and mouse device.
