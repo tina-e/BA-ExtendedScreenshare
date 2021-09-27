@@ -19,6 +19,7 @@ class Streamer:
     '''
     def __init__(self, configurator):
         self.config = configurator
+        self.lock = threading.Lock()
         # event communication
         self.receiving = True
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -31,7 +32,7 @@ class Streamer:
         connection_thread_files = threading.Thread(target=self.file_communicator.start, daemon=True)
         connection_thread_files.start()
         # shared clipboard
-        self.clip_handler = ClipboardHandler(self.input_handler)
+        self.clip_handler = ClipboardHandler(self.input_handler, self.lock)
         # stream
         self.stream = Stream(configurator)
         self.is_stream_active = False
@@ -140,7 +141,6 @@ class Streamer:
         self.clip_handler.on_copy(self.sock, self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT)
 
     def handle_paste(self, content_to_paste):
-        self.lock = threading.Lock()
         with self.lock:
             self.clip_handler.on_paste(content_to_paste)
 

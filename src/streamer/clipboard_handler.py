@@ -14,10 +14,10 @@ class ClipboardHandler:
     This class handles clipboard actions from the receiver.
     Streamer's clipboard content is caches while performing receiver's copy- oder paste-actions.
     '''
-    def __init__(self, mouse_handler):
+    def __init__(self, mouse_handler, lock):
         self.mouse_handler = mouse_handler
         self.app = QApplication(sys.argv)
-        self.lock = threading.Lock()
+        self.lock = lock
 
     def on_copy(self, sock, rec_addr, port):
         '''
@@ -41,13 +41,13 @@ class ClipboardHandler:
         '''
         :return: contains the clipboard a file currently?, current content of the clipboard
         '''
-        #with self.lock:
-        is_file = False
-        content = pyclip.paste()
-        if self.app.clipboard().mimeData().hasUrls():
-            is_file = True
-            content = content.decode('utf-8').split('file://', 1)[1]
-        return is_file, content
+        with self.lock:
+            is_file = False
+            content = pyclip.paste()
+            if self.app.clipboard().mimeData().hasUrls():
+                is_file = True
+                content = content.decode('utf-8').split('file://', 1)[1]
+            return is_file, content
     
     def write_clipboard(self, is_file, content):
         '''
@@ -71,10 +71,11 @@ class ClipboardHandler:
         Streamer's clipboard content is copied again to the clipboard.
         :param incoming_content: received content that needs to be pasted
         '''
-        stored_is_file, stored_content = self.read_clipboard()
-        pyclip.copy(incoming_content)
-        self.mouse_handler.simulate_paste()
-        self.write_clipboard(stored_is_file, stored_content)
+        with self.lock:
+            stored_is_file, stored_content = self.read_clipboard()
+            pyclip.copy(incoming_content)
+            self.mouse_handler.simulate_paste()
+            self.write_clipboard(stored_is_file, stored_content)
 
     def on_drop(self, path_to_file, drop_x, drop_y):
         '''
