@@ -140,7 +140,9 @@ class Streamer:
         self.clip_handler.on_copy(self.sock, self.config.RECEIVER_ADDRESS, self.config.EVENT_PORT)
 
     def handle_paste(self, content_to_paste):
-        self.clip_handler.on_paste(content_to_paste)
+        self.lock = threading.Lock()
+        with self.lock:
+            self.clip_handler.on_paste(content_to_paste)
 
     def handle_drop(self, filename, x, y):
         # re-calculates position on screen from position in stream

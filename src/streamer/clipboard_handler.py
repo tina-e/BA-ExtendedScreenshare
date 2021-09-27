@@ -41,13 +41,13 @@ class ClipboardHandler:
         '''
         :return: contains the clipboard a file currently?, current content of the clipboard
         '''
-        with self.lock:
-            is_file = False
-            content = pyclip.paste()
-            if self.app.clipboard().mimeData().hasUrls():
-                is_file = True
-                content = content.decode('utf-8').split('file://', 1)[1]
-            return is_file, content
+        #with self.lock:
+        is_file = False
+        content = pyclip.paste()
+        if self.app.clipboard().mimeData().hasUrls():
+            is_file = True
+            content = content.decode('utf-8').split('file://', 1)[1]
+        return is_file, content
     
     def write_clipboard(self, is_file, content):
         '''
@@ -95,3 +95,5 @@ class ClipboardHandler:
         time.sleep(0.1)  # required, else: no drop happens
         pyautogui.mouseUp()
         pyautogui.moveTo(current_x, current_y)
+
+

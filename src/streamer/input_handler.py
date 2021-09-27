@@ -1,7 +1,6 @@
 import errno
 import subprocess
 import time
-# from wmctrl import Window
 from event_types import get_device_by_button
 from evdev import UInput, ecodes, AbsInfo, InputDevice
 
