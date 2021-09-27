@@ -72,6 +72,7 @@ class ClipboardHandler:
         stored_is_file, stored_content = self.read_clipboard()
         timestamp_xclip = subprocess.check_output('xclip -selection \'clipboard\' -o -t TIMESTAMP', shell=True)
         pyclip.copy(incoming_content)
+        # wait until incoming content is fully copied to the clipboard to make sure no previous clipboard content is pasted
         while timestamp_xclip == subprocess.check_output('xclip -selection \'clipboard\' -o -t TIMESTAMP', shell=True):
             pass
         self.mouse_handler.simulate_paste()
