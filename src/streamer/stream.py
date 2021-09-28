@@ -44,9 +44,10 @@ class Stream:
         self.frame_maker.toggle_visibility()
 
     def end(self):
-        self.pipeline.set_state(Gst.State.PAUSED)
-        self.pipeline.set_state(Gst.State.READY)
-        self.pipeline.set_state(Gst.State.NULL)
+        if self.pipeline is not None:
+            self.pipeline.set_state(Gst.State.PAUSED)
+            self.pipeline.set_state(Gst.State.READY)
+            self.pipeline.set_state(Gst.State.NULL)
         self.pipeline_open = False
         self.frame_maker.toggle_visibility()
 

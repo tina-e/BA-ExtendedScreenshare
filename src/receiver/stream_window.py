@@ -80,7 +80,6 @@ class StreamWindow(QMainWindow):
         If there is movement within the stream, the view gets updated
         '''
         self.gstWindowId = self.winId()
-        # print("Setting up gstreamer pipeline, win id %s" % (self.gstWindowId,))
         self.player = Gst.parse_launch(f'udpsrc port={self.configurator.STREAM_PORT} caps = "application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264, payload=(int)96" ! rtph264depay ! decodebin ! videoconvert ! ximagesink name=sinkx_overview')
 
         bus = self.player.get_bus()
@@ -91,19 +90,14 @@ class StreamWindow(QMainWindow):
 
     def on_message(self, bus, message):
         t = message.type
-        # print('\n'.join(dir(gst)))
-        # print('MSG: %s' % (t,))
 
     def on_sync_message(self, bus, message):
-        # print('sync, %s' % (message,))
         structure = message.get_structure()
         if structure is None:
             return
         message_name = structure.get_name()
         if message_name == "prepare-window-handle":
             assert message.src.get_name() == 'sinkx_overview'
-            # "Note that trying to get the drawingarea XID in your on_sync_message() handler will cause a segfault because of threading issues."
-            #print 'sinkx_overview win_id: %s (%s)' % (self.gstWindowId, self.video_container.winId())
             assert self.gstWindowId
             message.src.set_window_handle(self.gstWindowId)
 

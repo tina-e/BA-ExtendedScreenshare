@@ -88,6 +88,7 @@ class InputHandler():
         self.key_ui.write(ecodes.EV_KEY, ecodes.KEY_LEFTCTRL, 0)
         self.key_ui.syn()
 
+    # not used for xcopy solution
     '''def simulate_drop(self, x_drop, y_drop):
         dragon_win = Window.by_name('dragon')[0]
         x_drag = dragon_win.x + (dragon_win.w / 2)
