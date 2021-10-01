@@ -18,10 +18,13 @@ Content which is pasted in the clipboard is accessible for both parts.
    Window Management -> Window Behavior -> Advanced -> Window placement: In Top-Left Corner
    - Avoid window movement by dragging the window to allow area choosing via drag gesture:  
    Application Style -> Configure style of your theme -> General -> Windows' drag mode: Drag windows from titlebar only
+2. Add your user to group input. `usermod -a -G input {username}`
 3. As the streaming part, make sure you have reading and writing permission for `/dev/uinput`.
 To do this: `sudo chmod a+rw /dev/uinput`
-3. Use `evtest` and `xinput` list to find out the event number of you keyboard and mouse device.
+4. Use `evtest` and `xinput` list to find out the event number of you keyboard and mouse device.
 Make sure to use the mouse device which is listed as pointer **and** keyboard device.
-4. Run `./extended_screenshare.sh` with `-k {your keyboard event number}` and `-m {your mouse event number}`
+5. Run `./extended_screenshare.sh` with `-k {your keyboard event number}` and `-m {your mouse event number}`
+
+Make sure Streamer and Receiver are in the same network.
 
 A tray icon appears. Use the option `Quit` to exit the application.
