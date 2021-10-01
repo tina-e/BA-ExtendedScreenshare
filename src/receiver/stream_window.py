@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-# source: https://gist.github.com/JohnDMcMaster/fdedc262feebc44d0ce8399ad7652b38
-# https://wiki.ubuntu.com/Novacut/GStreamer1.0#Python_Porting_Guide
+# Einbettung des GStreams orientiert an: https://gist.github.com/JohnDMcMaster/fdedc262feebc44d0ce8399ad7652b38
 
 import gi
 gi.require_version('Gst', '1.0')
