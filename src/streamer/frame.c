@@ -32,6 +32,7 @@ void setup_rect(int rectX, int rectY, int rectWidth, int rectHeight, int borderW
 
     XMatchVisualInfo(dpy, DefaultScreen(dpy), 32, TrueColor, &vinfo);
     attr.colormap = XCreateColormap(dpy, DefaultRootWindow(dpy), vinfo.visual, AllocNone);
+    attr.override_redirect = True;
 
     char color_code_red[] = "#fc0303";
     XParseColor(dpy, attr.colormap, color_code_red, &red_color);
@@ -42,7 +43,9 @@ void setup_rect(int rectX, int rectY, int rectWidth, int rectHeight, int borderW
     XAllocColor(dpy, attr.colormap, &grey_color);
 
     w = XCreateWindow(dpy, DefaultRootWindow(dpy), 0, 0, width + x + border, height + y + border, 0, vinfo.depth,
-                      InputOutput, vinfo.visual, CWColormap | CWBorderPixel | CWBackPixel, &attr);
+                      InputOutput, vinfo.visual, CWColormap | CWBorderPixel | CWBackPixel | CWOverrideRedirect, &attr); // CWOverrideRedirect from ChatGPT
+    // ChatGPT
+    XSetTransientForHint(dpy, w, RootWindow(dpy, DefaultScreen(dpy)));
 
     gcv.line_width = borderWidth;
     gc = XCreateGC(dpy, w, GCLineWidth, &gcv);
@@ -53,7 +56,8 @@ void setup_rect(int rectX, int rectY, int rectWidth, int rectHeight, int borderW
     XFixesDestroyRegion (dpy, region);
 
     XSelectInput(dpy, w, ExposureMask);
-    long value = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DOCK", False);
+    //long value = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DOCK", False);
+    long value = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_UTILITY", False);
     XChangeProperty(dpy, w, XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", False), XA_ATOM, 32, PropModeReplace, (unsigned char *) &value, 1);
     XMapWindow(dpy, w);
     XSync(dpy, False);
